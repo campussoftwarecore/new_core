@@ -102,11 +102,9 @@ class Core_Controllers_NodeController extends Core_Model_Node
     public function descriptorAction()
     {
         $sourceNode=$this->_requestedData['node'];
-        $DestinationNode=$this->_requestedData['destinationNode'];         
-        $db=new Core_DataBase_ProcessQuery();
-        $db->setTable($this->_tableName, $this->_nodeName);
-        $db->addFieldArray(array($this->_nodeName.".".$this->_primaryKey=>"pid"));
-        $noderesult=$this->_requestedData['noderesult'];
+        $DestinationNode=$this->_requestedData['destinationNode']; 
+		$FieldName=$this->_requestedData['idname'];  
+		$noderesult=$this->_requestedData['noderesult'];
         if($noderesult!="")
         {
             $noderesult=  json_decode($noderesult,true);
@@ -115,6 +113,14 @@ class Core_Controllers_NodeController extends Core_Model_Node
         {
             $noderesult=array();
         }
+		$defaultValue=$noderesult[$FieldName];
+		$readonlyAttributes=$this->readonlyAttributes();
+		//$sourceNodeStructure=$sourceNodeObject->currentNodeStructure();
+		
+        $db=new Core_DataBase_ProcessQuery();
+        $db->setTable($this->_tableName, $this->_nodeName);
+        $db->addFieldArray(array($this->_nodeName.".".$this->_primaryKey=>"pid"));
+        
         if(in_array($this->_descriptor,$this->_nodeRelations))
         {
         }
@@ -122,25 +128,29 @@ class Core_Controllers_NodeController extends Core_Model_Node
         {
             $db->addFieldArray(array($this->_nodeName.".".$this->_descriptor=>"pds"));
         }
+		if(in_array($FieldName,$readonlyAttributes))
+        {
+			$db->addWhere($this->_nodeName.".".$this->_primaryKey."='".$defaultValue."'");
+		}
         $db->addOrderBy($this->_descriptor);
         $result=$db->getRows();        
         try
-        {
+        {            
             
-            $defaultValue=$noderesult[$this->_requestedData['idname']];
             $attributeType="select";
-            $attribute=new Core_Attributes_Attribute($attributeType);
+            $attributeDetails=new Core_Attributes_LoadAttribute($attributeType);				
+			$attributeClass=Core_Attributes_.$attributeDetails->_attributeName;
+			$attribute=new $attributeClass;
             $attribute->setIdName($this->_requestedData['idname']);
             $attribute->setOptions($result);
             $attribute->setValue($defaultValue);
-            $attribute->setAction($action);
+            $attribute->setAction($this->_requestedData['action']);
             if(in_array($FieldName,$mandotatoryAttributes))
             {
                 $attribute->setRequired();
             }            
             if(in_array($FieldName,$readonlyAttributes))
-            {
-                
+            {                
                 $attribute->setReadonly();
             }
             $attribute->loadAttributeTemplate($attributeType,$FieldName);

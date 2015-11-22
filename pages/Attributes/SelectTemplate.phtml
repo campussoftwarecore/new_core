@@ -1,8 +1,16 @@
-<?php 
-echo "<pre>";
-print_r($this);
-echo "</pre>";
-?>
+<?php
+	
+
+if($this->_readonly=='1')
+{
+	$displayValue=$this->_options['0']['pds'];
+	?>
+	<input type="hidden" id="<?php echo $this->_idName; ?>" name="<?php echo $this->_idName; ?>" value="<?php echo $this->_Value; ?>" /> <span class="text_display" ><?php echo $displayValue;?> </span>
+	<?php
+}
+else
+{
+	?>
 <select class="" id="<?php echo $this->_idName; ?>" name="<?php echo $this->_idName; ?>">
    <option value="">  Select <?php echo $this->getLabel($this->_idName); ?>  </option>
    <?php
@@ -21,4 +29,7 @@ echo "</pre>";
             }
         }
     ?>
-</select>
+</select>	
+<?php
+}
+?>

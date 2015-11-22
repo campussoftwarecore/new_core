@@ -12,31 +12,34 @@
         if( $error !== NULL) 
         {
             $errno   = $error["type"];
-            $errfile = $error["file"];
-            $errline = $error["line"];
-            $errstr  = $error["message"];
-            try
-            {
-                 
-                try 
-                {
-                    
-                   /* $filename=$_SERVER['DOCUMENT_ROOT']."new_core/Var/Errors/".strtotime(date('Y-m-d H:i:s')).".html";
-                    $errorContent=(format_error( $errno, $errstr, $errfile, $errline));
-                    $fp=fopen($filename,"w+") or die($filename);
-                    fwrite($fp, $errorContent);
-                    fclose($fp);*/
-                } 
-                catch (Exception $ex) 
-                {
-                   
-                }              
-                              
-            }
-            catch (Exception $e)
-            {
-                $e->getMessage();
-            }
+			if($errno==1)
+			{
+				$errfile = $error["file"];
+				$errline = $error["line"];
+				$errstr  = $error["message"];
+				try
+				{
+					 
+					try 
+					{
+						echo $errorContent=(format_error( $errno, $errstr, $errfile, $errline));
+					   /* $filename=$_SERVER['DOCUMENT_ROOT']."new_core/Var/Errors/".strtotime(date('Y-m-d H:i:s')).".html";
+						
+						$fp=fopen($filename,"w+") or die($filename);
+						fwrite($fp, $errorContent);
+						fclose($fp);*/
+					} 
+					catch (Exception $ex) 
+					{
+					   
+					}              
+								  
+				}
+				catch (Exception $e)
+				{
+					$e->getMessage();
+				}
+			}
           
         }
     }

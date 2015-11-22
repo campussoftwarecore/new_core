@@ -175,10 +175,9 @@
         public function loadAttribute($FieldName)
         {            
             $mandotatoryAttributes=$this->mandotatoryAttributes();
+			
             $readonlyAttributes=$this->readonlyAttributes();
-            echo "<pre>";
-                print_r($readonlyAttributes);
-            echo "</pre>";
+            
             $methodName=$FieldName."_loadAttribute";
             if(method_exists($this,$methodName))
             {
@@ -202,7 +201,10 @@
             try
             {
                 
-                $attribute=new Core_Attributes_Attribute($attributeType);
+                $attributeDetails=new Core_Attributes_LoadAttribute($attributeType);				
+				$attributeClass=Core_Attributes_.$attributeDetails->_attributeName;
+				$attribute=new $attributeClass;
+				
                 $attribute->setIdName($FieldName);
                 $attribute->setValue($this->_record[$FieldName]);
                 if(in_array($FieldName,$mandotatoryAttributes))
@@ -210,18 +212,16 @@
                     $attribute->setRequired();
                 }
                 if(in_array($FieldName,$readonlyAttributes))
-                {
-                    $attribute->setReadonly();
-                  
-                }
-                
+                {					
+                    $attribute->setReadonly();                  
+                }				
                 $attribute->setAction($this->_currentAction);
                 $attribute->loadAttributeTemplate($attributeType,$FieldName);
             }
             catch (Exception $ex)
             {
                 
-                $ex->getMessage();
+                echo $ex->getMessage();
             }
             catch (ErrorException $ex)
             {

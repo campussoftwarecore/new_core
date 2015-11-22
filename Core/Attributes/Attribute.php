@@ -10,16 +10,7 @@
         public $_options=array();
         public $_action=NULL;
         
-        function __construct($attributeType=NULL) 
-        {
-            $className="Core_Attributes_".ucwords($attributeType)."Attribute";
-            $classResponse=class_exists($className, true);
-            if($classResponse)
-            {
-                return new $className;
-            }
-            
-        }
+        
         public function setIdName($idName)
         {
             $this->_idName=$idName;
@@ -37,7 +28,7 @@
             $this->_required="required";
         }
         public function setReadonly()
-        {
+        {			
             $this->_readonly=true;
         }
         function valiadte($action,$mode)
