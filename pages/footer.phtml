@@ -1,0 +1,64 @@
+    </div>
+</div>
+<?php
+    $wp=new Core_WebsiteSettings();
+?>
+<div id="footer">
+    <span style="color: blue;font-weight: bolder;background: white; padding-right: 10px;"> Powered by</span><span style="color: red;font-weight: bolder;background: white;">Easy info</span>
+      <div class="span pull-right ">
+         <span class="go-top scrollToTop "><i class="icon-arrow-up"></i></span>
+      </div>
+   </div>
+   <!-- END FOOTER -->
+   <!-- BEGIN JAVASCRIPTS -->    
+   <!-- Load javascripts at bottom, this will reduce page load time -->
+   <?php
+            $this->setFooter();
+            $this->addDefaultCss();
+            $this->addContent("
+                    ");
+            
+            $this->addDefaultJs();
+            $this->renderLayout();
+   ?>
+   <script type="text/javascript" src="<?php echo $wp->websiteUrl; ?>assets/bootstrap/js/bootstrap.min.js"></script>
+   <script type="text/javascript" src="<?php echo $wp->websiteUrl; ?>js/theme/jquery.blockui.js"></script>
+   <script type="text/javascript" src="<?php echo $wp->websiteUrl; ?>js/theme/jquery-ui.js"></script>
+   
+   <script type="text/javascript" src="<?php echo $wp->websiteUrl; ?>assets/ckeditor/ckeditor.js"></script>
+   <script type="text/javascript" src="<?php echo $wp->websiteUrl; ?>assets/bootstrap/js/bootstrap-fileupload.js"></script>
+
+   <!-- ie8 fixes -->
+   <!--[if lt IE 9]>
+   <script src="<?php $wp->websiteUrl; ?>js/theme/excanvas.js"></script>
+   <script src="<?php $wp->websiteUrl; ?>js/theme/respond.js"></script>
+   <![endif]-->
+   <script type="text/javascript" src="<?php echo $wp->websiteUrl; ?>assets/chosen-bootstrap/chosen/chosen.jquery.min.js"></script>
+   <script type="text/javascript" src="<?php echo $wp->websiteUrl; ?>assets/uniform/jquery.uniform.min.js"></script>
+   <script type="text/javascript" src="<?php echo $wp->websiteUrl; ?>assets/jquery-tags-input/jquery.tagsinput.min.js"></script>
+   <script type="text/javascript" src="<?php echo $wp->websiteUrl; ?>assets/bootstrap-datepicker/js/bootstrap-datepicker.js"></script>   
+   <script type="text/javascript" src="<?php echo $wp->websiteUrl; ?>assets/bootstrap-daterangepicker/date.js"></script>
+   <script type="text/javascript" src="<?php echo $wp->websiteUrl; ?>assets/bootstrap-daterangepicker/daterangepicker.js"></script> 
+   <script type="text/javascript" src="<?php echo $wp->websiteUrl; ?>assets/bootstrap-colorpicker/js/bootstrap-colorpicker.js"></script>
+   <script type="text/javascript" src="<?php echo $wp->websiteUrl; ?>assets/bootstrap-timepicker/js/bootstrap-timepicker.js"></script>
+   <script type="text/javascript" src="<?php echo $wp->websiteUrl; ?>assets/bootstrap-inputmask/bootstrap-inputmask.min.js"></script>
+   
+   <script type="text/javascript" src="<?php echo $wp->websiteUrl; ?>js/theme/scripts.js"></script>
+   <script type="text/javascript" src="<?php echo $wp->websiteUrl; ?>js/project/functions.js"></script>
+   <script type="text/javascript" src="<?php echo $wp->websiteUrl; ?>js/theme/functions.js"></script>
+   <script type="text/javascript" src="<?php echo $wp->websiteUrl; ?>js/project/project.js"></script>
+   <script type="text/javascript" src="<?php echo $wp->websiteUrl; ?>js/theme/ui-nestable.js"></script>
+   <script type="text/javascript" src="<?php echo $wp->websiteUrl; ?>assets/nestable/jquery.nestable.js"></script>
+    <script type="text/javascript" src="<?php echo $wp->websiteUrl; ?>assets/data-tables/jquery.dataTables.js"></script>
+    <script type="text/javascript" src="<?php echo $wp->websiteUrl; ?>assets/data-tables/DT_bootstrap.js"></script>
+    
+   <script>
+      jQuery(document).ready(function() {       
+         // initiate layout and plugins
+         App.init();
+      });
+   </script>
+   <!-- END JAVASCRIPTS -->   
+</body>
+<!-- END BODY -->
+</html>

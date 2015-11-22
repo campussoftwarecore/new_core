@@ -1,0 +1,122 @@
+<div class="container-fluid">
+    <div id="report_template_format">        
+        <div class="row-fluid">	
+            <div class="span12">
+                <div class="widget">
+                    <div class="widget-title">
+                        <h4><i class="icon-reorder"></i>ADMIN</h4>
+                        <span class="tools">
+                            <a href="javascript:;" class="icon-chevron-down"></a>
+                        </span>
+                    </div>
+                    <div class="widget-body">
+                        <span id="div_loading" class="loader1" style="display:none"> Data will be under processing </span>
+                        <div id="total_report_template" name="total_report_template">
+                            <div>
+                                <span style="padding-left: 25px;">
+                                    <a href="http://localhost/smartcode/index.php?&amp;node=cmRTOXZiSkgzL1hDNmlPWmtPTVdndz09&amp;action=add&amp;parentnode=&amp;parentidvalue=&amp;parentaction=">
+                                        <button class="btn btn-warning"><i class="icon-plus icon-white"></i> Report  Template</button>
+                                    </a>
+                                </span>
+                            </div>
+                            <div class="table-responsive" style="margin-top:15px; overflow-x:auto; overflow-y:hidden;">
+                                <div>
+                                    <div class="dataTables_filter" id="sample_1_filter">
+                                        <label></label>
+                                    </div>
+                                </div>
+                            <div id="sample-table-2_wrapper" class="dataTables_wrapper" role="grid">
+                                <form id="result_report_template" name="result_report_template" method="POST">
+                                    <div id="result_report_template_div" name="result_report_template_div">
+                                        <div id="sample_div" name="sample_div" style="color:red;"></div>
+                                        <div style="text-align: center;margin-top: 13px;">                                            
+                                            <table id="sample-table-2" class="table table-striped table-bordered table-hover dataTable">
+                                                <thead>
+                                                    <tr role="row">
+                                                        <th></th>
+                                                        <th>Name</th>
+                                                        <th>Short Code</th>
+                                                    </tr>
+                                                    <tr role="row">
+                                                        <th>
+                                                            <input type="hidden" id="action_id" name="action_id" value="admin">
+                                                            <input type="button" id="search" name="search" value="Search" onclick="setpagezero(); samplefun('report_template','cmRTOXZiSkgzL1hDNmlPWmtPTVdndz09');" class="btn btn-info" style="border-radius: 15px;">	   
+                                                            <input type="hidden" id="module" name="module" value="codebasedsettings">
+                                                            <input type="hidden" id="node" name="node" value="report_template">
+                                                            <input type="hidden" id="rpp" name="rpp" value="25">
+                                                            <input type="hidden" id="page" name="page" value="1">			    
+                                                            <input type="hidden" id="parentaction" name="parentaction" value="">
+                                                            <input type="hidden" id="parentnode" name="parentnode" value="">
+                                                            <input type="hidden" id="parentidvalue" name="parentidvalue" value="">
+                                                            <input type="hidden" id="multiedit" name="multiedit" value="0">
+
+                                                        </th>
+                                                        <th>
+                                                            <div id="value_name" name="value_name">
+                                                                <span id="admin_name" name="admin_name">
+                                                                    <input type="text" class="input-small" name="name" id="name" value="">
+                                                                </span>	
+                                                            </div>
+                                                        </th>
+                                                        <th>
+                                                            <div id="value_short_code" name="value_short_code">
+                                                                <span id="admin_short_code" name="admin_short_code">
+                                                                    <input type="text" class="input-small" name="short_code" id="short_code" value="">
+                                                                </span>	
+                                                            </div>
+                                                        </th>
+                                                        <th style="display:none">
+                                                            <input type="hidden" name="defaultselectnodes" id="defaultselectnodes" value="">
+
+                                                        </th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody role="alert" aria-live="polite" aria-relevant="all">
+                                                    
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                                <div class="row-fluid">	
+                                    <div class="span6">
+                                        <div class="dataTables_info" id="sample_1_info">No Records Found</div>
+                                    </div>
+                                        
+                                </div>
+                                <script type="text/javascript">
+                                        function getmraaction()
+                                        {
+                                        var mra_action=document.getElementById("mra_action").value;
+
+                                        var node=document.getElementById("node").value;
+                                        var selectedids="";
+                                        var arr=new Array();
+                                        var i=0;
+                                        if(mra_action=="")
+                                        {
+                                        alert("Please Action");
+                                        return false;
+                                        }
+                                        var checkedVals = $('.mra_report_template:checkbox:checked').map(function() {
+                                        return this.value;
+                                        }).get();
+                                        var selectedids=checkedVals.join('|');
+                                        if(selectedids=='')
+                                        {
+                                        alert('Please Check the values');
+                                        return false
+                                        }
+                                        custommravalidate(node,selectedids);	   
+
+                                        }
+                            </script>
+                            </div>
+                        </div> 
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

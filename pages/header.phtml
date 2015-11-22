@@ -1,0 +1,189 @@
+<?php
+$lb=new Core_Model_Language(); 
+$wp=new Core_WebsiteSettings();
+?>
+<!DOCTYPE html>
+<!--[if IE 8]> <html lang="en" class="ie8"> <![endif]-->
+<!--[if IE 9]> <html lang="en" class="ie9"> <![endif]-->
+<!--[if !IE]><!--> <html lang="en"> <!--<![endif]-->
+<!-- BEGIN HEAD -->
+<head>   
+   <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+   <meta content="" name="description" />
+   <meta content="" name="author" />
+   <title>
+       <?php echo $lb->getLabel("header_project_name"); ?></title>
+	<?php             
+            $this->addDefaultCss();
+            $this->addContent("
+                    ");
+            $this->addDefaultJs();
+            $this->renderLayout();
+        ?>
+   <link href="<?php echo $wp->websiteUrl; ?>assets/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
+   <link href="<?php echo $wp->websiteUrl; ?>assets/bootstrap/css/bootstrap-responsive.min.css" rel="stylesheet" />
+   <link href="<?php echo $wp->websiteUrl; ?>assets/bootstrap/css/bootstrap-fileupload.css" rel="stylesheet" />
+   <link href="<?php echo $wp->websiteUrl; ?>assets/font-awesome/css/font-awesome.css" rel="stylesheet" />
+   <link href="<?php echo $wp->websiteUrl; ?>assets/chosen-bootstrap/chosen/chosen.css" rel="stylesheet" />
+   <link href="<?php echo $wp->websiteUrl; ?>assets/bootstrap-datepicker/css/datepicker.css" rel="stylesheet" />
+   <link href="<?php echo $wp->websiteUrl; ?>assets/bootstrap-daterangepicker/daterangepicker.css" rel="stylesheet" />
+   <link href="<?php echo $wp->websiteUrl; ?>assets/bootstrap-colorpicker/css/colorpicker.css" rel="stylesheet" />
+   <link href="<?php echo $wp->websiteUrl; ?>css/theme/style.css" rel="stylesheet" />
+   <link href="<?php echo $wp->websiteUrl; ?>css/theme/style_default.css" rel="stylesheet" />
+   <link href="<?php echo $wp->websiteUrl; ?>css/theme/alertify.core.css" rel="stylesheet" />
+   <link href="<?php echo $wp->websiteUrl; ?>css/theme/alertify.default.css" rel="stylesheet" />
+   <link href="<?php echo $wp->websiteUrl; ?>css/theme/style_responsive.css" rel="stylesheet" />
+   <link href="<?php echo $wp->websiteUrl; ?>css/theme/style_default.css" rel="stylesheet" id="style_color" />
+   <link href="<?php echo $wp->websiteUrl; ?>assets/fancybox/source/jquery.fancybox.css" rel="stylesheet" />
+   
+   <link rel="stylesheet" type="text/css" href="<?php echo $wp->websiteUrl; ?>assets/uniform/css/uniform.default.css" />
+    <link rel="stylesheet" type="text/css" href="<?php echo $wp->websiteUrl; ?>assets/nestable/jquery.nestable.css" />
+    <script src="<?php echo $wp->websiteUrl; ?>js/theme/alertify.min.js"></script>
+    <script type="text/javascript" src="<?php echo $wp->websiteUrl; ?>js/theme/jquery-1.8.2.min.js"></script>
+ 
+    
+</head>
+<!-- END HEAD -->
+<!-- BEGIN BODY -->
+<body class="fixed-top">
+   <div id="dialogoverlay"></div>
+      <div id="dialogbox">
+	 <div style="
+    min-height: 104%;
+    background: rgb(194, 228, 236);
+    color: darkslateblue;
+    font-family: monospace;
+    font-size: larger;
+    font-style: inherit;
+    font-weight: bolder;
+    
+">
+	    <div id="dialogboxhead"></div>
+	    <div id="dialogboxbody"></div>
+	    <div id="dialogboxfoot"></div>
+	 </div>
+      </div>
+   <!-- BEGIN HEADER -->
+   <div id="header" class="navbar navbar-inverse navbar-fixed-top">
+       <!-- BEGIN TOP NAVIGATION BAR -->
+       <div class="navbar-inner">
+           <div class="container-fluid">
+               <!-- BEGIN LOGO -->
+	       <a class="brand" href="<?php echo $wp->websiteUrl; ?>index.php" style=" color: rgb(10, 14, 114); font-size: 16px; ">
+		  
+		  <span> New Core </span>
+	       </a>
+	       
+               <!-- END LOGO -->
+               <!-- BEGIN RESPONSIVE MENU TOGGLER -->
+               <a class="btn btn-navbar collapsed" id="main_menu_trigger" data-toggle="collapse" data-target=".nav-collapse">
+                   <span class="icon-bar"></span>
+                   <span class="icon-bar"></span>
+                   <span class="icon-bar"></span>
+                   <span class="arrow"></span>
+               </a>
+               
+
+               <div class="top-nav ">
+                   <ul class="nav pull-right top-menu" style="margin-top:10px;">
+                       		   
+                       <li class="dropdown">
+                           <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                               <img src="<?php echo $wp->websiteUrl."img/avatar_small.jpg";?>" alt="">
+                               <span class="username"><?php echo $_SESSION[$this->identity]['name']; ?></span>
+                               <b class="caret"></b>
+                           </a>
+                           <ul class="dropdown-menu">
+                               <li class="divider"></li>
+                               <li><a href="<?php echo $wp->websiteUrl; ?>index.php?logout=1"><i class="icon-key"></i> Log Out</a></li>
+                           </ul>
+                       </li>
+                       <!-- END USER LOGIN DROPDOWN -->
+                   </ul>
+                   <!-- END TOP NAVIGATION MENU -->
+               </div>
+           </div>
+       </div>
+       <!-- END TOP NAVIGATION BAR -->
+   </div>
+   <span id="div_loading" class="loader1" style="display:none"> Data will be under processing </span>
+   <!-- END HEADER -->   
+   <div id="container" class="row-fluid" style="padding-top: 25px; background:#363838;">
+        <div class="row">
+    <div id="sidebar" style=" background:#363838;" class="nav-collapse collapse">
+
+        <div class="sidebar-toggler hidden-phone"></div>   
+        <ul class="sidebar-menu" style=" background:#363838;">
+            <?php
+                    $menuObject=new Core_Attributes_BuildMenu();
+                    $menuObject->buildMenu();
+            ?>
+            <li class="has-sub">
+                <a href="index.php" class="">
+                   <div><span class="icon-box"><i class="icon-home"></i></span>Home</div>
+                </a>
+            </li>    
+            <?php
+                $output="";			
+                if(count($menuObject->_rootModules)>0)
+                {
+                        foreach($menuObject->_rootModules as $rootmoduledata)
+                        {
+                                if(key_exists($rootmoduledata['nodename'],$menuObject->_moduleList))
+                                {
+                                        $root=$rootmoduledata['nodename'];
+                                        $rootdata=$menuObject->_menuItems[$root];
+                                        $output.='
+                                        <li class="has-sub ">'; 
+                                        $output.='<a href="javascript:;"  >
+                                                    <div>
+                                                        <span class="icon-box">
+                                                        <i class="'.$rootmoduledata['icon'].'"></i>'
+                                                . '     </span>'.$menuObject->_nodeDisplay[$root].'</div>
+           </a>';
+                                         $output.=' <ul class="sub"  >';
+
+                                                        foreach($rootdata as $moduledisplay=>$moduledata)
+                                                        {
+                                                                $output.='<li class="has-supersub"   name="link_'.$root.'" id="link_'.$root."-".$moduledisplay.'" >
+                                                                                       <a href="javascript:;" >
+                                                                                        <div>
+                                                                                           <span class="icon-box">
+                                                                                                <i id="icon_'.$root.'-'.$moduledisplay.'" class="icon-chevron-up"></i>
+                                                                                            </span>'.$menuObject->_nodeDisplay[$moduledisplay].'
+                                                                                        </div>
+                                                                                        </a>
+                                                                                        <ul class="supersub" style="display:block;" name="menu_'.$root.'" id="menu_'.$root.'-'.$moduledisplay.'">';
+
+                                                                                                foreach($moduledata as $module=>$nodedata)
+                                                                                                {
+                                                                                                        foreach($nodedata as $node=>$action)
+                                                                                                        {
+                                                                                                            if($node!=$moduledisplay)
+                                                                                                            {
+                                                                                                                $output.='
+
+        <li>
+                <a  href="'.$menuObject->_nodeLink[$node].'">'.$menuObject->_nodeDisplay[$node].'</a>
+        </li>';
+                                                                                                            }
+                                                                                                        }
+                                                                                                }
+                                                                $output.='	
+                                                                                        </ul>';
+                                                        }						
+
+                                        $output.='		 
+                                                        </li>							
+                                                  </ul>';							
+
+                                        $output.="
+                                        </li>";
+                                }
+                        }
+                }
+                echo $output;
+            ?>    
+        </ul>
+    </div>
+    <div id="main-content" style="padding-top: 25px; min-height: 244px; background: rgb(220, 247, 224);">

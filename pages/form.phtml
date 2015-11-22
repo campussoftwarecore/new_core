@@ -1,0 +1,75 @@
+<div class="container-fluid">
+   <div class="row-fluid">
+      <div class="span12">
+         <div class="widget">
+            <div class="widget-title">
+               <h4><i class="icon-reorder"></i><?php echo $this->getLabel($this->_currentAction);?></h4>
+               <span class="tools">
+               <a href="javascript:;" class="icon-chevron-down"></a>
+               </span>
+            </div>
+            <div class="widget-body">
+               <div>
+                   <form id="action_type" name="<?php echo $this->_nodeName; ?>" id="<?php echo $this->_nodeName; ?>" class="form-horizontal <?php echo "form_".$this->_nodeName; ?>" action="" method="POST" enctype="multipart/form-data">
+                     <input type="hidden" id="parentnode" name="parentnode" value="">
+                     <input type="hidden" id="node" name="node" value="<?php echo $this->_nodeName;?>">
+                     <input type="hidden" id="module" name="module" value="<?php echo $this->_currentNodeModule;?>">
+                     <input type="hidden" id="action" name="action" value="<?php echo $this->_currentAction;?>">
+                     <input type="hidden" id="action_id" name="action_id" value="<?php echo $this->_currentAction;?>">
+                     <input type="hidden" id="parentidvalue" name="parentidvalue" value="">
+                     <input type="hidden" id="resultchange" name="resultchange" value="1">
+                     <div id="error_div" name="error_div" style="color: red;font-weight: bold;"></div>    
+                     <?php                                    
+                        if(count($this->_showAttributes)>0)
+                        {
+                            foreach($this->_showAttributes as $FieldName)
+                            {
+                                ?>
+                                <div class="control-group" id="row_<?php echo $FieldName; ?>">
+                                    <lable class="control-label">
+                                        <span id="label_<?php echo $FieldName; ?>"><?php echo $this->getLabel($FieldName); ?></span>
+                                        <span id="req_name" class=""></span>
+                                    </lable>
+                                    <div class="control">
+                                       <div class="controls" id="value_<?php echo $FieldName; ?>">    
+                                            <?php
+                                                try 
+                                                {
+                                                    $this->loadAttribute($FieldName);
+                                                } 
+                                                catch (Exception $ex) 
+                                                {
+
+                                                }
+                                                
+                                            ?>
+                                       </div>
+                                       <span class="control" id="error_<?php echo $FieldName; ?>"></span>
+                                    </div>
+                                </div>
+                    <?php
+                            }
+                        }
+                    ?>
+                                          
+                     <div class="form-actions">
+                        <input type="hidden" id="noderesult" name="noderesult" value='<?php echo json_encode($this->_record);?>'>
+                        <input type="hidden" id="noderelations" name="noderelations" value='<?php echo json_encode($this->_nodeRelations);?>'>
+                        <input type="hidden" id="formsubmit" name="formsubmit" value="0">
+                        <input type="hidden" id="validate_value" name="validate_value" value="1">	
+                        <button type="button" id="save" name="save" class="btn btn-small btn-success" onclick="return getformsubmit();"> <i class="icon-ok"></i> Save</button>
+                        <button type="button" id="saveandclose" name="saveandclose" class="btn btn-small btn-success" onclick="return getformsubmit();"> <i class="icon-ok"></i> Save and Close</button>
+                        <button type="button" id="refreshsaveandclose" name="refreshsaveandclose" class="btn btn-small btn-inverse" style="display:none;" onclick="removedisable()" ;=""> <i class="icon-refresh icon-white"></i> Refresh Save and Close</button>
+                        <a href="<?php echo $this->_websiteHostUrl; ?> ">
+                            <button style="margin-left:4px;" type="button" class="btn btn-small btn-warning">  
+                                <i class=" icon-remove"></i> Cancel
+                            </button>
+                        </a>	
+                     </div>
+                  </form>
+               </div>
+            </div>
+         </div>
+      </div>
+   </div>
+</div>

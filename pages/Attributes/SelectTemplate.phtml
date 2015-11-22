@@ -1,0 +1,24 @@
+<?php 
+echo "<pre>";
+print_r($this);
+echo "</pre>";
+?>
+<select class="" id="<?php echo $this->_idName; ?>" name="<?php echo $this->_idName; ?>">
+   <option value="">  Select <?php echo $this->getLabel($this->_idName); ?>  </option>
+   <?php
+        if(count($this->_options)>0)
+        {
+            foreach ($this->_options as $optionData)
+            {
+                $sel="";
+                if($optionData['pid']==$this->_Value)
+                {
+                    $sel=" selected ";
+                }
+                ?>
+                    <option value="<?php echo $optionData['pid']; ?>" <?php echo $sel; ?> >  <?php echo $optionData['pds']; ?>  </option>
+                <?php
+            }
+        }
+    ?>
+</select>

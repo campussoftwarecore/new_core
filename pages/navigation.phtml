@@ -1,0 +1,35 @@
+<?php
+    $wp=new Core_WebsiteSettings();
+    global $currentNode;
+?>
+<div class="container-fluid">
+    <div id="<?php echo $currentNode; ?>_format">
+        <ul class="breadcrumb">
+            <li>
+                <a href="<?php echo $wp->websiteUrl; ?>">
+                    <span class="divider" style="">Home</span>
+                </a>
+                <span class="divider">&nbsp;</span>
+            </li>
+            <?php
+                    $navigationMenu=new Core_Pages_NavigationPage();
+                    $navigationArray=$navigationMenu->getNavigationPath();                
+                    if(count($navigationArray)>0)
+                    {                        
+                        foreach($navigationArray as $menuData)
+                        {
+                            ?>
+                            <li>
+                                <a href="<?php echo $menuData['url']; ?>">
+                                    <span class="divider" ><?php echo $menuData['label'];?></span>
+                                </a>
+                                <span class="divider">&nbsp;</span>
+                            </li>
+                            <?php
+                        }
+                    }
+
+            ?>
+        </ul>
+    </div>
+</div>

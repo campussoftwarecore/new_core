@@ -1,0 +1,176 @@
+<?php
+class Core_Controllers_NodeController extends Core_Model_Node
+{
+    public $_requestedData=array();
+    public $_filesData=array();
+    public $_nodeName=NULL;
+    public $_currentAction="Admin";
+    public $_websiteAdminUrl=NULL;
+    public $_methodType=NULL;
+            
+    function __construct($nodeName,$action) 
+    {
+        $wp=new Core_WebsiteSettings();                
+        $this->setNodeName($nodeName);
+        $this->setActionName($action);
+        $this->_websiteHostUrl=$wp->websiteAdminUrl.$this->getNodeName()."/";
+        $this->setShowAttributes();
+        parent::__construct();
+    }
+    public function setMethodType($Type)
+    {        
+        $this->_methodType=$Type;
+    }
+    public function setRequestedData($requesteddata)
+    {        
+        $this->_requestedData=$requesteddata;
+    }
+    public function setFilesData($filesdata)
+    {
+        $this->_filesData=$filesdata;
+    }
+    public function adminAction()
+    {
+        
+        $this->gridContent();        
+    }
+    public function noAction()
+    {
+        $this->loadLayout("noActionFound.phtml");
+    }
+    public function addAction()
+    {
+        if($this->_methodType=="REQUEST")
+        {
+            $loadResponse=$this->loadLayout("addform.phtml");
+            if($loadResponse==false)
+            {
+                $loadResponse=$this->loadLayout("form.phtml");
+            }
+        }
+        else
+        {
+            echo "<pre>";
+                print_r($_REQUEST);
+                print_r($_FILES);
+            echo "</pre>";
+        }
+        
+    }
+    public function editAction()
+    {        
+        if($this->_methodType=="REQUEST")
+        {
+            
+            $this->getRecordLoad();
+            $loadResponse=$this->loadLayout("editform.phtml");
+            if($loadResponse==false)
+            {
+                $loadResponse=$this->loadLayout("form.phtml");
+            }
+        }
+        else
+        {
+            echo "<pre>";
+                print_r($_REQUEST);
+                print_r($_FILES);
+            echo "</pre>";
+        }
+        
+    }
+    public function viewAction()
+    {
+        if($this->_methodType=="REQUEST")
+        {
+            
+            $this->getRecordLoad();
+            $loadResponse=$this->loadLayout("viewform.phtml");
+            if($loadResponse==false)
+            {
+                $loadResponse=$this->loadLayout("form.phtml");
+            }
+        }
+        else
+        {
+            echo "<pre>";
+                print_r($_REQUEST);
+                print_r($_FILES);
+            echo "</pre>";
+        }
+        
+    }
+    public function descriptorAction()
+    {
+        $sourceNode=$this->_requestedData['node'];
+        $DestinationNode=$this->_requestedData['destinationNode'];         
+        $db=new Core_DataBase_ProcessQuery();
+        $db->setTable($this->_tableName, $this->_nodeName);
+        $db->addFieldArray(array($this->_nodeName.".".$this->_primaryKey=>"pid"));
+        $noderesult=$this->_requestedData['noderesult'];
+        if($noderesult!="")
+        {
+            $noderesult=  json_decode($noderesult,true);
+        }
+        else
+        {
+            $noderesult=array();
+        }
+        if(in_array($this->_descriptor,$this->_nodeRelations))
+        {
+        }
+        else 
+        {
+            $db->addFieldArray(array($this->_nodeName.".".$this->_descriptor=>"pds"));
+        }
+        $db->addOrderBy($this->_descriptor);
+        $result=$db->getRows();        
+        try
+        {
+            
+            $defaultValue=$noderesult[$this->_requestedData['idname']];
+            $attributeType="select";
+            $attribute=new Core_Attributes_Attribute($attributeType);
+            $attribute->setIdName($this->_requestedData['idname']);
+            $attribute->setOptions($result);
+            $attribute->setValue($defaultValue);
+            $attribute->setAction($action);
+            if(in_array($FieldName,$mandotatoryAttributes))
+            {
+                $attribute->setRequired();
+            }            
+            if(in_array($FieldName,$readonlyAttributes))
+            {
+                
+                $attribute->setReadonly();
+            }
+            $attribute->loadAttributeTemplate($attributeType,$FieldName);
+        }
+        catch (Exception $ex)
+        {
+            echo $ex->getMessage();
+        }
+        
+    }
+
+    public function gridContent()
+    {        
+        $this->setSingleActions();  
+        $this->setIndividualActions();
+        $this->getCollection();
+        $this->loadLayout("maingrid.phtml");
+    }    
+    public function adminRefreshAction()
+    {
+        
+        $this->setSingleActions();  
+        $this->setIndividualActions();
+        $this->getCollection();
+        $this->loadLayout("grid.phtml");
+    }
+
+    public function setSingleActions()
+    {        
+        return parent::setSingleActions();
+    }
+}
+?>
