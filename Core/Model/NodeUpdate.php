@@ -11,6 +11,11 @@
  *
  * @author ramesh
  */
-class NodeUpdate {
-    //put your code here
+public class Core_Model_NodeUpdate extends Core_Model_Settings
+{
+    
+    function Save()
+    {
+        
+    }
 }

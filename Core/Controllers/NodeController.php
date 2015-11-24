@@ -72,6 +72,11 @@ class Core_Controllers_NodeController extends Core_Model_Node
         }
         else
         {
+            $obj=new Core_Model_NodeUpdate();
+            echo "<pre>";
+                print_r($obj);
+               
+            echo "</pre>";
             echo "<pre>";
                 print_r($_REQUEST);
                 print_r($_FILES);

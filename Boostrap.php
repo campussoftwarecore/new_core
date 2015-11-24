@@ -12,7 +12,7 @@
         if( $error !== NULL) 
         {
             $errno   = $error["type"];
-			if($errno==1)
+			//if($errno==1)
 			{
 				$errfile = $error["file"];
 				$errline = $error["line"];
