@@ -55,7 +55,7 @@ function defaultphpfile(node,action,destinationNode,replacediv)
 		var formdata = $("form#result_"+node).serialize();
 		
 	}
-	console.log(formdata);
+	
 	var posturl=window.hosturl+destinationNode+"/descriptor";
         
        $.ajax({
@@ -128,73 +128,37 @@ function hidevalues()
 		document.getElementById("row_module_display").style.display = "";
 	}	
 }
-function getmoduledetails(action)
-{
-	$.ajax({
-		url : "phpfiles/getreplacediv_values.php",
-		type : "POST",
-		dataType : "html",
-		data : "&nodefile=getmodules"+"&action_id="+action,
-		success : function (html)
-		{
-			var data=html;
-			$('#value_module_id').html(data);
-			return true;
-		}
-	});
-}
 function getformsubmit()
 {
 	var node=document.getElementById("node").value;
 	var action=document.getElementById("action").value;	
-	ram=ram+1;
-	$( "#saveandclose").prop( "disabled", true);
+	var postUrl=window.hosturl+node+"/"+action;
+                    console.log(postUrl);
 	var x=confirm("Due Want to Submit");
 	if(x==true)
-	{
-		$( "#saveandclose").prop( "disabled", false);
-		$("#refreshsaveandclose").show();
-		var formsubmit=$("#formsubmit").val();		
-		$("#formsubmit").val("1");
-		$("#div_loading").show();
-		$("form#"+node).submit(function(event){
-		var formData = new FormData($(this)[0]);
-		$( "#saveandclose").prop( "disabled", true);
-		//disable the default form submission
+	{		
+		$("form#"+node).click(function(event){
+		var formData = new FormData($(this)[0]);		
 		event.preventDefault();
-		var formsubmit=$("#formsubmit").val();
-		if(formsubmit==1)
-		{
+		
 			
 			$.ajax({
-				url : "validations.php",
+				url : postUrl,
 				type: 'POST',
 				data: formData,
 				async: false,
 				cache: false,
 				contentType: false,
 				processData: false,
-				success: function (returndata)
+				success: function (responseData)
 				{
+                                        console.log("ramesh");
 					
-					$("#error_div").html(returndata);
-					$("#formsubmit").val("0");
-					$( "#saveandclose").prop( "disabled", false);
-					if(returndata.search("script")<0)
-					{
-						$("#error_div").html(returndata);
-						$( "#saveandclose").prop( "disabled", false);
-						$("#refreshsaveandclose").hide();
-						$("#div_loading").hide();
-						return false;
-					}
+					$("#error_div").html(responseData);
+					return true;
 				}
 			});
-		}
-		else
-		{
-			return true;
-		}
+		
 		});
 	}
 	else
@@ -286,75 +250,6 @@ function multieditformsubmit(node,nodeencrypt)
 	});	
 	return true;
 	
-}
-function getregisternode()
-{
-	var node=document.getElementById('node').value;
-	var registernode=document.getElementById('node_settings_id').value;
-	var action=document.getElementById('action_id').value;
-	var formdata = $("#"+node).serialize();
-	var columnname="uniquefieldset";
-	$.ajax({
-	url : "phpfiles/getreplacediv_values.php",
-	type : "POST",
-	dataType : "html",
-	data : formdata+"&idname="+columnname+"&node="+node+"&registernode="+registernode+"&action_id="+action+"&nodefile=contgettabledata1",
-	success : function (html)
-	{
-		if(html)
-		{
-			var ivid="#value_"+columnname;
-			$(ivid).html(html);
-			return true;
-		}	
-	}
-	});
-}
-function getregisternodesettings()
-{
-	var node=document.getElementById('node').value;
-	var registernode=document.getElementById('registernode_id').value;
-	var action=document.getElementById('action_id').value;
-	var formdata = $("#"+node).serialize();
-	var columnname="register_col";
-	$.ajax({
-	url : "phpfiles/getreplacediv_values.php",
-	type : "POST",
-	dataType : "html",
-	data : formdata+"&idname="+columnname+"&node="+node+"&registernode="+registernode+"&action_id="+action+"&nodefile=contgettabledata1",
-	success : function (html)
-	{
-		if(html)
-		{
-			var ivid="#value_"+columnname;
-			$(ivid).html(html);
-			return true;
-		}	
-	}
-	});
-}
-function displayfilefields()
-{
-	var node=document.getElementById('node').value;
-	var registernode=document.getElementById('node_settings_id').value;
-	var action=document.getElementById('action_id').value;
-	var formdata = $("#"+node).serialize();
-	var columnname="colmanname";
-	$.ajax({
-	url : "phpfiles/getreplacediv_values.php",
-	type : "POST",
-	dataType : "html",
-	data : formdata+"&idname="+columnname+"&node="+node+"&registernode="+registernode+"&action_id="+action+"&nodefile=contgettabledata1"+"&filedata=1",
-	success : function (html)
-	{
-		if(html)
-		{
-			var ivid="#value_"+columnname;
-			$(ivid).html(html);
-			return true;
-		}	
-	}
-	});
 }
 function setpagezero()
 {
@@ -505,60 +400,6 @@ function checkactionsrestrictions(action,node)
 	}
 	
 }
-function getmrahtml(action,node)
-{
-	var formdata=$('form').serialize();
-	$.ajax({
-	url : "phpfiles/customhtml.php",
-	type : "POST",
-	dataType : "html",
-	data : formdata,
-	success : function (html)
-	{
-		if(html)
-		{
-			var ivid="#mrahtml_"+node;
-			$(ivid).html(html);
-			return true;
-		}	
-	}
-	});
-}
-function custommravalidate(node,primvalues)
-{
-	var formdata1=$('form').serialize();
-	$("#mra_submit").prop("disabled",true);
-	//alert(formdata1);
-	//return false;
-	$.ajax({
-	url : "phpfiles/coustommravalidations.php",
-	type : "POST",
-	dataType : "html",
-	data : formdata1+"&primvalues="+primvalues,
-	success : function (html)
-	{
-		
-		var list=html.split("|||");
-		if(list[0]!="success")
-		{
-			$("#mra_submit").prop("disabled",false);
-			if(html.search("script")<0)
-			{
-				alertify.alert(html);
-			}
-			var idname="#mraerror_"+node;
-			$(idname).html(html);
-			return false;
-		}
-		else
-		{
-			self.location=list[1];
-	
-			return true;	
-		}
-	}
-	});
-}
 function formvalidations(value,colname,type)
 {
 	if(type=="EMD")
@@ -569,11 +410,6 @@ function formvalidations(value,colname,type)
 	{
 		validatePhone(value,colname);
 	}
-}
-function checkdate(colname,value)
-{
-	alert(colname);
-	alert(value);
 }
 function checkdateformate(colname,value)
 {
@@ -618,79 +454,6 @@ function validatePhone(value,colname)
 		return false;
 	}
 }
-function getreportfilter(reportname)
-{
-	$("#div_loading").show();
-	if(reportname!="")
-	{
-		$.ajax({
-			
-			url:"phpfiles/getreportfilters.php",
-			type:"POST",
-			data:"&reportname="+reportname,
-			dataType:"html",
-			success : function (output)
-			{
-				$("#filterdiv").html(output);
-				$("#buttons_div").show();
-				$("#report_submit").attr("disabled", false);
-				$("#report_submitrefresh").hide();
-				$("#div_loading").hide();
-				$("#reportoutput_div").html("");
-				$("#page").val(1);
-			}
-			
-			});
-		
-	}
-	else
-	{
-		$("#filterdiv").html("");
-		$("#reportoutput_div").html("");
-		$("#buttons_div").hide();
-		$("#div_loading").hide();
-		$("#page").val(1);
-	}
-	return true;
-}
-function reportdatasubmit()
-{
-	var formdata=$("form").serialize();
-	var outputtype=document.getElementById("output_type").value;
-	if(outputtype=="csv" || outputtype=='pdf')
-	{
-		var url1="phpfiles/reportoutput.php?"+formdata;
-		window.open(url1);
-	}
-	else
-	{
-		$("#report_submit").attr("disabled", true);
-		$("#report_submitrefresh").show();
-		$("#div_loading").show();
-		$.ajax({
-				
-			url:"phpfiles/reportoutput.php",
-			type:"POST",
-			data:formdata,
-			dataType:"html",
-			success : function (output)
-			{
-				$("#reportoutput_div").html(output);
-				$("#div_loading").hide();
-				$("#report_submit").attr("disabled", false);
-			}
-				
-		});
-	}
-	
-	return false;
-	
-}
-function setpageforreport(page)
-{
-	$("#page").val(page);
-	reportdatasubmit();
-}
 function rameshajaxfunction(fileurl,formdata,replacediv,type)
 {
 	if(type == undefined) 
@@ -722,81 +485,4 @@ function rameshajaxfunction(fileurl,formdata,replacediv,type)
 	});	
    //do this
 	return true;
-}
-function actionform(action,node,parentnode,parentidvalue,parentaction)
-{
-	$.ajax({
-	
-		url:"index.php",
-		data:"node="+node+"&action="+action+"&action_id="+action+"&parentnode="+parentnode+"&parentidvalue="+parentidvalue+"&parentaction="+parentaction+"&resultchange=1"+"&actionform=1",
-		dataType:"html",
-		type:"GET",
-		success : function (html)
-		{
-			$("#"+node+"_format").html(html);
-		}
-	});
-	return true;
-}
-function checkaction(nodename,value,type)
-{
-	
-	if(type == undefined) 
-	{
-		var namevaluearray=document.getElementsByName(nodename+"[]");
-	}
-	else
-	{
-		var namevaluearray=document.getElementsByClassName(nodename);
-	}
-	
-	for(var i=0;i<namevaluearray.length;i++)
-	{
-		var idvalue=namevaluearray[i].id;
-		$("#"+idvalue).attr('checked',value);
-		$("#"+idvalue).css("opacity","1");
-	}
-	return true;
-}
-function queryclausechange()
-{
-	var clausevalue=$("#queryclause_id").val();	
-	if(clausevalue=="ORDERBY")
-	{
-		$("#row_orderclausetype_id").show();
-	}
-	else
-	{
-		$("#orderclausetype_id").val("");
-		$("#row_orderclausetype_id").hide();
-	}
-	if(clausevalue=="AGGREGATE")
-	{
-		$("#row_aggregate_function_id").show();
-	}
-	else
-	{
-		$("#aggregate_function_id").val("");
-		$("#row_aggregate_function_id").hide();
-	}
-	return true;
-}
-function getreportnodestructure()
-{
-	var formdata = $("form" ).serialize();
-	$.ajax({
-	url : "phpfiles/getreplacediv_values.php",
-	type : "POST",
-	dataType : "html",
-	data : formdata+"&idname=fieldsdata"+"&nodefile=reportfieldsdata",
-	success : function (html)
-	{
-		if(html)
-		{
-			var ivid="#value_fieldsdata";
-			$(ivid).html(html);
-			return true;
-		}	
-	}
-	});
 }

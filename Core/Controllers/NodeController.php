@@ -58,7 +58,8 @@ class Core_Controllers_NodeController extends Core_Model_Node
         
     }
     public function editAction()
-    {        
+    {       
+     
         if($this->_methodType=="REQUEST")
         {
             
@@ -101,10 +102,11 @@ class Core_Controllers_NodeController extends Core_Model_Node
     }
     public function descriptorAction()
     {
+        $rquestedData=$this->_requestedData;
         $sourceNode=$this->_requestedData['node'];
-        $DestinationNode=$this->_requestedData['destinationNode']; 
-		$FieldName=$this->_requestedData['idname'];  
-		$noderesult=$this->_requestedData['noderesult'];
+        $DestinationNode=$this->_requestedData['destinationNode'];         
+        $FieldName=$this->_requestedData['idname'];  
+	$noderesult=$this->_requestedData['noderesult'];
         if($noderesult!="")
         {
             $noderesult=  json_decode($noderesult,true);
@@ -113,25 +115,26 @@ class Core_Controllers_NodeController extends Core_Model_Node
         {
             $noderesult=array();
         }
-		$defaultValue=$noderesult[$FieldName];
-		$readonlyAttributes=$this->readonlyAttributes();
-		//$sourceNodeStructure=$sourceNodeObject->currentNodeStructure();
-		
+        $defaultValue=$noderesult[$FieldName];
+        $readonlyAttributes=$this->readonlyAttributes($rquestedData['action']);
+			
         $db=new Core_DataBase_ProcessQuery();
         $db->setTable($this->_tableName, $this->_nodeName);
         $db->addFieldArray(array($this->_nodeName.".".$this->_primaryKey=>"pid"));
         
         if(in_array($this->_descriptor,$this->_nodeRelations))
         {
+            
         }
         else 
         {
             $db->addFieldArray(array($this->_nodeName.".".$this->_descriptor=>"pds"));
         }
-		if(in_array($FieldName,$readonlyAttributes))
+        if(in_array($FieldName,$readonlyAttributes))
         {
-			$db->addWhere($this->_nodeName.".".$this->_primaryKey."='".$defaultValue."'");
-		}
+            $db->addWhere($this->_nodeName.".".$this->_primaryKey."='".$defaultValue."'");
+	}
+        //echo "<pre>";             print_r($this);         echo "</pre>";
         $db->addOrderBy($this->_descriptor);
         $result=$db->getRows();        
         try
@@ -139,8 +142,8 @@ class Core_Controllers_NodeController extends Core_Model_Node
             
             $attributeType="select";
             $attributeDetails=new Core_Attributes_LoadAttribute($attributeType);				
-			$attributeClass=Core_Attributes_.$attributeDetails->_attributeName;
-			$attribute=new $attributeClass;
+            $attributeClass=Core_Attributes_.$attributeDetails->_attributeName;
+            $attribute=new $attributeClass;
             $attribute->setIdName($this->_requestedData['idname']);
             $attribute->setOptions($result);
             $attribute->setValue($defaultValue);

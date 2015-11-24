@@ -11,6 +11,7 @@
  *
  * @author ramesh
  */
-class NodeDelete {
+class NodeDelete
+{
     //put your code here
 }
