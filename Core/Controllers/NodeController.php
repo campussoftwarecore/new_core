@@ -59,6 +59,7 @@ class Core_Controllers_NodeController extends Core_Model_Node
     }
     public function editAction()
     {        
+        
         if($this->_methodType=="REQUEST")
         {
             
@@ -74,7 +75,7 @@ class Core_Controllers_NodeController extends Core_Model_Node
             echo "<pre>";
                 print_r($_REQUEST);
                 print_r($_FILES);
-            echo "</pre>";
+            echo "</pre>"; 
         }
         
     }
@@ -103,8 +104,8 @@ class Core_Controllers_NodeController extends Core_Model_Node
     {
         $sourceNode=$this->_requestedData['node'];
         $DestinationNode=$this->_requestedData['destinationNode']; 
-		$FieldName=$this->_requestedData['idname'];  
-		$noderesult=$this->_requestedData['noderesult'];
+        $FieldName=$this->_requestedData['idname'];  
+        $noderesult=$this->_requestedData['noderesult'];
         if($noderesult!="")
         {
             $noderesult=  json_decode($noderesult,true);
@@ -113,10 +114,9 @@ class Core_Controllers_NodeController extends Core_Model_Node
         {
             $noderesult=array();
         }
-		$defaultValue=$noderesult[$FieldName];
-		$readonlyAttributes=$this->readonlyAttributes();
-		//$sourceNodeStructure=$sourceNodeObject->currentNodeStructure();
-		
+        $defaultValue=$noderesult[$FieldName];
+        $readonlyAttributes=$this->readonlyAttributes($this->_requestedData['action']);
+        
         $db=new Core_DataBase_ProcessQuery();
         $db->setTable($this->_tableName, $this->_nodeName);
         $db->addFieldArray(array($this->_nodeName.".".$this->_primaryKey=>"pid"));
@@ -127,11 +127,11 @@ class Core_Controllers_NodeController extends Core_Model_Node
         else 
         {
             $db->addFieldArray(array($this->_nodeName.".".$this->_descriptor=>"pds"));
-        }
-		if(in_array($FieldName,$readonlyAttributes))
+        }        
+	if(in_array($FieldName,$readonlyAttributes))
         {
-			$db->addWhere($this->_nodeName.".".$this->_primaryKey."='".$defaultValue."'");
-		}
+            $db->addWhere($this->_nodeName.".".$this->_primaryKey."='".$defaultValue."'");
+        }
         $db->addOrderBy($this->_descriptor);
         $result=$db->getRows();        
         try

@@ -47,10 +47,13 @@
             
             return $mandotatoryAttributes;
         }
-        public function readonlyAttributes()
+        public function readonlyAttributes($action=NULL)
         {            
-            $this->_currentAction;            
-            $readonly_column="readonly_".strtolower($this->_currentAction);
+            if($action=="")
+            {
+                $action=$this->_currentAction;  
+            }                     
+            $readonly_column="readonly_".strtolower($action);
             $readonlyAttributes=array();
             if(key_exists($readonly_column,$this->_currentNodeStructure))
             {

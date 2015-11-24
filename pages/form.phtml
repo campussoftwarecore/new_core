@@ -10,7 +10,7 @@
             </div>
             <div class="widget-body">
                <div>
-                   <form id="action_type" name="<?php echo $this->_nodeName; ?>" id="<?php echo $this->_nodeName; ?>" class="form-horizontal <?php echo "form_".$this->_nodeName; ?>" action="" method="POST" enctype="multipart/form-data">
+                   <form name="<?php echo $this->_nodeName; ?>" id="<?php echo $this->_nodeName; ?>" class="form-horizontal <?php echo "form_".$this->_nodeName; ?>" action="" method="POST" enctype="multipart/form-data">
                      <input type="hidden" id="parentnode" name="parentnode" value="">
                      <input type="hidden" id="node" name="node" value="<?php echo $this->_nodeName;?>">
                      <input type="hidden" id="module" name="module" value="<?php echo $this->_currentNodeModule;?>">
@@ -18,6 +18,7 @@
                      <input type="hidden" id="action_id" name="action_id" value="<?php echo $this->_currentAction;?>">
                      <input type="hidden" id="parentidvalue" name="parentidvalue" value="">
                      <input type="hidden" id="resultchange" name="resultchange" value="1">
+                     <input type="hidden" id="id" name="id" value="<?php echo $this->_record['id'];?>">
                      <div id="error_div" name="error_div" style="color: red;font-weight: bold;"></div>    
                      <?php                                    
                         if(count($this->_showAttributes)>0)
@@ -57,12 +58,20 @@
                         <input type="hidden" id="noderelations" name="noderelations" value='<?php echo json_encode($this->_nodeRelations);?>'>
                         <input type="hidden" id="formsubmit" name="formsubmit" value="0">
                         <input type="hidden" id="validate_value" name="validate_value" value="1">	
-                        <button type="button" id="save" name="save" class="btn btn-small btn-success" onclick="return getformsubmit();"> <i class="icon-ok"></i> Save</button>
-                        <button type="button" id="saveandclose" name="saveandclose" class="btn btn-small btn-success" onclick="return getformsubmit();"> <i class="icon-ok"></i> Save and Close</button>
+                        <?php
+                            if($this->_currentAction!="view")
+                            {
+                                ?>
+                                    <button type="button" id="save" name="save" class="btn btn-small btn-success" onclick="return getformsubmit();"> <i class="icon-ok"></i> Save</button>
+                                    <button type="button" id="saveandclose" name="saveandclose" class="btn btn-small btn-success" onclick="return getformsubmit();"> <i class="icon-ok"></i> Save and Close</button>
+                        
+                                <?php
+                            }
+                        ?>
                         <button type="button" id="refreshsaveandclose" name="refreshsaveandclose" class="btn btn-small btn-inverse" style="display:none;" onclick="removedisable()" ;=""> <i class="icon-refresh icon-white"></i> Refresh Save and Close</button>
                         <a href="<?php echo $this->_websiteHostUrl; ?> ">
                             <button style="margin-left:4px;" type="button" class="btn btn-small btn-warning">  
-                                <i class=" icon-remove"></i> Cancel
+                                <i class=" icon-back"></i> Back 
                             </button>
                         </a>	
                      </div>

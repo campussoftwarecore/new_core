@@ -54,8 +54,7 @@ function defaultphpfile(node,action,destinationNode,replacediv)
 	{
 		var formdata = $("form#result_"+node).serialize();
 		
-	}
-	console.log(formdata);
+	}	
 	var posturl=window.hosturl+destinationNode+"/descriptor";
         
        $.ajax({
@@ -75,79 +74,47 @@ function defaultphpfile(node,action,destinationNode,replacediv)
 		}
 	});
 }
-function defaultphpfileforproject(node,action,nodefile,idname,replacediv)
-{
-	var formdata = $("form" ).serialize();
-	$.ajax({
-		url : "phpfiles/getreplacediv_values.php",
-		type : "POST",
-		dataType : "html",
-		data : formdata+"&nodefile="+nodefile+"&defaultfile=1"+"&action_id="+action+"&idname="+idname,
-		success : function (html)
-		{
-			if(html)
-			{
-				var ivid="#"+replacediv;
-				$(ivid).html(html);
-				return true;
-			}
-		}
-	});
-}
-function setprimarykey(node,action,nodefile)
-{
-	var formdata = $("form" ).serialize();
-	$.ajax({
-		url : "phpfiles/getreplacediv_values.php",
-		type : "POST",
-		dataType : "html",
-		data : formdata+"&nodefile="+nodefile+"&action_id="+action+"&idname="+"primkey",
-		success : function (html)
-		{
-			if(html)
-			{
-				var ivid="#primkey";
-				$(ivid).val(html.trim());
-				return true;
-			}
-		}
-	});
-}
-function hidevalues()
-{
-	var is_module=$("#is_module").is(":checked");
-	if(is_module==true)
-	{
-		document.getElementById("row_module_id").style.display = "none";
-		document.getElementById("row_module_display").style.display = "none";
-		
-	}
-	else
-	{
-		document.getElementById("row_module_id").style.display = "";
-		document.getElementById("row_module_display").style.display = "";
-	}	
-}
-function getmoduledetails(action)
-{
-	$.ajax({
-		url : "phpfiles/getreplacediv_values.php",
-		type : "POST",
-		dataType : "html",
-		data : "&nodefile=getmodules"+"&action_id="+action,
-		success : function (html)
-		{
-			var data=html;
-			$('#value_module_id').html(data);
-			return true;
-		}
-	});
-}
 function getformsubmit()
+{
+    console.log("ramesh");
+    var x=confirm("Due Want to Submit");
+    if(x==true)
+    {
+        var node=document.getElementById("node").value;
+	var action=document.getElementById("action").value;
+        console.log(node);
+        console.log(action);
+        $("form#"+node).click(function(event){
+            event.preventDefault();
+            var formData = new FormData($(this)[0]);
+            console.log(formData);
+            console.log("formsubmitted");
+            var posturl=window.hosturl+node+"/"+action;
+            console.log(posturl);
+            $.ajax({
+				url : posturl,
+				type: 'POST',
+				data: formData,
+				async: false,
+				cache: false,
+				contentType: false,
+				processData: false,
+				success: function (returndata)
+				{
+                                    $("#error_div").html(returndata);
+                                }
+                            });
+        });
+    }
+    else
+    {
+        
+    }
+}
+function getformsubmittemp()
 {
 	var node=document.getElementById("node").value;
 	var action=document.getElementById("action").value;	
-	ram=ram+1;
 	$( "#saveandclose").prop( "disabled", true);
 	var x=confirm("Due Want to Submit");
 	if(x==true)
@@ -156,7 +123,7 @@ function getformsubmit()
 		$("#refreshsaveandclose").show();
 		var formsubmit=$("#formsubmit").val();		
 		$("#formsubmit").val("1");
-		$("#div_loading").show();
+		//$("#div_loading").show();
 		$("form#"+node).submit(function(event){
 		var formData = new FormData($(this)[0]);
 		$( "#saveandclose").prop( "disabled", true);
