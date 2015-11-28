@@ -40,6 +40,7 @@ class Core_Controllers_NodeController extends Core_Model_Node
     }
     public function addAction()
     {
+        $requestedData=$this->_requestedData;
         if($this->_methodType=="REQUEST")
         {
             $loadResponse=$this->loadLayout("addform.phtml");
@@ -50,10 +51,24 @@ class Core_Controllers_NodeController extends Core_Model_Node
         }
         else
         {
-            echo "<pre>";
-                print_r($_REQUEST);
-                print_r($_FILES);
-            echo "</pre>";
+            try
+            {
+                $nodeSave=new Core_Model_NodeSave();
+                $nodeSave->setNode($this->_nodeName);            
+                foreach($this->_showAttributes as $FieldName)
+                {                
+                    $nodeSave->setData($FieldName,$requestedData[$FieldName]);
+                } 
+                $nodeSave->save();
+                $output=array();
+                $output['status']="success";
+                $output['redirecturl']=$this->_websiteHostUrl;            
+                echo json_encode($output);
+            }
+            catch (Exception $ex)
+            {
+                Core::Log(__METHOD__.$ex->getMessage(), $this->_nodeName."_add");
+            }
         }
         
     }
@@ -99,14 +114,7 @@ class Core_Controllers_NodeController extends Core_Model_Node
             {
                 $loadResponse=$this->loadLayout("form.phtml");
             }
-        }
-        else
-        {
-            echo "<pre>";
-                print_r($_REQUEST);
-                print_r($_FILES);
-            echo "</pre>";
-        }
+        }        
         
     }
     public function descriptorAction()
@@ -126,7 +134,16 @@ class Core_Controllers_NodeController extends Core_Model_Node
         }
         $defaultValue=$noderesult[$FieldName];
         $readonlyAttributes=$this->readonlyAttributes($rquestedData['action']);
-			
+        $np=new Core_Model_NodeProperties();
+        $np->setNode($sourceNode);
+        $sourceNodeStructure=$np->currentNodeStructure();
+        if(Core::isArray($sourceNodeStructure))
+        {            
+            $readonlyAttributes=Core::covertStringToArray($sourceNodeStructure['readonly_'.$rquestedData['action']]);   
+            $mandotatoryAttributes=Core::covertStringToArray($sourceNodeStructure['mandotatory_'.$rquestedData['action']]);   
+        }
+        
+		
         $db=new Core_DataBase_ProcessQuery();
         $db->setTable($this->_tableName, $this->_nodeName);
         $db->addFieldArray(array($this->_nodeName.".".$this->_primaryKey=>"pid"));
@@ -139,11 +156,10 @@ class Core_Controllers_NodeController extends Core_Model_Node
         {
             $db->addFieldArray(array($this->_nodeName.".".$this->_descriptor=>"pds"));
         }
-        if(in_array($FieldName,$readonlyAttributes))
+        if(in_array($FieldName,$readonlyAttributes) || $rquestedData['action']=='view')
         {
             $db->addWhere($this->_nodeName.".".$this->_primaryKey."='".$defaultValue."'");
-	}
-        //echo "<pre>";             print_r($this);         echo "</pre>";
+	}        
         $db->addOrderBy($this->_descriptor);
         $result=$db->getRows();        
         try
@@ -161,7 +177,7 @@ class Core_Controllers_NodeController extends Core_Model_Node
             {
                 $attribute->setRequired();
             }            
-            if(in_array($FieldName,$readonlyAttributes))
+            if(in_array($FieldName,$readonlyAttributes) || $rquestedData['action']=='view')
             {                
                 $attribute->setReadonly();
             }

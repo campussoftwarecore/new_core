@@ -1,14 +1,21 @@
 <?php    
     $type="checkbox";
+    $class="";
     if($this->_readonly==1)
     {
         $type="hidden";
-    }
+        $class.=" ".$type;
+    } 
+    $checked=" ";
+    if($this->_Value==1)
+    {
+        $checked=" checked ";
+    }    
 ?>
-<div class="checker <?php echo $type;?>" id="uniform-<?php echo $this->_idName; ?>">
-    <span>
-        <input class="input-large" type="<?php echo $type;?>" id="<?php echo $this->_idName; ?>" name="<?php echo $this->_idName; ?>" value="<?php echo $this->_Value; ?>"  />        
-    </span>
+<div class="checker <?php echo $class; ?>" id="uniform-<?php echo $this->_idName; ?>">
+   
+        <input class="input-large" type="<?php echo $type;?>" id="<?php echo $this->_idName; ?>" name="<?php echo $this->_idName; ?>" value="<?php echo $this->_Value; ?>"  <?php echo $checked; ?> />        
+    
 </div>
 <?php
         if($this->_readonly==1)

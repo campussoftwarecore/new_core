@@ -42,4 +42,28 @@ class Core
         }
         return $tempFolder;
     }
+    static  function isArray($stringNeedToCheckArray)
+    {
+        if(is_array($stringNeedToCheckArray))
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+    static function covertStringToArray($stringNeedExplode,$delimiter=NULL)
+    {
+        if(!$delimiter)
+        {
+            $delimiter="|";
+        }
+        $output=array();
+        if($stringNeedExplode)
+        {
+            $output= explode($delimiter, $stringNeedExplode);
+        }
+        return $output;
+    }
 }

@@ -75,44 +75,7 @@ function defaultphpfile(node,action,destinationNode,replacediv)
 		}
 	});
 }
-function defaultphpfileforproject(node,action,nodefile,idname,replacediv)
-{
-	var formdata = $("form" ).serialize();
-	$.ajax({
-		url : "phpfiles/getreplacediv_values.php",
-		type : "POST",
-		dataType : "html",
-		data : formdata+"&nodefile="+nodefile+"&defaultfile=1"+"&action_id="+action+"&idname="+idname,
-		success : function (html)
-		{
-			if(html)
-			{
-				var ivid="#"+replacediv;
-				$(ivid).html(html);
-				return true;
-			}
-		}
-	});
-}
-function setprimarykey(node,action,nodefile)
-{
-	var formdata = $("form" ).serialize();
-	$.ajax({
-		url : "phpfiles/getreplacediv_values.php",
-		type : "POST",
-		dataType : "html",
-		data : formdata+"&nodefile="+nodefile+"&action_id="+action+"&idname="+"primkey",
-		success : function (html)
-		{
-			if(html)
-			{
-				var ivid="#primkey";
-				$(ivid).val(html.trim());
-				return true;
-			}
-		}
-	});
-}
+
 function hidevalues()
 {
 	var is_module=$("#is_module").is(":checked");
@@ -151,9 +114,11 @@ function getformsubmit()
 				processData: false,
 				success: function (responseData)
 				{
-                                        var obj = jQuery.parseJSON(responseData)
-                                        if(typeof obj =='object')
-                                        { 
+                                        
+                                        
+                                        try
+                                        {
+                                            var obj = jQuery.parseJSON(responseData)
                                             if(obj.status=="success")
                                             {
                                                 window.location.replace(obj.redirecturl);
@@ -165,11 +130,12 @@ function getformsubmit()
                                             }
                                             return true;
                                         }
-                                        else
+                                        catch(e)
                                         {
                                             $("#error_div").html(responseData);
                                             return false;
                                         }
+                                       
 				}
 			});
 		
