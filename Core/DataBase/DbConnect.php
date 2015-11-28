@@ -5,8 +5,9 @@
         public      $output=array();
         /* Class constructor */ 
         function __construct()
-        {        
-           $this->default = mysqli_connect("localhost", "root",'',"new_easy_core") or die("Please Check DB");            
+        {       
+            $dbConfig=Core::getDBConfig();              
+            $this->default = mysqli_connect($dbConfig['default']['Host'], $dbConfig['default']['User'],'',$dbConfig['default']['Name']) or die("Please Check DB");            
         } 
 
         function begin()

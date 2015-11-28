@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<hostsettings>
+    <Database>
+        <default>
+            <Host>localhost</Host>
+            <User>root</User>
+            <PWD></PWD>
+            <Name>new_easy_core</Name>
+        </default>
+    </Database>
+</hostsettings>
