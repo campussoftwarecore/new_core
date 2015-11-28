@@ -21,7 +21,8 @@ class Core_Model_Settings
     protected $_NodeProperties=array();
     protected $_TableStructure=array();
     protected $_autoKey=NULL;
-    
+    protected $_whereCon=NULL;
+            
     function __construct($nodeName=NULL) 
     {
         $this->_nodeName=$nodeName;
@@ -41,7 +42,6 @@ class Core_Model_Settings
         $this->setTableName($this->_NodeProperties['tablename']);
         
     }
-
     public function setData($FieldName,$Value)
     {
         $this->_tableFieldWithData[$FieldName]=$Value;
@@ -99,5 +99,13 @@ class Core_Model_Settings
             $_TableStructure[$FieldName]['Size']=$Size;            
         }        
         $this->_TableStructure=$_TableStructure;
+    }
+    function addFilterCondition($Condition)
+    {
+        if($this->_whereCon)
+        {
+            $this->_whereCon.=" and ";
+        }
+        $this->_whereCon.=$Condition;
     }
 }

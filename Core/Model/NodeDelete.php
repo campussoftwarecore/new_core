@@ -11,7 +11,22 @@
  *
  * @author ramesh
  */
-class NodeDelete
+class Core_Model_NodeDelete extends Core_Model_Settings
 {
-    //put your code here
+    function delete()
+    {
+        try
+        {
+            $db=new Core_DataBase_ProcessQuery();          
+            $db->setTable($this->_tableName);
+            $db->addWhere($this->_whereCon);
+            $db->buildDelete();
+            $db->executeQuery();        
+            return true;
+        }
+        catch (Exception $ex)
+        {
+            Core::Log(__METHOD__.$ex->getMessage(), $this->_tableName."_delete.log");
+        }
+    }
 }

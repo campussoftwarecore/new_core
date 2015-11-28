@@ -9,7 +9,7 @@ class Core
             $filename="system.log";
         }
         $folderPath=Core::createFolder("Errors","L");
-        $filename=$folderPath.str_replace(" ","_", $filename).".log";            
+        $filename=$folderPath.str_replace(" ","_", $filename)."";            
         $fp=  fopen($filename,"w");
         fwrite($fp, $string);
         fclose($fp);                
@@ -65,5 +65,13 @@ class Core
             $output= explode($delimiter, $stringNeedExplode);
         }
         return $output;
+    }
+    static function redirectUrl($url)
+    {
+        echo '
+            <script>            
+                window.location.assign("'.$url.'")            
+            </script>';         
+        exit;
     }
 }

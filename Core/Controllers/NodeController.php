@@ -117,6 +117,26 @@ class Core_Controllers_NodeController extends Core_Model_Node
         }        
         
     }
+    public function deleteAction()
+    {
+        
+        $nodeDelete=new Core_Model_NodeDelete();
+        $nodeDelete->setNode($this->_nodeName);
+        $nodeDelete->addFilterCondition("(".$this->_tableName.".".$this->_primaryKey." = '".$this->_currentSelector."'".")");           
+        $nodeDelete->delete();
+        $output=array();
+        $output['status']="success";
+        $output['redirecturl']=$this->_websiteHostUrl;         
+        if($this->_methodType=='REQUEST')
+        {
+            Core::redirectUrl($this->_websiteHostUrl);
+        }
+        else
+        {
+            echo json_encode($output);
+        }
+        return;
+    }
     public function descriptorAction()
     {
         $rquestedData=$this->_requestedData;

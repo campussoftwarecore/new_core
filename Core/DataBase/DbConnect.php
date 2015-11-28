@@ -32,14 +32,14 @@
             
             try
             {
-                $this->output['result'] = mysqli_query($this->default,$query) or die($query); 
+                $this->output['result'] = mysqli_query($this->default,$query); 
                 $this->output['affetedrows'] =mysqli_num_rows($this->output['result']);
                 $this->output['affetedfields']=mysqli_num_fields($this->output['result']);
                 return $this->output;         
             }
             catch(Exception $ex)
             {
-                echo $ex->getMessage();
+                Core::Log($ex->getMessage());
             }
         }
         function getLastInsertID()

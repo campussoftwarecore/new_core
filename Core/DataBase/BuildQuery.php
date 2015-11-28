@@ -146,10 +146,9 @@
         
         public function buildDelete()
         {
-            $this->actionType=" DELETE";
-            $this->sql=$this->actionType." ";
-            $this->buildProcessData();            
-            $this->sql.=$this->processFieldsData." ";
+            $this->actionType=" DELETE ";
+            $this->sql=$this->actionType." FROM ";                     
+            $this->sql.=$this->table;
             $this->buildJoin();
             $this->sql.=$this->joinCondition;
             $this->buildFileterCondition();

@@ -37,7 +37,7 @@
             }
             catch (Exception $ex)
             {
-                echo $ex->getMessage();
+                Core::Log($ex->getMessage());
             }
         }
         public function getRow()
@@ -59,7 +59,7 @@
             }
             catch (Exception $ex)
             {
-                echo $ex->getMessage();
+                Core::Log($ex->getMessage());
             }
         }
         public function getValue()
@@ -96,7 +96,7 @@
             }
             catch (Exception $ex)
             {
-                echo $ex->getMessage();
+               Core::Log($ex->getMessage());
             }
         }
         public function executeQuery()
@@ -116,7 +116,7 @@
             }
             catch (Exception $ex)
             {
-                 echo $ex->getMessage();
+                Core::Log($ex->getMessage());
             }
         }
     }
