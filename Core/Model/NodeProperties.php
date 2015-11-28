@@ -97,6 +97,6 @@ class Core_Model_NodeProperties
         $fp=fopen($filename,"r");
         $filecontent=  fread($fp,filesize($filename));
         return json_decode($filecontent,true)[$action];
-    }
+    }    
 	
 }

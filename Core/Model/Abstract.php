@@ -105,7 +105,12 @@ class Core_Model_Abstract extends Core_Pages_PageLayout
     {
         $ts=new Core_Model_TableStructure();
         $ts->setTable($this->_tableName);   
-        $this->_NodeFieldsList=$ts->getStructure();
+        $filedsArray=array();
+        foreach ($ts->getStructure() as $key => $fieldStructure) 
+        {
+            $filedsArray[$fieldStructure['Field']]=$fieldStructure['Field'];           
+        }
+        $this->_NodeFieldsList=$filedsArray;
         return $this->_NodeFieldsList;
     }
     public function getAdminSettingsData()

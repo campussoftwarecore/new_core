@@ -132,8 +132,7 @@ function getformsubmit()
 {
 	var node=document.getElementById("node").value;
 	var action=document.getElementById("action").value;	
-	var postUrl=window.hosturl+node+"/"+action;
-                    console.log(postUrl);
+	var postUrl=window.hosturl+node+"/"+action;                    
 	var x=confirm("Due Want to Submit");
 	if(x==true)
 	{		
@@ -152,10 +151,25 @@ function getformsubmit()
 				processData: false,
 				success: function (responseData)
 				{
-                                        console.log("ramesh");
-					
-					$("#error_div").html(responseData);
-					return true;
+                                        var obj = jQuery.parseJSON(responseData)
+                                        if(typeof obj =='object')
+                                        { 
+                                            if(obj.status=="success")
+                                            {
+                                                window.location.replace(obj.redirecturl);
+                                            }
+                                            else
+                                            {
+                                                $("#error_div").html(responseData);
+                                                return false;
+                                            }
+                                            return true;
+                                        }
+                                        else
+                                        {
+                                            $("#error_div").html(responseData);
+                                            return false;
+                                        }
 				}
 			});
 		

@@ -18,6 +18,7 @@
                      <input type="hidden" id="action_id" name="action_id" value="<?php echo $this->_currentAction;?>">
                      <input type="hidden" id="parentidvalue" name="parentidvalue" value="">
                      <input type="hidden" id="resultchange" name="resultchange" value="1">
+                     <input type="hidden" id="id" name="id" value="<?php echo $this->_record['id']; ?>">
                      <div id="error_div" name="error_div" style="color: red;font-weight: bold;"></div>    
                      <?php                                    
                         if(count($this->_showAttributes)>0)
@@ -57,13 +58,19 @@
                         <input type="hidden" id="noderelations" name="noderelations" value='<?php echo json_encode($this->_nodeRelations);?>'>
                         <input type="hidden" id="formsubmit" name="formsubmit" value="0">
                         <input type="hidden" id="validate_value" name="validate_value" value="1">	
+                        <?php
+                            if($this->_currentAction!="view")
+                            {
+                                
+                            ?>
                         <button type="button" id="save" name="save" class="btn btn-small btn-success" onclick="return getformsubmit();"> <i class="icon-ok"></i> Save</button>
                         <button type="button" id="saveandclose" name="saveandclose" class="btn btn-small btn-success" onclick="return getformsubmit();"> <i class="icon-ok"></i> Save and Close</button>
+                        <?php
+                            }
+                         ?>
                         <button type="button" id="refreshsaveandclose" name="refreshsaveandclose" class="btn btn-small btn-inverse" style="display:none;" onclick="removedisable()" ;=""> <i class="icon-refresh icon-white"></i> Refresh Save and Close</button>
                         <a href="<?php echo $this->_websiteHostUrl; ?> ">
-                            <button style="margin-left:4px;" type="button" class="btn btn-small btn-warning">  
-                                <i class=" icon-remove"></i> Cancel
-                            </button>
+                            <button style="margin-left:4px;" type="button" class="btn btn-primary">  <i class="icon-arrow-left"></i> BACK</button>
                         </a>	
                      </div>
                   </form>

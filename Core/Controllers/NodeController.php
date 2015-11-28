@@ -59,7 +59,8 @@ class Core_Controllers_NodeController extends Core_Model_Node
     }
     public function editAction()
     {       
-     
+        $requestedData=$this->_requestedData;
+        
         if($this->_methodType=="REQUEST")
         {
             
@@ -72,15 +73,18 @@ class Core_Controllers_NodeController extends Core_Model_Node
         }
         else
         {
-            $obj=new Core_Model_NodeUpdate();
-            echo "<pre>";
-                print_r($obj);
-               
-            echo "</pre>";
-            echo "<pre>";
-                print_r($_REQUEST);
-                print_r($_FILES);
-            echo "</pre>";
+            $nodeSave=new Core_Model_NodeSave();
+            $nodeSave->setNode($this->_nodeName);
+            $nodeSave->setData("id",$requestedData["id"]);
+            foreach($this->_showAttributes as $FieldName)
+            {                
+                $nodeSave->setData($FieldName,$requestedData[$FieldName]);
+            } 
+            $nodeSave->save();        
+            $output=array();
+            $output['status']="success";
+            $output['redirecturl']=$this->_websiteHostUrl;            
+            echo json_encode($output);
         }
         
     }

@@ -1,6 +1,7 @@
 <?php  
     error_reporting(0);
     include_once 'Boostrap.php';
+    Core::Log("ramesh");
     //$refreshCache=new Core_Cache_Refresh();
     //$refreshCache->refreshCache();
    

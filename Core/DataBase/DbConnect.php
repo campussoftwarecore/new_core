@@ -42,5 +42,9 @@
                 echo $ex->getMessage();
             }
         }
+        function getLastInsertID()
+        {
+            return mysqli_insert_id($this->default);
+        }
     }
 ?>

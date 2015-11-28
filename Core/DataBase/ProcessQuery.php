@@ -99,5 +99,25 @@
                 echo $ex->getMessage();
             }
         }
+        public function executeQuery()
+        {
+            try
+            {
+                $db=new Core_DataBase_DbConnect();
+                $output=$db->executeQuery($this->sql);
+                if(strtoupper($this->actionType)=="INSERT")
+                {
+                    return $db->getLastInsertId();
+                }
+                else
+                {
+                    return true;
+                }
+            }
+            catch (Exception $ex)
+            {
+                 echo $ex->getMessage();
+            }
+        }
     }
 ?>

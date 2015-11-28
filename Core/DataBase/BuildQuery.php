@@ -125,7 +125,7 @@
         public function buildUpdate()
         {
             $this->actionType=" UPDATE";
-            $this->sql=$this->actionType." ";
+            $this->sql=$this->actionType." ".$this->table." SET ";
             $this->buildProcessData();            
             $this->sql.=$this->processFieldsData." ";
             $this->buildJoin();
@@ -134,6 +134,16 @@
             $this->sql.=$this->fileterCondition;
             return $this->sql;
         }
+        
+        public function buildInsert()
+        {
+            $this->actionType=" Insert";
+            $this->sql=$this->actionType." ".$this->table." SET ";
+            $this->buildProcessData();            
+            $this->sql.=$this->processFieldsData." ";            
+            return $this->sql;
+        }
+        
         public function buildDelete()
         {
             $this->actionType=" DELETE";

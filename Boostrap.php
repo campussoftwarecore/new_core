@@ -4,15 +4,15 @@
     {
         $errfile = "unknown file";
         $errstr  = "shutdown";
-        $errno   = E_CORE_ERROR;
+        $errno   = E_ERROR;
         $errline = 0;
 
         $error = error_get_last();
 
         if( $error !== NULL) 
         {
-            $errno   = $error["type"];
-			//if($errno==1)
+                        $errno   = $error["type"];
+			if(!in_array($errno, array("2","8")))
 			{
 				$errfile = $error["file"];
 				$errline = $error["line"];
