@@ -8,6 +8,8 @@
         public $_rpp=null;
         public $_page=null;
         public $_wsrpp=null;
+        public $_eventMethods=array();
+        
         public function __construct() 
         {
             
@@ -177,10 +179,9 @@
         }
         public function loadAttribute($FieldName)
         {            
-            $mandotatoryAttributes=$this->mandotatoryAttributes();
-			
-            $readonlyAttributes=$this->readonlyAttributes();
             
+            $mandotatoryAttributes=$this->mandotatoryAttributes();			
+            $readonlyAttributes=$this->readonlyAttributes();            
             $methodName=$FieldName."_loadAttribute";
             if(method_exists($this,$methodName))
             {

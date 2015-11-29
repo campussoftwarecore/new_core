@@ -466,3 +466,25 @@ function rameshajaxfunction(fileurl,formdata,replacediv,type)
    //do this
 	return true;
 }
+function checkaction(nodename,value,type)
+{
+	console.log(type);
+        console.log(nodename);
+	if(type == undefined) 
+	{
+		var namevaluearray=document.getElementsByName(nodename+"[]");
+	}
+	else
+	{
+		var namevaluearray=document.getElementsByClassName(nodename);
+	}
+	
+	for(var i=0;i<namevaluearray.length;i++)
+	{
+		var idvalue=namevaluearray[i].id;
+                console.log(idvalue);
+		$("#"+idvalue).attr('checked',value);
+		$("#"+idvalue).css("opacity","1");
+	}
+	return true;
+}

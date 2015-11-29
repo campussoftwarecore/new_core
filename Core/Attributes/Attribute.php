@@ -21,7 +21,17 @@
         }
         public function setValue($value)
         {
-            $this->_Value=$value;
+            $tempValue=$value;
+            if($tempValue)
+            {
+                $tempValue_list=Core::covertStringToArray($tempValue, "|");
+                if(count($tempValue_list)>1)
+                {
+                    $tempValue=$tempValue_list;
+                }
+            }
+            $this->_Value=$tempValue;
+            
         }
         public function setRequired()
         {

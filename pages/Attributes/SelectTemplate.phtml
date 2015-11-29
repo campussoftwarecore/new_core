@@ -10,7 +10,7 @@ if($this->_readonly=='1')
 else
 {
 	?>
-<select class="" id="<?php echo $this->_idName; ?>" name="<?php echo $this->_idName; ?>">
+<select  id="<?php echo $this->_idName; ?>" name="<?php echo $this->_idName; ?>" class="chosen-with-diselect " >
    <option value="">  Select <?php echo $this->getLabel($this->_idName); ?>  </option>
    <?php
         if(count($this->_options)>0)

@@ -69,6 +69,8 @@
                             ?>
                         </select>
                     </span>
+                    <span style=" padding-left: 18px;">Display Records: <?php  echo $this->_rpp*($this->_page-1);  ?> to <?php  echo $this->_rpp*($this->_page)>$this->_totalRecordsCount?$this->_totalRecordsCount:$this->_rpp*($this->_page);  ?>  of <?php echo $this->_totalRecordsCount; ?></span>
+                    </span>
                 </div>
                 <div id="sample_div" name="sample_div" style="color:red;"></div>
                 <div style="text-align: center;margin-top: 13px;">                                            

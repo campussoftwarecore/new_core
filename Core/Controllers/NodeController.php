@@ -144,6 +144,8 @@ class Core_Controllers_NodeController extends Core_Model_Node
         $DestinationNode=$this->_requestedData['destinationNode'];         
         $FieldName=$this->_requestedData['idname'];  
 	$noderesult=$this->_requestedData['noderesult'];
+        //echo "<pre>";            print_r($this);        echo "<pre>";
+        
         if($noderesult!="")
         {
             $noderesult=  json_decode($noderesult,true);
@@ -157,10 +159,12 @@ class Core_Controllers_NodeController extends Core_Model_Node
         $np=new Core_Model_NodeProperties();
         $np->setNode($sourceNode);
         $sourceNodeStructure=$np->currentNodeStructure();
+        $multiSelectedValues=array();
         if(Core::isArray($sourceNodeStructure))
         {            
             $readonlyAttributes=Core::covertStringToArray($sourceNodeStructure['readonly_'.$rquestedData['action']]);   
             $mandotatoryAttributes=Core::covertStringToArray($sourceNodeStructure['mandotatory_'.$rquestedData['action']]);   
+            $multiSelectedValues=Core::covertStringToArray($sourceNodeStructure['multivalues']);   
         }
         
 		
@@ -178,20 +182,31 @@ class Core_Controllers_NodeController extends Core_Model_Node
         }
         if(in_array($FieldName,$readonlyAttributes) || $rquestedData['action']=='view')
         {
-            $db->addWhere($this->_nodeName.".".$this->_primaryKey."='".$defaultValue."'");
+            $defaultValue_list=Core::covertStringToArray($defaultValue,"|");
+            $db->addWhere("LOWER(".$this->_nodeName.".".$this->_primaryKey.") in ('".implode("','",$defaultValue_list)."')");
 	}        
         $db->addOrderBy($this->_descriptor);
+        $db->buildSelect();        
         $result=$db->getRows();        
         try
-        {            
+        {       
+            $idName=$this->_requestedData['idname'];            
+            if(in_array($idName,  $multiSelectedValues))
+            {
+                $attributeType="checkbox";
+            }
+            else 
+            {
+                $attributeType="select";
+            }       
             
-            $attributeType="select";
             $attributeDetails=new Core_Attributes_LoadAttribute($attributeType);				
             $attributeClass=Core_Attributes_.$attributeDetails->_attributeName;
             $attribute=new $attributeClass;
-            $attribute->setIdName($this->_requestedData['idname']);
+            $attribute->setIdName($idName);
             $attribute->setOptions($result);
             $attribute->setValue($defaultValue);
+            
             $attribute->setAction($this->_requestedData['action']);
             if(in_array($FieldName,$mandotatoryAttributes))
             {

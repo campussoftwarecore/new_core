@@ -1,1 +1,51 @@
-<input type="checkbox" id="<?php echo $this->_idName; ?>" name="<?php echo $this->_idName; ?>" value="1"><?php echo $this->getLabel($this->_idName); ?>
+<?php
+if(!is_array($this->_Value))
+{
+    $this->_Value=array($this->_Value);
+}
+if(count($this->_options)>0)
+{
+    foreach ($this->_options as $optionData)
+    {
+        $checked="";
+        if(in_array($optionData['pid'],$this->_Value))
+        {
+            $checked=" checked ";
+        }
+        $type="checkbox";
+        if($this->_readonly)
+        {
+            $type="hidden";
+        }
+        ?>
+        <input class="<?php echo $this->_idName; ?>" type="<?php echo $type; ?>" id="<?php echo $this->_idName."_".$optionData['pid']; ?>" name="<?php echo $this->_idName; ?>[]" <?php echo $checked; ?> value="<?php echo $optionData['pid']; ?>">
+            <?php echo $optionData['pds'];
+            if($this->_readonly)
+            {
+                echo ",";
+            }
+    }
+    
+    if(!$this->_readonly)
+    {
+    ?>
+        <div class="actionslist">
+                <a href="javascript:void(0);"></a>
+                <a href="javascript:void(0);" class="btn btn-mini btn-primary" onclick="checkaction('<?php echo $this->_idName; ?>',true);">Check All</a>
+                <a href="javascript:void(0);" class="btn btn-mini btn-warning" onclick="checkaction('<?php echo $this->_idName; ?>',false);">Un Check All</a>
+        </div>
+    <?php
+    }
+}
+else
+{
+        $type="checkbox";
+        if($this->_readonly)
+        {
+            $type="hidden";
+        }
+?>
+    <input type="<?php echo $type; ?>" id="<?php echo $this->_idName; ?>" name="<?php echo $this->_idName; ?>[]" value=""><?php echo $this->getLabel("None"); ?>
+<?php
+}
+?>

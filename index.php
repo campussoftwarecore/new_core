@@ -1,6 +1,6 @@
 <?php  
     error_reporting(0);
-    include_once 'Boostrap.php';  
+    include_once 'Boostrap.php';      
     $extension=substr($_REQUEST['reditectpath'], -3);     
     if($extension==".js" || $extension=="css")
     {
