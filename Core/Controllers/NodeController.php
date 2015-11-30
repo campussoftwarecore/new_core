@@ -6,7 +6,7 @@ class Core_Controllers_NodeController extends Core_Model_Node
     public $_nodeName=NULL;
     public $_currentAction="Admin";
     public $_websiteAdminUrl=NULL;
-    public $_methodType=NULL;
+    public $_methodType=NULL;    
             
     function __construct($nodeName,$action) 
     {
@@ -14,6 +14,7 @@ class Core_Controllers_NodeController extends Core_Model_Node
         $this->setNodeName($nodeName);
         $this->setActionName($action);
         $this->_websiteHostUrl=$wp->websiteAdminUrl.$this->getNodeName()."/";
+        $this->_websiteAdminUrl=$wp->websiteAdminUrl;
         $this->setShowAttributes();
         parent::__construct();
     }
@@ -53,17 +54,28 @@ class Core_Controllers_NodeController extends Core_Model_Node
         {
             try
             {
-                $nodeSave=new Core_Model_NodeSave();
-                $nodeSave->setNode($this->_nodeName);            
-                foreach($this->_showAttributes as $FieldName)
-                {                
-                    $nodeSave->setData($FieldName,$requestedData[$FieldName]);
-                } 
-                $nodeSave->save();
-                $output=array();
-                $output['status']="success";
-                $output['redirecturl']=$this->_websiteHostUrl;            
-                echo json_encode($output);
+                $errorsArray=$this->nodeDataValidate("add",$this);
+                if(count($errorsArray)>0)
+                {   
+                    $output['status']="error";
+                    $output['errors']=$errorsArray;
+                    $output['redirecturl']=$this->_websiteHostUrl;                 
+                    echo json_encode($output);                   
+                }
+                else
+                {
+                    $nodeSave=new Core_Model_NodeSave();
+                    $nodeSave->setNode($this->_nodeName);            
+                    foreach($this->_showAttributes as $FieldName)
+                    {                
+                        $nodeSave->setData($FieldName,$requestedData[$FieldName]);
+                    } 
+                    $nodeSave->save();
+                    $output=array();
+                    $output['status']="success";
+                    $output['redirecturl']=$this->_websiteHostUrl;            
+                    echo json_encode($output);
+                }
             }
             catch (Exception $ex)
             {
@@ -88,18 +100,36 @@ class Core_Controllers_NodeController extends Core_Model_Node
         }
         else
         {
-            $nodeSave=new Core_Model_NodeSave();
-            $nodeSave->setNode($this->_nodeName);
-            $nodeSave->setData("id",$requestedData["id"]);
-            foreach($this->_showAttributes as $FieldName)
-            {                
-                $nodeSave->setData($FieldName,$requestedData[$FieldName]);
-            } 
-            $nodeSave->save();        
-            $output=array();
-            $output['status']="success";
-            $output['redirecturl']=$this->_websiteHostUrl;            
-            echo json_encode($output);
+            try
+            {
+                $errorsArray=$this->nodeDataValidate("edit",$this);
+                if(count($errorsArray)>0)
+                {   
+                    $output['status']="error";
+                    $output['errors']=$errorsArray;
+                    $output['redirecturl']=$this->_websiteHostUrl;                 
+                    echo json_encode($output);                   
+                }
+                else
+                {
+                    $nodeSave=new Core_Model_NodeSave();
+                    $nodeSave->setNode($this->_nodeName);
+                    $nodeSave->setData("id",$requestedData["id"]);
+                    foreach($this->_showAttributes as $FieldName)
+                    {                
+                        $nodeSave->setData($FieldName,$requestedData[$FieldName]);
+                    } 
+                    $nodeSave->save();        
+                    $output=array();
+                    $output['status']="success";
+                    $output['redirecturl']=$this->_websiteHostUrl;            
+                    echo json_encode($output);
+                }
+            }
+            catch (Exception $ex)
+            {
+                Core::Log(__METHOD__.$ex->getMessage(), $this->_nodeName."_edit");
+            }
         }
         
     }
@@ -244,6 +274,52 @@ class Core_Controllers_NodeController extends Core_Model_Node
     public function setSingleActions()
     {        
         return parent::setSingleActions();
+    }
+    public function nodeDataValidate($action,$nodeObject)
+    {
+        $errorsArray=array();
+        $requestedData=$nodeObject->_requestedData;       
+        $nodeResult=  json_decode($requestedData['noderesult'],true);        
+        foreach ($this->mandotatoryAttributes() as $fieldName)
+        {
+            if($requestedData[$fieldName]=="")
+            {
+                $errorsArray[$fieldName]=" Please Enter ".$this->getLabel($fieldName);                
+            }
+            else
+            {
+                if(Core::inArray($fieldName, $this->_numberAttributes))
+                {
+                    if(!is_numeric($requestedData[$fieldName]))
+                    {
+                        $errorsArray[$fieldName]=" Please Enter Numbers Only ";
+                    }                    
+                }
+            }
+                
+        }        
+        if(count($errorsArray)==0)
+        {
+            foreach($this->_uniqueAttributes as $fieldName)
+            {
+                if($requestedData[$fieldName]!="")
+                {
+                    $db=new Core_DataBase_ProcessQuery();            
+                    $db->setTable($this->_tableName); 
+                    $db->addField("*");
+                    $db->addWhere($fieldName."='".$requestedData[$fieldName]."'");
+                    $db->addWhere($this->_primaryKey."!='".$nodeResult[$this->_primaryKey]."'");
+                    
+                    $db->buildSelect();                    
+                    $existingRecord=$db->getRow();
+                    if(count($existingRecord)>0)
+                    {
+                        $errorsArray[$fieldName]=" Value is already Existing ";
+                    }
+                }
+            }
+        }        
+        return $errorsArray;
     }
 }
 ?>

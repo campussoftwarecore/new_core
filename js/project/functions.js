@@ -123,6 +123,15 @@ function getformsubmit()
                                             {
                                                 window.location.replace(obj.redirecturl);
                                             }
+                                            else if(obj.status=="error")
+                                            {
+                                                var errorsArray=obj.errors;
+                                                $.each(errorsArray, function(key, errorMessage) 
+                                                {
+                                                    var idname="#error_"+key;                                                    
+                                                    $(idname).html(errorMessage);                                                        
+                                                });                                                
+                                            }
                                             else
                                             {
                                                 $("#error_div").html(responseData);

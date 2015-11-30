@@ -53,6 +53,17 @@ class Core
             return false;
         }
     }
+    static  function inArray($key,$stringNeedToCheckArray)
+    {
+        if(in_array($key,$stringNeedToCheckArray))
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
     static function covertStringToArray($stringNeedExplode,$delimiter=NULL)
     {
         if(!$delimiter)

@@ -108,7 +108,7 @@ class Core_Model_Abstract extends Core_Pages_PageLayout
         $filedsArray=array();
         foreach ($ts->getStructure() as $key => $fieldStructure) 
         {
-            $filedsArray[$fieldStructure['Field']]=$fieldStructure['Field'];           
+            $filedsArray[$fieldStructure['Field']]=$fieldStructure['Type'];           
         }
         $this->_NodeFieldsList=$filedsArray;
         return $this->_NodeFieldsList;

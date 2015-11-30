@@ -1,3 +1,7 @@
+<?php
+    $mandotoryAttributes=$this->mandotatoryAttributes();
+?>
+
 <div class="container-fluid">
    <div class="row-fluid">
       <div class="span12">
@@ -29,7 +33,16 @@
                                 <div class="control-group" id="row_<?php echo $FieldName; ?>">
                                     <lable class="control-label">
                                         <span id="label_<?php echo $FieldName; ?>"><?php echo $this->getLabel($FieldName); ?></span>
-                                        <span id="req_name" class=""></span>
+                                        <?php 
+                                            $display="none";
+                                            if(in_array($FieldName,$mandotoryAttributes))
+                                            {
+                                                $display="display";
+                                            }
+                                        ?>
+                                        <span id="req_<?php echo $FieldName; ?>" style="display:<?php echo $display; ?>" class="">
+                                            <img src="<?php echo $this->_websiteAdminUrl; ?>img/required_field.gif">
+                                        </span>
                                     </lable>
                                     <div class="control">
                                        <div class="controls" id="value_<?php echo $FieldName; ?>">    
@@ -44,8 +57,9 @@
                                                 }
                                                 
                                             ?>
+                                           <span class="error_message" id="error_<?php echo $FieldName; ?>"></span>
                                        </div>
-                                       <span class="control" id="error_<?php echo $FieldName; ?>"></span>
+                                       
                                     </div>
                                 </div>
                     <?php
