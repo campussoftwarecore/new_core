@@ -9,11 +9,20 @@ class Core
             $filename="system.log";
         }
         $folderPath=Core::createFolder("Errors","L");
-        $filename=$folderPath.str_replace(" ","_", $filename)."";            
-        $fp=  fopen($filename,"w");
-        fwrite($fp, $string);
-        fclose($fp);                
-        
+        $filename=$folderPath.str_replace(" ","_", $filename)."";      
+        if(!Core::fileExists($filename))
+        {
+            $fp=  fopen($filename,"w+");
+            fwrite($fp, $string);
+            fclose($fp);  
+        }
+        else
+        {
+            $fp=  fopen($filename,"a");
+            fwrite($fp, " \n ");
+            fwrite($fp, $string);
+            fclose($fp);                
+        }
     }
     static function createFolder($folderName,$type)
     {
@@ -41,6 +50,39 @@ class Core
             $i++;
         }
         return $tempFolder;
+    }
+    static  function fileExists($file)
+    {
+        if(file_exists($file))           
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+    static  function methodExists($object,$method)
+    {
+        if(method_exists($object,$method))           
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+    static  function keyInArray($key,$stringNeedToCheckArray)
+    {
+        if(key_exists($key,$stringNeedToCheckArray))
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
     }
     static  function isArray($stringNeedToCheckArray)
     {

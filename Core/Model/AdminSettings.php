@@ -23,8 +23,7 @@ class Core_Model_AdminSettings extends Core_Model_Node
         {
             
             $this->_requestedData=$requesteddata;
-            $this->_filesData=$filesData;
-            
+            $this->_filesData=$filesData;            
             if(isset($this->_requestedData['reditectpath']))
             {
                 $list=explode("/",$this->_requestedData['reditectpath']);                

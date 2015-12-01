@@ -28,6 +28,10 @@ function calldefaultfunctions()
                             });
 			}
 		}
+                if(node=='core_node_settings')
+                {
+                    getNodeStructure();
+                }
         }
 }
 
@@ -115,7 +119,6 @@ function getformsubmit()
 				success: function (responseData)
 				{
                                         
-                                        
                                         try
                                         {
                                             var obj = jQuery.parseJSON(responseData)
@@ -197,9 +200,7 @@ function updateresultdiv(action,node)
 			{
                                 
 				var idname="#total_"+node;
-                                console.log(idname);
-                                console.log(html);
-				$(idname).html(html);
+                                $(idname).html(html);
 				//$("#div_loading").hide();
 				return true;
 					
@@ -239,6 +240,60 @@ function multieditformsubmit(node,nodeencrypt)
 	});	
 	return true;
 	
+}
+function getPrimarykey()
+{
+    var destinationNode=$("#node").val();
+    var formData = $("form").serialize();
+    var posturl=window.hosturl+destinationNode+"/getPrimaryKey";
+        
+    $.ajax({
+            url : posturl,
+            type : "POST",
+            dataType : "html",
+            data : formData+"&idname=tablename",
+            success : function (html)
+            {                
+               $("#primkey").val(html);
+
+            }
+     });
+    
+}
+function getNodeStructure()
+{
+    var destinationNode=$("#node").val();
+    var formData = $("form").serialize();
+    var posturl=window.hosturl+destinationNode+"/getNodeStructureDetails";
+    var columnarray=new Array("mandotatory_add","mandotatory_edit","uniquefields","hide_add","hide_edit","hide_view","hide_admin","readonly_add","readonly_edit","search","boolattributes","file","fck","checkbox","selectbox","multivalues","exactsearch","editlist","numberattribute","total","colorattributes");
+    for(var j=0;j<columnarray.length;j++)
+    {
+            var columnname=columnarray[j];
+            getNodeStructureFields(columnname);
+    }
+    
+}
+function getNodeStructureFields(columnname)
+{
+    var destinationNode=$("#node").val();
+    var formData = $("form").serialize();
+    var posturl=window.hosturl+destinationNode+"/getNodeStructureDetails";
+    
+        $.ajax({
+         url : posturl,
+         type : "POST",
+         dataType : "html",
+         data : formData+"&idname="+columnname,
+         success : function (html)
+         {                
+            var ivid="#value_"+columnname;
+            console.log(ivid);
+            $(ivid).html(html);
+
+         }
+    });
+   
+    
 }
 function setpagezero()
 {

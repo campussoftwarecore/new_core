@@ -83,16 +83,19 @@
         public function getDescription()
         {
             try
-            {
-                $this->query=$this->buildDesc();
-                $db=new Core_DataBase_DbConnect();
-                $output=$db->executeQuery($this->query);
-                $tempresult=$output['result'];
-                while($rs=mysqli_fetch_assoc($tempresult))
-                {
-                    $this->result[$rs['Field']]=$rs;                   
+            {                
+                if($this->table)
+                {                    
+                    $this->query=$this->buildDesc();
+                    $db=new Core_DataBase_DbConnect();
+                    $output=$db->executeQuery($this->query);
+                    $tempresult=$output['result'];
+                    while($rs=mysqli_fetch_assoc($tempresult))
+                    {
+                        $this->result[$rs['Field']]=$rs;                   
+                    }
+                    return $this->result;
                 }
-                return $this->result;
             }
             catch (Exception $ex)
             {

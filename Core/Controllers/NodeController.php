@@ -65,12 +65,13 @@ class Core_Controllers_NodeController extends Core_Model_Node
                 else
                 {
                     $nodeSave=new Core_Model_NodeSave();
+                    
                     $nodeSave->setNode($this->_nodeName);            
                     foreach($this->_showAttributes as $FieldName)
                     {                
                         $nodeSave->setData($FieldName,$requestedData[$FieldName]);
                     } 
-                    $nodeSave->save();
+                    $nodeSave->save();                    
                     $output=array();
                     $output['status']="success";
                     $output['redirecturl']=$this->_websiteHostUrl;            
@@ -87,7 +88,7 @@ class Core_Controllers_NodeController extends Core_Model_Node
     public function editAction()
     {       
         $requestedData=$this->_requestedData;
-        
+         
         if($this->_methodType=="REQUEST")
         {
             
@@ -100,6 +101,7 @@ class Core_Controllers_NodeController extends Core_Model_Node
         }
         else
         {
+            
             try
             {
                 $errorsArray=$this->nodeDataValidate("edit",$this);
@@ -112,13 +114,15 @@ class Core_Controllers_NodeController extends Core_Model_Node
                 }
                 else
                 {
-                    $nodeSave=new Core_Model_NodeSave();
+                    $nodeSave=new Core_Model_NodeSave();                    
                     $nodeSave->setNode($this->_nodeName);
+                    
                     $nodeSave->setData("id",$requestedData["id"]);
                     foreach($this->_showAttributes as $FieldName)
                     {                
                         $nodeSave->setData($FieldName,$requestedData[$FieldName]);
                     } 
+                    
                     $nodeSave->save();        
                     $output=array();
                     $output['status']="success";
@@ -174,84 +178,101 @@ class Core_Controllers_NodeController extends Core_Model_Node
         $DestinationNode=$this->_requestedData['destinationNode'];         
         $FieldName=$this->_requestedData['idname'];  
 	$noderesult=$this->_requestedData['noderesult'];
-        //echo "<pre>";            print_r($this);        echo "<pre>";
+        $methodName=CoreClass::getMethod($this,"descriptorAction",$sourceNode,$FieldName); 
         
-        if($noderesult!="")
-        {
-            $noderesult=  json_decode($noderesult,true);
+        if($methodName) 
+        {           
+            $this->$methodName();
         }
-        else
+        else            
         {
-            $noderesult=array();
-        }
-        $defaultValue=$noderesult[$FieldName];
-        $readonlyAttributes=$this->readonlyAttributes($rquestedData['action']);
-        $np=new Core_Model_NodeProperties();
-        $np->setNode($sourceNode);
-        $sourceNodeStructure=$np->currentNodeStructure();
-        $multiSelectedValues=array();
-        if(Core::isArray($sourceNodeStructure))
-        {            
-            $readonlyAttributes=Core::covertStringToArray($sourceNodeStructure['readonly_'.$rquestedData['action']]);   
-            $mandotatoryAttributes=Core::covertStringToArray($sourceNodeStructure['mandotatory_'.$rquestedData['action']]);   
-            $multiSelectedValues=Core::covertStringToArray($sourceNodeStructure['multivalues']);   
-        }
-        
-		
-        $db=new Core_DataBase_ProcessQuery();
-        $db->setTable($this->_tableName, $this->_nodeName);
-        $db->addFieldArray(array($this->_nodeName.".".$this->_primaryKey=>"pid"));
-        
-        if(in_array($this->_descriptor,$this->_nodeRelations))
-        {
-            
-        }
-        else 
-        {
-            $db->addFieldArray(array($this->_nodeName.".".$this->_descriptor=>"pds"));
-        }
-        if(in_array($FieldName,$readonlyAttributes) || $rquestedData['action']=='view')
-        {
-            $defaultValue_list=Core::covertStringToArray($defaultValue,"|");
-            $db->addWhere("LOWER(".$this->_nodeName.".".$this->_primaryKey.") in ('".implode("','",$defaultValue_list)."')");
-	}        
-        $db->addOrderBy($this->_descriptor);
-        $db->buildSelect();        
-        $result=$db->getRows();        
-        try
-        {       
-            $idName=$this->_requestedData['idname'];            
-            if(in_array($idName,  $multiSelectedValues))
+            if($noderesult!="")
             {
-                $attributeType="checkbox";
+                $noderesult=  json_decode($noderesult,true);
+            }
+            else
+            {
+                $noderesult=array();
+            }
+            $defaultValue=$noderesult[$FieldName];
+            $readonlyAttributes=$this->readonlyAttributes($rquestedData['action']);
+            $sourceNodeObj=CoreClass::getModel($sourceNode, $rquestedData['action']);           
+            $sourceNodeObj->setNodeName($sourceNode);            
+            $sourceNodeStructure=$sourceNodeObj->_currentNodeStructure;
+            $onchangeEvents=array();
+            $eventmethod=lcfirst(str_replace(" ","",ucwords(str_replace("_", " ",$sourceNode)))."Onchange");
+            if(Core::methodExists($sourceNodeObj, $eventmethod))
+            {
+                $onchangeEvents=$sourceNodeObj->$eventmethod();
+            }
+            $multiSelectedValues=array();
+            if(Core::isArray($sourceNodeStructure))
+            {            
+                $readonlyAttributes=Core::covertStringToArray($sourceNodeStructure['readonly_'.$rquestedData['action']]);   
+                $mandotatoryAttributes=Core::covertStringToArray($sourceNodeStructure['mandotatory_'.$rquestedData['action']]);   
+                $multiSelectedValues=Core::covertStringToArray($sourceNodeStructure['multivalues']);   
+            }
+            $db=new Core_DataBase_ProcessQuery();
+            $db->setTable($this->_tableName, $this->_nodeName);
+            $db->addFieldArray(array($this->_nodeName.".".$this->_primaryKey=>"pid"));
+
+            if(in_array($this->_descriptor,$this->_nodeRelations))
+            {
+
             }
             else 
             {
-                $attributeType="select";
-            }       
-            
-            $attributeDetails=new Core_Attributes_LoadAttribute($attributeType);				
-            $attributeClass=Core_Attributes_.$attributeDetails->_attributeName;
-            $attribute=new $attributeClass;
-            $attribute->setIdName($idName);
-            $attribute->setOptions($result);
-            $attribute->setValue($defaultValue);
-            
-            $attribute->setAction($this->_requestedData['action']);
-            if(in_array($FieldName,$mandotatoryAttributes))
-            {
-                $attribute->setRequired();
-            }            
-            if(in_array($FieldName,$readonlyAttributes) || $rquestedData['action']=='view')
-            {                
-                $attribute->setReadonly();
+                $db->addFieldArray(array($this->_nodeName.".".$this->_descriptor=>"pds"));
             }
-            $attribute->loadAttributeTemplate($attributeType,$FieldName);
-        }
-        catch (Exception $ex)
-        {
-            echo $ex->getMessage();
-        }
+            if(in_array($FieldName,$readonlyAttributes) || $rquestedData['action']=='view')
+            {
+                $defaultValue_list=Core::covertStringToArray($defaultValue,"|");
+                $db->addWhere("LOWER(".$this->_nodeName.".".$this->_primaryKey.") in ('".implode("','",$defaultValue_list)."')");
+            }   
+            
+            $methodName=CoreClass::getMethod($this,"filter",$sourceNode,$FieldName);       
+            if($methodName) 
+            { 
+                $db->addWhere($this->$methodName());
+            }
+            $db->addOrderBy($this->_descriptor);
+            $db->buildSelect();        
+            $result=$db->getRows();        
+            try
+            {       
+                $idName=$this->_requestedData['idname'];            
+                if(in_array($idName,  $multiSelectedValues))
+                {
+                    $attributeType="checkbox";
+                }
+                else 
+                {
+                    $attributeType="select";
+                }       
+
+                $attributeDetails=new Core_Attributes_LoadAttribute($attributeType);				
+                $attributeClass=Core_Attributes_.$attributeDetails->_attributeName;
+                $attribute=new $attributeClass;
+                $attribute->setIdName($idName);
+                $attribute->setOptions($result);
+                $attribute->setValue($defaultValue);
+
+                $attribute->setAction($this->_requestedData['action']);
+                if(in_array($FieldName,$mandotatoryAttributes))
+                {
+                    $attribute->setRequired();
+                }            
+                if(in_array($FieldName,$readonlyAttributes) || $rquestedData['action']=='view')
+                {                
+                    $attribute->setReadonly();
+                }
+                $attribute->loadAttributeTemplate($attributeType,$FieldName);
+            }
+            catch (Exception $ex)
+            {
+                echo $ex->getMessage();
+            }
+        }      
         
     }
 

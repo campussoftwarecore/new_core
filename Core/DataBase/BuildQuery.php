@@ -17,10 +17,10 @@
         }
         public function buildFileterCondition()
         {
-            $this->fileterCondition=NULL;
+            $this->fileterCondition="";
             if($this->whereCon!="" && $this->whereCon!=NULL)
             {
-                $this->fileterCondition.=" WHERE ".$this->whereCon;
+                $this->fileterCondition=" WHERE ".$this->whereCon;
             }
             if($this->groupByColumnName!="" && $this->groupByColumnName!=NULL)
             {
@@ -118,7 +118,6 @@
             $this->sql.=" ".$this->joinCondition;
             $this->buildFileterCondition();
             $this->sql.=$this->fileterCondition;
-            
             
             return $this->sql;                    
         }

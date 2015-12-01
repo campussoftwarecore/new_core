@@ -25,17 +25,18 @@
         }
         public function addWhere($where=NULL)
         {
-            if($where!=NULL)
+            
+            if($where!="")
             {
                 if($this->whereCon!=NULL && $this->whereCon!="")
                 {
-                    $this->whereCon.=$this->whereCon." and ";
+                    $this->whereCon=$this->whereCon." and ";
                 }
                 if(strpos($where,".") === false)
                 {
                     $where=$this->tablealias.".".$where;
                 }                
-                $this->whereCon.=$this->whereCon." ".$where;
+                $this->whereCon=$this->whereCon." ".$where;
                 
             }
             

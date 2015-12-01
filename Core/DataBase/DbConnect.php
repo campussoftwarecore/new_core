@@ -33,13 +33,13 @@
             
             try
             {
-                $this->output['result'] = mysqli_query($this->default,$query); 
+                $this->output['result'] = mysqli_query($this->default,$query) or die (Core::Log($query)); 
                 $this->output['affetedrows'] =mysqli_num_rows($this->output['result']);
                 $this->output['affetedfields']=mysqli_num_fields($this->output['result']);
                 return $this->output;         
             }
             catch(Exception $ex)
-            {
+            {               
                 Core::Log($ex->getMessage());
             }
         }

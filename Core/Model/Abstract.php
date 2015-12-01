@@ -13,6 +13,7 @@ class Core_Model_Abstract extends Core_Pages_PageLayout
     public $_nodeRelations=array();   
     public $_NodeFieldAttributes=array();
     public $_NodeFieldsList=array();
+    
     public function setNodeName($nodename) 
     {
         $this->_nodeName=$nodename;

@@ -49,6 +49,10 @@
         {
             $this->_options=$result;
         }
+        public function setOnchange($param) 
+        {
+            $this->_onchange.=$param;
+        }
         
     }
 ?>

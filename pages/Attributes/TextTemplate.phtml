@@ -8,7 +8,7 @@
         $type="type";
     }
 ?>
-<input class="input-large" type="<?php echo $type; ?>" id="<?php echo $this->_idName; ?>" name="<?php echo $this->_idName; ?>" value="<?php echo $this->_Value;?>" placeholder="<?php echo $this->getLabel($this->_idName); ?>" <?php echo $this->_required; ?> />
+<input class="input-large" type="<?php echo $type; ?>" id="<?php echo $this->_idName; ?>" name="<?php echo $this->_idName; ?>" value="<?php echo $this->_Value;?>" placeholder="<?php echo $this->getLabel($this->_idName); ?>" onchange="<?php echo $this->_onchange; ?>" <?php echo $this->_required; ?> />
 <?php
     if($this->_readonly)
     {

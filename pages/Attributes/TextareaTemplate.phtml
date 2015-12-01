@@ -1,1 +1,12 @@
-<textarea class="input-large" id="hasmany" name="hasmany" rows="3"></textarea>
+<?php
+    if($this->_readonly==1)
+    {
+        echo $this->_Value;
+    }
+    else
+    {
+?>
+<textarea class="input-large" id="<?php echo $this->_idName;?>" name="<?php echo $this->_idName;?>" rows="3"> <?php echo $this->_Value;?></textarea>
+<?php
+    }
+?>

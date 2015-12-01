@@ -1,6 +1,8 @@
 <?php  
     error_reporting(0);
-    include_once 'Boostrap.php';      
+    include_once 'Boostrap.php'; 
+    //$ch=new Core_Cache_Refresh();
+    //$ch->refreshCache();
     $extension=substr($_REQUEST['reditectpath'], -3);     
     if($extension==".js" || $extension=="css")
     {
@@ -25,7 +27,7 @@
     $methodType="REQUEST";
     try
     {
-        $np=new Core_Model_AdminSettings($_REQUEST,$_FILES);
+        $np=new Core_Model_AdminSettings($_REQUEST,$_FILES);        
         $currentNode=$np->_currentNode;  
         $currentAction=$np->_currentAction;
         $currentModule=$np->_nodeDetails['module'];
@@ -41,7 +43,7 @@
             $action="admin";
         }       
         if(count($_POST)>0)
-        {
+        {            
            $methodType="POST";
            $header=false;
            $navigation=false;
@@ -57,19 +59,9 @@
             $page=new Core_Pages_NavigationPage();
         }     
         if($currentNode!="")
-        {            
-            $currentClassName=  str_replace(" ","",ucwords(str_replace("_"," ",$currentNode)));
-
-            $fileName=$rootObj->documentRoot."Modules/Controllers/".$currentClassName.".php";
-            if(file_exists($fileName))
-            {
-                $className="Modules_Controllers_".$currentClassName;                
-            }   
-            else
-            {
-                $className="Core_Controllers_NodeController";
-            }            
-            $node=new $className($currentNode,$action);
+        {  
+            $node=CoreClass::getController($currentNode,$currentModule,$action);        
+           
             $node->setActionName($action);
             $node->setSurrentSelector($currentSelector);
             $node->setMethodType($methodType);
@@ -85,6 +77,7 @@
             {
                 $node->noAction();
             }
+            
         }
         else
         {

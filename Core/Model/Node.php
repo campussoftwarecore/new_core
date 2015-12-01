@@ -182,18 +182,27 @@
             
             $mandotatoryAttributes=$this->mandotatoryAttributes();			
             $readonlyAttributes=$this->readonlyAttributes();            
+            
+            $onchangeEvents=array();
+            $eventmethod=lcfirst(str_replace(" ","",ucwords(str_replace("_", " ",$this->_nodeName)))."Onchange");
+            if(Core::methodExists($this, $eventmethod))
+            {
+                $onchangeEvents=$this->$eventmethod();
+            }            
             $methodName=$FieldName."_loadAttribute";
-            if(method_exists($this,$methodName))
+            if(Core::methodExists($this,$methodName))
             {
                 $this->$methodName();
             }
-            if(key_exists($FieldName, $this->_NodeFieldAttributes))
+            
+            if(Core::keyInArray($FieldName, $this->_NodeFieldAttributes))
             {
                 $attributeType=ucwords($this->_NodeFieldAttributes[$FieldName]);
             }
             else
-            {
-                if(in_array($this->_NodeFieldsList[$FieldName]['Type'],array("text","longtext","mediumint")))
+            {    
+                
+                if(Core::inArray($this->_NodeFieldsList[$FieldName], array("text","longtext","mediumint")))
                 {
                     $attributeType="Textarea";
                 }
@@ -203,14 +212,17 @@
                 }
             }
             try
-            {
-                
+            {                
                 $attributeDetails=new Core_Attributes_LoadAttribute($attributeType);				
 				$attributeClass=Core_Attributes_.$attributeDetails->_attributeName;
 				$attribute=new $attributeClass;
 				
                 $attribute->setIdName($FieldName);
                 $attribute->setValue($this->_record[$FieldName]);
+                if(Core::keyInArray($FieldName, $onchangeEvents))
+                {
+                    $attribute->setOnchange($onchangeEvents[$FieldName]);
+                }
                 if(in_array($FieldName,$mandotatoryAttributes))
                 {
                     $attribute->setRequired();
@@ -252,6 +264,12 @@
                 }
             }
             
+        }
+        public function coreNodeSettingsOnchange()
+        {
+            $events=array();
+            $events['tablename']="getPrimarykey();getNodeStructure();";           
+            return $events;
         }
     }
 ?>
