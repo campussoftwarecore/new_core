@@ -140,8 +140,7 @@
             $db->addWhere($this->_whereCon);
             $db->addGroupBy("id");
             $db->setLimit(($page-1)*$this->_rpp,$this->_rpp);     
-            $db->buildSelect();
-           
+            $db->buildSelect();                   
             $this->_collections=$db->getRows("id"); 
             
         }
@@ -152,8 +151,8 @@
             $this->addFilter();
             $db->addFieldArray(array("count(distinct(".$this->_tableName.".id))"=>"count"));
             $db->addWhere($this->_whereCon);            
-            $db->buildSelect();
-            $this->_totalRecordsCount=$db->getValue(); 
+            $db->buildSelect();            
+            $this->_totalRecordsCount=$db->getValue();             
         }
         public function nodeFieldDisplay($row,$FieldName)
         {
@@ -247,8 +246,13 @@
         } 
         public function addFilter()
         {
+            
             $this->_whereCon=null;
-            $requestedData=$this->_requestedData;
+            if($this->_parentNode)
+            {
+                $this->_whereCon=$this->_parentColName."='".$this->_parentSelector."'";
+            }
+            $requestedData=$this->_requestedData;           
             if(count($this->_showAttributes)>0)
             {
                 foreach ($this->_showAttributes as $FieldName) 
@@ -271,5 +275,6 @@
             $events['tablename']="getPrimarykey();getNodeStructure();";           
             return $events;
         }
+        
     }
 ?>

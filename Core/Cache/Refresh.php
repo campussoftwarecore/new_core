@@ -100,9 +100,10 @@
                         || ns.core_node_actions_id like concat('%','|',nac.short_code) 
                         || (ns.core_node_actions_id=nac.short_code) ");
                     $qry->addJoin("core_profile_id", "core_access", "urac", " urac.action like concat('%',nac.short_code,'%') and urac.node=rnd.nodename ");
-                    $qry->addWhere("core_profile_id='".$pd['short_code']."' || is_module='1'");
+                    $qry->addWhere("(urac.core_profile_id='".$pd['short_code']."' || is_module='1' )");
                     $qry->addGroupBy("rnd.nodename");
                     $qry->addOrderBy("rnd.is_module DESC ,rnd.sort_value ASC");
+                    $qry->buildSelect();                    
                     $result=$qry->getRows("nodename");
                     
                     $totalResult[$pd['short_code']]=$result;                 
@@ -198,14 +199,23 @@
             $wb=new Core_WebsiteSettings();
             $qry=new Core_DataBase_ProcessQuery();
             $qry->setTable("core_node_relations");
-            $qry->addFieldArray(array("core_node_settings_id"=>"node","core_node_colname"=>"colname","core_node_parent"=>"parent"));
+            $qry->addFieldArray(array("core_node_settings_id"=>"node","core_relation_type_id"=>"type","core_node_colname"=>"colname","core_node_parent"=>"parent"));
+            $qry->buildSelect();           
             $noderesult=$qry->getRows();
             $finalresult=array();
             if(count($noderesult)>0)
             {
                 foreach($noderesult as $nodeRelation)
                 {
-                    $finalresult[$nodeRelation['node']][$nodeRelation['colname']]=$nodeRelation['parent'];
+                    $type=$nodeRelation['type'];
+                    $key=$nodeRelation['colname'];
+                    $value=$nodeRelation['parent'];
+                    if($type!='MTO')
+                    {
+                        $key=$value;
+                        $value=$nodeRelation['colname'];
+                    }
+                    $finalresult[$nodeRelation['node']][$type][$key]=$value;
                 }
             }
             $folderpath=$wb->documentRoot.'var/'.$wb->identity;					    

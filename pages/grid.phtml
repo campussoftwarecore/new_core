@@ -1,13 +1,27 @@
+<?php 
+    $performAction=0;
+    if($this->_parentAction=='edit' || $this->_parentAction=="" )
+    {
+        $performAction=1;
+    }
+?>
 <div id="total_<?php echo $this->_nodeName;?>" name="total_<?php echo $this->_nodeName;?>">
     <div>
         <?php
-            if(count($this->_singleActions))
+            $parentPath="";
+            if($this->_parentNode)
+            {
+                $parentPath.=$this->_parentNode."/";
+                $parentPath.=$this->_parentAction."/";
+                $parentPath.=$this->_parentSelector;
+            }
+            if(count($this->_singleActions) && $performAction==1)
             {
                 foreach($this->_singleActions as $actionName)
-                {
+                {   
                     ?>
                         <span style="padding-left: 25px;">
-                        <a href="<?php echo $this->_websiteHostUrl.$actionName["code"]."/";?>">
+                        <a href="<?php echo $this->_websiteHostUrl.$actionName["code"]."/0/".$parentPath;?>">
                             <button class="btn btn-warning"><?php echo $actionName['name']; ?></button>
                         </a>
                         </span>
@@ -93,14 +107,14 @@
                             <tr role="row">
                                 <th>
                                     <input type="hidden" id="action_id" name="action_id" value="admin">
-                                    <input type="button" id="search" name="search" value="Search" onclick="setpagezero(); samplefun('<?php echo $this->_nodeName;?>');" class="btn bsetpagezerotn-info" style="border-radius: 15px;" />	   
+                                    <input type="button" id="buttonsearch" name="buttonsearch" value="Search" onclick="setpagezero(); samplefun('<?php echo $this->_nodeName;?>');" class="btn bsetpagezerotn-info" style="border-radius: 15px;" />	   
                                     <input type="hidden" id="module" name="module" value="codebasedsettings">
                                     <input type="hidden" id="node" name="node" value="<?php echo $this->_nodeName;?>">
                                     <input type="hidden" id="rpp" name="rpp" value="25">
                                     <input type="hidden" id="page" name="page" value="1">			    
-                                    <input type="hidden" id="parentaction" name="parentaction" value="">
-                                    <input type="hidden" id="parentnode" name="parentnode" value="">
-                                    <input type="hidden" id="parentidvalue" name="parentidvalue" value="">
+                                    <input type="hidden" id="parentaction" name="parentaction" value="<?php echo $this->_parentAction; ?>">
+                                    <input type="hidden" id="parentnode" name="parentnode" value="<?php echo $this->_parentNode; ?>">
+                                    <input type="hidden" id="parentidvalue" name="parentidvalue" value="<?php echo $this->_parentSelector; ?>">
                                     <input type="hidden" id="multiedit" name="multiedit" value="0">
 
                                 </th>
@@ -162,7 +176,15 @@
                                         <tr>
                                             <td>
                                                 <span>
+                                                    <?php
+                                                    if($performAction==1)
+                                                    {
+                                                        ?>
                                                     <input type="checkbox" class="mra_<?php echo $this->_nodeName;?>" name="selectid[]" />
+                                                    <?php
+                                                    }
+                                                    ?>
+                                                    
                                                 </span>
                                                 <?php
                                                     if(count($this->_individualActions)>0)
@@ -180,7 +202,10 @@
                                                                 {
                                                                     $primarykeyValue=$row[$this->_primaryKey];
                                                                 }
-                                                                echo '<a href="'.$this->_websiteHostUrl.$actionData['code'].'/'.$primarykeyValue.'">'.$actionData['name']."</a>";
+                                                                if($performAction==1 || $actionData['code']=='view')
+                                                                {
+                                                                    echo '<a href="'.$this->_websiteHostUrl.$actionData['code'].'/'.$primarykeyValue.'/'.$parentPath.'">'.$actionData['name']."</a>";
+                                                                }
                                                             }
                                                         ?>
                                                             </span>
@@ -207,33 +232,6 @@
                 </div>
             </div>
         </form>
-    </div>        
-        <script type="text/javascript">
-                function getmraaction()
-                {
-                var mra_action=document.getElementById("mra_action").value;
-
-                var node=document.getElementById("node").value;
-                var selectedids="";
-                var arr=new Array();
-                var i=0;
-                if(mra_action=="")
-                {
-                alert("Please Action");
-                return false;
-                }
-                var checkedVals = $('.mra_report_template:checkbox:checked').map(function() {
-                return this.value;
-                }).get();
-                var selectedids=checkedVals.join('|');
-                if(selectedids=='')
-                {
-                alert('Please Check the values');
-                return false
-                }
-                custommravalidate(node,selectedids);	   
-
-                }
-    </script>
+    </div>
     </div>
 </div>

@@ -38,6 +38,7 @@ function calldefaultfunctions()
 
 function defaultphpfile(node,action,destinationNode,replacediv)
 {
+    
 	//$("#div_loading").show();
 	var casevalue;
 	if ($("#"+node))
@@ -104,8 +105,11 @@ function getformsubmit()
 	if(x==true)
 	{		
 		$("form#"+node).click(function(event){
-		var formData = new FormData($(this)[0]);		
-		event.preventDefault();
+                    
+                    if($("#"+event.toElement.id).hasClass("formsubmit"))
+                    {
+                        var formData = new FormData($("form#"+node)[0]);		
+                        event.preventDefault();
 		
 			
 			$.ajax({
@@ -118,6 +122,7 @@ function getformsubmit()
 				processData: false,
 				success: function (responseData)
 				{
+                                        $("#error_div").html(responseData);
                                         
                                         try
                                         {
@@ -128,11 +133,20 @@ function getformsubmit()
                                             }
                                             else if(obj.status=="error")
                                             {
+                                                
                                                 var errorsArray=obj.errors;
                                                 $.each(errorsArray, function(key, errorMessage) 
                                                 {
-                                                    var idname="#error_"+key;                                                    
-                                                    $(idname).html(errorMessage);                                                        
+                                                    try
+                                                    {
+                                                        var idname="#error_"+key;                                                    
+                                                        $(idname).html(errorMessage);                                                        
+                                                    }
+                                                    catch(e)
+                                                    {
+                                                        console.log(e);
+                                                       
+                                                    }
                                                 });                                                
                                             }
                                             else
@@ -150,6 +164,11 @@ function getformsubmit()
                                        
 				}
 			});
+                    }
+                    else
+                    {
+                        console.log(event.toElement.className);
+                    }
 		
 		});
 	}
@@ -195,7 +214,7 @@ function updateresultdiv(action,node)
 			url : window.hosturl+node+"/adminRefresh",
 			type : "POST",
 			dataType : "html",
-			data:formdata+"&resultchange=1"+"&search=search",
+			data:formdata+"&resultchange=1"+"&gridsearch=search",
 			success : function (html)
 			{
                                 

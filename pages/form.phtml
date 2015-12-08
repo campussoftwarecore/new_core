@@ -1,94 +1,148 @@
 <?php
-    $mandotoryAttributes=$this->mandotatoryAttributes();
+    $mandotoryAttributes=$this->mandotatoryAttributes();    
 ?>
-
 <div class="container-fluid">
-   <div class="row-fluid">
-      <div class="span12">
-         <div class="widget">
-            <div class="widget-title">
-               <h4><i class="icon-reorder"></i><?php echo $this->getLabel($this->_currentAction);?></h4>
-               <span class="tools">
-               <a href="javascript:;" class="icon-chevron-down"></a>
-               </span>
-            </div>
-            <div class="widget-body">
-               <div>
-                   <form name="<?php echo $this->_nodeName; ?>" id="<?php echo $this->_nodeName; ?>" class="form-horizontal <?php echo "form_".$this->_nodeName; ?>" action="" method="POST" enctype="multipart/form-data">
-                     <input type="hidden" id="parentnode" name="parentnode" value="">
-                     <input type="hidden" id="node" name="node" value="<?php echo $this->_nodeName;?>">
-                     <input type="hidden" id="action" name="action" value="<?php echo $this->_currentAction;?>">
-                     <input type="hidden" id="action_id" name="action_id" value="<?php echo $this->_currentAction;?>">                     
-                     <input type="hidden" id="resultchange" name="resultchange" value="1">
-                     <input type="hidden" id="id" name="id" value="<?php echo $this->_record['id']; ?>">
-                     <div id="error_div" name="error_div" style="color: red;font-weight: bold;"></div>    
-                     <?php                                    
-                        if(count($this->_showAttributes)>0)
-                        {
-                            foreach($this->_showAttributes as $FieldName)
+	<div class="row-fluid">
+		<div class="span12">
+			<div class="widget">
+				<div class="widget-title">
+					<h4><i class="icon-reorder"></i><?php echo $this->getLabel($this->_currentAction);?></h4>
+					<span class="tools">
+						<a href="javascript:;" class="icon-chevron-down"></a>
+					</span>
+				</div>
+			<div class="widget-body">
+                        <?php     
+                            $backUrl=$this->_websiteHostUrl;
+                            if($this->_parentNode)
                             {
-                                ?>
-                                <div class="control-group" id="row_<?php echo $FieldName; ?>">
-                                    <lable class="control-label">
-                                        <span id="label_<?php echo $FieldName; ?>"><?php echo $this->getLabel($FieldName); ?></span>
-                                        <?php 
-                                            $display="none";
-                                            if(in_array($FieldName,$mandotoryAttributes))
-                                            {
-                                                $display="display";
-                                            }
-                                        ?>
-                                        <span id="req_<?php echo $FieldName; ?>" style="display:<?php echo $display; ?>" class="">
-                                            <img src="<?php echo $this->_websiteAdminUrl; ?>img/required_field.gif">
-                                        </span>
-                                    </lable>
-                                    <div class="control">
-                                       <div class="controls" id="value_<?php echo $FieldName; ?>">    
-                                            <?php
-                                                try 
-                                                {
-                                                    $this->loadAttribute($FieldName);
-                                                } 
-                                                catch (Exception $ex) 
-                                                {
-
-                                                }
-                                                
-                                            ?>
-                                           <span class="error_message" id="error_<?php echo $FieldName; ?>"></span>
-                                       </div>
-                                       
-                                    </div>
-                                </div>
-                    <?php
+                                $backUrl=$this->_websiteAdminUrl.$this->_parentNode."/".$this->_parentAction."/".$this->_parentSelector;
                             }
-                        }
-                    ?>
-                                          
-                     <div class="form-actions">
-                        <input type="hidden" id="noderesult" name="noderesult" value='<?php echo json_encode($this->_record);?>'>
-                        <input type="hidden" id="noderelations" name="noderelations" value='<?php echo json_encode($this->_nodeRelations);?>'>                        
-                        <input type="hidden" id="formsubmit" name="formsubmit" value="0">
-                        <input type="hidden" id="validate_value" name="validate_value" value="1">	
-                        <?php
-                            if($this->_currentAction!="view")
-                            {
+                            if(count($this->_nodeOTMRelations)>0 && $this->_currentAction!='add')
+                            {                                
+                        ?>
+			<ul class="nav nav-tabs">
+				<li class="active">
+                                    <a href="#tab_<?php echo $this->_nodeName; ?>" data-toggle="tab">General</a>
+                                </li>
                                 
-                            ?>
-                        <button type="button" id="save" name="save" class="btn btn-small btn-success" onclick="return getformsubmit();"> <i class="icon-ok"></i> Save & Continue </button>
-                        <button type="button" id="saveandclose" name="saveandclose" class="btn btn-small btn-success" onclick="return getformsubmit();"> <i class="icon-ok"></i> Save and Close</button>
-                        <?php
+                                        
+                                        <?php
+                                        foreach($this->_nodeOTMRelations as $childNode=>$linkColName)
+                                        {
+                                            ?>
+                                        
+                                            <li>
+                                            <a href="#tab_<?php echo $childNode; ?>" data-toggle="tab" onclick="return samplefun('<?php echo $childNode; ?>')" ><?php echo $this->getLabel($childNode); ?></a>
+                                            </li>
+                                            <?php
+                                        }
+                                    
+                                ?>				
+			</ul>
+                            <?php
                             }
-                         ?>
-                        <button type="button" id="refreshsaveandclose" name="refreshsaveandclose" class="btn btn-small btn-inverse" style="display:none;" onclick="removedisable()" ;=""> <i class="icon-refresh icon-white"></i> Refresh Save and Close</button>
-                        <a href="<?php echo $this->_websiteHostUrl; ?> ">
-                            <button style="margin-left:4px;" type="button" class="btn btn-primary">  <i class="icon-arrow-left"></i> BACK</button>
-                        </a>	
-                     </div>
-                  </form>
-               </div>
-            </div>
-         </div>
-      </div>
-   </div>
+                            ?>
+			<div class="tab-content">
+				<div class="tab-pane active" id="tab_<?php echo $this->_nodeName; ?>">
+
+					<form name="<?php echo $this->_nodeName; ?>" id="<?php echo $this->_nodeName; ?>" class="form-horizontal <?php echo "form_".$this->_nodeName; ?>" action="" method="POST" enctype="multipart/form-data">
+						
+						<input type="hidden" id="node" name="node" value="<?php echo $this->_nodeName;?>">
+						<input type="hidden" id="action" name="action" value="<?php echo $this->_currentAction;?>">
+						<input type="hidden" id="action_id" name="action_id" value="<?php echo $this->_currentAction;?>">                                          
+						<input type="hidden" id="id" name="id" value="<?php echo $this->_record['id']; ?>">
+						<div id="error_div" name="error_div" style="color: red;font-weight: bold;"></div>    
+						<?php                                    
+						if(count($this->_showAttributes)>0)
+						{
+							foreach($this->_showAttributes as $FieldName)
+							{
+								?>
+								<div class="control-group" id="row_<?php echo $FieldName; ?>">
+									<lable class="control-label">
+										<span id="label_<?php echo $FieldName; ?>"><?php echo $this->getLabel($FieldName); ?></span>
+										<?php 
+										$display="none";
+										if(in_array($FieldName,$mandotoryAttributes))
+										{
+											$display="display";
+										}
+										?>
+										<span id="req_<?php echo $FieldName; ?>" style="display:<?php echo $display; ?>" class="">
+											<img src="<?php echo $this->_websiteAdminUrl; ?>img/required_field.gif">
+										</span>
+									</lable>
+									<div class="control">
+										<div class="controls" id="value_<?php echo $FieldName; ?>">    
+											<?php
+											try 
+											{
+												$this->loadAttribute($FieldName);
+											} 
+											catch (Exception $ex) 
+											{
+
+											}
+
+											?>
+											<span class="error_message" id="error_<?php echo $FieldName; ?>"></span>
+										</div>
+
+									</div>
+								</div>
+								<?php
+							}
+						}
+						?>
+
+						<div class="form-actions">
+                                                        
+                                                        <input type="hidden" id="parentformNode" name="parentformNode" value="<?php echo $this->_parentNode; ?>" >
+                                                        <input type="hidden" id="parentformkey" name="parentformkey" value="<?php echo $this->_parentColName; ?>" >
+                                                        <input type="hidden" id="parentformvalue" name="parentformvalue" value="<?php echo $this->_parentSelector; ?>" >
+                                                        <input type="hidden" id="noderesult" name="noderesult" value='<?php echo json_encode($this->_record);?>'>
+							<input type="hidden" id="noderelations" name="noderelations" value='<?php echo json_encode($this->_nodeMTORelations);?>'>                                                	
+							<?php
+							if($this->_currentAction!="view")
+							{
+
+							?>
+								<button type="button" id="save" name="save" class="btn btn-small btn-success formsubmit" onclick="return getformsubmit();"> <i class="icon-ok"></i> Save & Continue </button>
+								<button type="button" id="saveandclose" name="saveandclose" class="btn btn-small btn-success formsubmit " onclick="return getformsubmit();"> <i class="icon-ok"></i> Save and Close</button>
+							<?php
+							}
+							?>
+							<button type="button" id="refreshsaveandclose" name="refreshsaveandclose" class="btn btn-small btn-inverse" style="display:none;" onclick="removedisable()" ;=""> <i class="icon-refresh icon-white"></i> Refresh Save and Close</button>
+							<a href="<?php echo $backUrl; ?> ">
+							<button style="margin-left:4px;" type="button" class="btn btn-primary">  <i class="icon-arrow-left"></i> BACK</button>
+							</a>	
+						</div>
+					</form>
+				</div>
+                                <?php
+                                                                          
+                                        foreach($this->_nodeOTMRelations as $childNode=>$linkColName)
+                                        {
+                                            ?>                                       
+                                            <div class="tab-pane" id="tab_<?php echo $childNode; ?>">
+                                                <div id="total_<?php echo $childNode; ?>" name="total_<?php echo $childNode; ?>" >
+                                                    <form id="result_<?php echo $childNode; ?>" name="result_<?php echo $childNode; ?>" >
+                                                    <input type="hidden" id="action_id" name="action_id" value="admin">			
+                                                            <input type="hidden" id="multiedit" name="multiedit" value="0">
+                                                            <input type="hidden" id="parentaction" name="parentaction" value="<?php echo $this->_currentAction;?>">
+                                                            <input type="hidden" id="parentnode" name="parentnode" value="<?php echo $this->_nodeName; ?>">
+                                                            <input type="hidden" id="parentidvalue" name="parentidvalue" value="<?php echo $this->_currentSelector;?>">
+                                                    </form>
+                                                </div>
+                                            </div>                                            
+                                            <?php
+                                        }
+                                    
+                                ?>
+                            </div>    
+			</div>
+		</div>
+	</div>
+    </div>
 </div>

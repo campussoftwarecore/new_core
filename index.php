@@ -1,8 +1,8 @@
 <?php  
     error_reporting(0);
     include_once 'Boostrap.php'; 
-    //$ch=new Core_Cache_Refresh();
-    //$ch->refreshCache();
+    $ch=new Core_Cache_Refresh();
+    $ch->setRelations();
     $extension=substr($_REQUEST['reditectpath'], -3);     
     if($extension==".js" || $extension=="css")
     {
@@ -27,7 +27,10 @@
     $methodType="REQUEST";
     try
     {
-        $np=new Core_Model_AdminSettings($_REQUEST,$_FILES);        
+        $np=new Core_Model_AdminSettings($_REQUEST,$_FILES); 
+        $parentNode=$np->_parentNode;
+        $parentValue=$np->_parentValue;
+        $parentAction=$np->_parentAction;
         $currentNode=$np->_currentNode;  
         $currentAction=$np->_currentAction;
         $currentModule=$np->_nodeDetails['module'];
@@ -61,14 +64,15 @@
         if($currentNode!="")
         {  
             $node=CoreClass::getController($currentNode,$currentModule,$action);        
-           
             $node->setActionName($action);
+            $node->setParentNode($parentNode);
+            $node->setParentValue($parentValue);
+            $node->setParentAction($parentAction);
             $node->setSurrentSelector($currentSelector);
             $node->setMethodType($methodType);
             $node->setRequestedData($_REQUEST);
             $node->setFilesData($_FILES);
-            $functionName=$action."Action";
-            
+            $functionName=$action."Action";           
             if(method_exists($node,$functionName))
             {
                 $node->$functionName();

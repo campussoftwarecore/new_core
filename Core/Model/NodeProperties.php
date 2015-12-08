@@ -41,18 +41,18 @@ class Core_Model_NodeProperties
     public function getCurrentProfilePermission($profile_id="ROOT")
     {
         $wp=new Core_WebsiteSettings();    
-		try
-		{
-			$filename=$wp->documentRoot."Var/".$wp->identity."/profileacess.json";
-			$fp=fopen($filename,"r");
-			$filecontent= fread($fp,filesize($filename));
-			fclose($fp);
-			return json_decode($filecontent,true)[$profile_id];
-		}
-		catch(Exception $e) 
+        try
+        {
+                $filename=$wp->documentRoot."Var/".$wp->identity."/profileacess.json";
+                $fp=fopen($filename,"r");
+                $filecontent= fread($fp,filesize($filename));
+                fclose($fp);
+                return json_decode($filecontent,true)[$profile_id];
+        }
+        catch(Exception $e) 
         {
             $e->getMessage();
-			return false;
+            return false;
         }
     }
     public function getCurrentProfilePermissionNodeAction()
@@ -97,6 +97,6 @@ class Core_Model_NodeProperties
         $fp=fopen($filename,"r");
         $filecontent=  fread($fp,filesize($filename));
         return json_decode($filecontent,true)[$action];
-    }    
-	
+    }  
+    
 }

@@ -29,8 +29,13 @@ class Modules_CoreDevelopmentsettings_Controllers_CoreRegisternode extends Core_
     }
     public function coreNodeSettingsCoreRegisternodeIdFilter($param) 
     {
-        //return $this->_nodeName.".is_module!='1'";   
+        return $this->_nodeName.".is_module!='1'";   
     }
-    
+    public function coreRegisternodeAfterDataUpdate()
+    {
+        $cache=new Core_Cache_Refresh();
+        $cache->nodeFiles();
+        return TRUE;        
+    }
     
 }

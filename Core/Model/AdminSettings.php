@@ -1,5 +1,5 @@
 <?php
-class Core_Model_AdminSettings extends Core_Model_Node
+class Core_Model_AdminSettings 
     {
         public $_requestedData;
         public $_currentAction=NULL;
@@ -26,13 +26,26 @@ class Core_Model_AdminSettings extends Core_Model_Node
             $this->_filesData=$filesData;            
             if(isset($this->_requestedData['reditectpath']))
             {
-                $list=explode("/",$this->_requestedData['reditectpath']);                
+                $list=explode("/",$this->_requestedData['reditectpath']);    
+                             
                 $this->_currentNode=$list['0'];
                 $this->_currentAction=$list['1'];
                 $this->_currentSelector=$list['2'];
                 $this->_parentNode=$list['3'];
                 $this->_parentAction=$list['4'];
                 $this->_parentValue=$list['5'];  
+                if(Core::keyInArray("parentnode", $this->_requestedData))
+                {
+                    $this->_parentNode=$this->_requestedData['parentnode'];
+                }
+                if(Core::keyInArray("parentidvalue", $this->_requestedData))
+                {
+                    $this->_parentValue=$this->_requestedData['parentidvalue'];
+                }
+                if(Core::keyInArray("parentaction", $this->_requestedData))
+                {
+                    $this->_parentAction=$this->_requestedData['parentaction'];
+                }
                 $np = new Core_Model_NodeProperties();
                 $np->setNode($this->_currentNode);
                 $this->_nodeDetails=$np->getNodeDetails();

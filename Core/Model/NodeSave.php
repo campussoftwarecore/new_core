@@ -68,7 +68,7 @@ class Core_Model_NodeSave extends Core_Model_Settings
             $db->buildInsert();
         }
         $db->executeQuery($query);
-       
+        return $this->_tableFieldWithData[$this->_pkName];
     }
     //put your code here
 }

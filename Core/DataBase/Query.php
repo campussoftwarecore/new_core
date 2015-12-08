@@ -91,7 +91,16 @@
             }
             if(count($fieldscount)==1)
             {
-                $selectColumnName=$this->tablealias.".".$selectColumnName;
+                
+                if(strpos($selectColumnName,".")>0)
+                {
+                    $selectColumnName=$selectColumnName;
+                }
+                else
+                {
+                    $selectColumnName=$this->tablealias.".".$selectColumnName;
+                }
+                
             }                
             $this->selectedFieldName=$this->selectedFieldName.$selectColumnName;     
             

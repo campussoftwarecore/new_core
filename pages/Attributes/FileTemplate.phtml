@@ -1,10 +1,11 @@
-<div class="control" id="value_user_image">
+<div class="control" id="value_<?php echo $this->_idName;?>">
     <a href="javascript: void(0);" target="_center" onclick="return popup('http://localhost/smartcode/uploads/smartcode/userimages/1426309871_nature.jpg','notes')">
         <img src="uploads/smartcode/userimages/small_1426309871_nature.jpg" style=" max-width: 250px; max-width: 200px;">
     </a>
-    <div class="checker" id="uniform-check_user_image">
+    <div class="checker" id="uniform-check_<?php echo $this->_idName;?>">
         <span><input type="checkbox" name="check_user_image" id="check_user_image" value="1" style="opacity: 0;"></span>
-    </div> Remove File<input type="file" name="user_image" id="user_image" value="">
-    <span class="control" id="error_user_image">
+    </div> Remove File<input type="file" name="<?php echo $this->_idName;?>" id="<?php echo $this->_idName;?>" value="<?php echo $this->_Value; ?>">
+    <span class="control" id="error_<?php echo $this->_idName;?>">
         
-    </span></div>
+    </span>
+</div>

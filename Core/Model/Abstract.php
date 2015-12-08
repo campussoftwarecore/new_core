@@ -2,6 +2,10 @@
 class Core_Model_Abstract extends Core_Pages_PageLayout
 {
     public $_nodeName;
+    public $_parentNode;
+    public $_parentSelector;
+    public $_parentAction;
+    public $_parentColName;
     public $_nodeProperties;
     public $_currentNodeModule;
     public $_currentAction;
@@ -10,18 +14,35 @@ class Core_Model_Abstract extends Core_Pages_PageLayout
     public $_showAttributes=array(); 
     public $_collections=array();
     public $_tableName=NULL;
-    public $_nodeRelations=array();   
+    public $_nodeMTORelations=array();   
     public $_NodeFieldAttributes=array();
     public $_NodeFieldsList=array();
+    public $_nodeMOTORelations=array(); 
+    public $_nodeOTMRelations=array(); 
     
     public function setNodeName($nodename) 
     {
         $this->_nodeName=$nodename;
-        $this->_nodename=$nodename;
-        $this->getModuleName();
-
-        $this->getAdminSettingsData();            
-
+        $this->getModuleName();       
+        $this->getAdminSettingsData();
+    }
+    public function setParentNode($parentNode)
+    {
+        $this->_parentNode=$parentNode;  
+        $np=new Core_Model_NodeRelations();
+        $np->setNode($this->_parentNode);
+        $np->setParentNode($this->_nodeName);
+        $this->_parentColName=$np->getParentColName();         
+    }
+    public function setParentValue($parentValue)
+    {
+        $this->_parentSelector=$parentValue;        
+    }
+    public function setParentAction($parentAction)
+    {
+        $this->_parentAction=$parentAction;
+        $this->refreshNodeRelations();
+        
     }
     public function setActionName($action) 
     {
@@ -186,8 +207,14 @@ class Core_Model_Abstract extends Core_Pages_PageLayout
         }        
         
         $nr=new Core_Model_NodeRelations();
-        $nr->setNode($this->_nodeName);
-        $this->_nodeRelations=$nr->getCurrentNodeRelation();
+        $nr->setNode($this->_nodeName);        
+        $this->_nodeMTORelations=$nr->getCurrentNodeRelation();
+        if($this->_parentNode)
+        {
+            //$this->_nodeMTORelations=  array_merge(array($this->_parentColName=>$this->_parentNode),$this->_nodeMTORelations);
+        }        
+        $this->_nodeOTORelations=$nr->getCurrentNodeOneToOneRelation();
+        $this->_nodeOTMRelations=$nr->getCurrentNodeOneToManyRelation();
     }
     function setNodeFeildAttribute($FieldList,$type)
     {
@@ -199,5 +226,12 @@ class Core_Model_Abstract extends Core_Pages_PageLayout
         {
             $this->_NodeFieldAttributes[$FieldName]=$type;
         }
+    }
+    public function refreshNodeRelations()
+    {       
+        if($this->_parentNode)
+        {
+            $this->_nodeMTORelations=  array_merge(array($this->_parentColName=>$this->_parentNode),$this->_nodeMTORelations);
+        }        
     }
 }

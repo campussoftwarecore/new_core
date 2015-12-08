@@ -1,0 +1,95 @@
+<form id="accessrights" name="accessrights" action="http://localhost/smartcode/modules/users/access.php" method="POST">   
+   <input type="hidden" id="parent_id" name="parent_id" value="profile_id">
+   <input type="hidden" id="profile_id" name="profile_id" value="SA">
+   <input type="hidden" id="node" name="node" value="access"></a>
+   <div class="actionslist"><a href="javascript:void(0);">
+      </a><a href="javascript:void(0);" class="btn btn-mini btn-primary" onclick="checkaction('userpermissionnodes',true,'class');">Check All</a>
+      <a href="javascript:void(0);" class="btn btn-mini btn-warning" onclick="checkaction('userpermissionnodes',false,'class');">Un Check All</a>
+   </div>
+    <?php
+       // echo "<pre>"; print_r($this->_profileAccess); echo "</pre>";
+        if(count($this->_profileAccess->_rootModules)>0)
+        {
+            foreach($this->_profileAccess->_rootModules as $rootmoduledata)
+            {
+                if(key_exists($rootmoduledata['nodename'],$this->_profileAccess->_moduleList))
+                {
+                    $root=$rootmoduledata['nodename'];
+                    $rootdata=$this->_profileAccess->_menuItems[$root];
+                    $i=1;
+                    ?>
+                     <div class="accordion collapse" id="accordion_<?php echo $root; ?>" style="height: auto;">
+                        <div class="accordion-group">
+                           <div class="accordion-heading" style="text-align: center;">
+                              <a class="accordion-toggle collapsed" data-toggle="collapse" data-parent="#accordion3" href="#collapse_<?php echo $root; ?>">
+                              <?php echo $this->_profileAccess->_nodeDisplay[$root]; ?>
+                              </a>
+                           </div>
+                            <div id="collapse_<?php echo $root; ?>" class="accordion-body collapse" style="height:0;">
+                                <div class="accordion-inner">
+                                    <?php
+                                    foreach($rootdata as $moduledisplay=>$moduledata)
+                                    {
+                                        
+                                    
+                                    ?>
+                                   <div class="accordion-group">
+                                      <div class="accordion-heading">
+                                         <a class="accordion-toggle collapsed" data-toggle="collapse" data-parent="#accordion_<?php echo $root; ?>_<?php echo $moduledisplay; ?>" href="#collapse_<?php echo $root; ?>_<?php echo $moduledisplay; ?>">
+                                         <?php echo $this->_profileAccess->_nodeDisplay[$moduledisplay]; ?>
+                                         </a>
+                                      </div>
+                                      <div id="collapse_<?php echo $root; ?>_<?php echo $moduledisplay; ?>" class="accordion-body collapse" style="height:auto;">
+                                         <div class="accordion-inner">
+                                            <?php
+                                                foreach($moduledata as $module=>$nodedata)
+                                                {
+                                                    foreach($nodedata as $node=>$action)
+                                                    {
+                                                
+                                            ?>                                                
+                                            <div class="accordion-group">
+                                               <div class="accordion-heading">
+                                                  <a class="accordion-toggle collapsed" data-toggle="collapse" data-parent="#accordion<?php echo $root."_".$moduledisplay."_".$node; ?>" href="#collapse<?php echo $root."_".$moduledisplay."_".$node; ?>">
+                                                  <?php echo $this->_profileAccess->_nodeDisplay[$node]; ?>
+                                                  </a>
+                                               </div>
+                                               <div class="actionslist">
+                                                  <a href="javascript:void(0);" class="btn btn-mini btn-primary" onclick="checkaction('<?php echo $node; ?>',true);">Check All</a>
+                                                  <a href="javascript:void(0);" class="btn btn-mini btn-warning" onclick="checkaction('<?php echo $node; ?>',false);">Un Check All</a>
+                                               </div>
+                                               <div id="collapse<?php echo $root."_".$moduledisplay."_".$node; ?>" class="accordion-body collapse" style="height:auto;">
+                                                  <div class="accordion-inner">
+                                                     <div class="checker" id="uniform-<?php echo $node; ?>_admin"><span><input type="checkbox" class="userpermissionnodes" id="<?php echo $node; ?>_admin" name="<?php echo $node; ?>[]" value="admin" style="opacity: 0;"></span></div>
+                                                     ADMIN
+                                                     <div class="checker" id="uniform-<?php echo $node; ?>_add"><span><input type="checkbox" class="userpermissionnodes" id="<?php echo $node; ?>_add" name="<?php echo $node; ?>[]" value="add" style="opacity: 0;"></span></div>
+                                                     ADD
+                                                     <div class="checker" id="uniform-<?php echo $node; ?>_edit"><span><input type="checkbox" class="userpermissionnodes" id="<?php echo $node; ?>_edit" name="<?php echo $node; ?>[]" value="edit" style="opacity: 0;"></span></div>
+                                                     EDIT
+                                                     <div class="checker" id="uniform-<?php echo $node; ?>_delete"><span><input type="checkbox" class="userpermissionnodes" id="<?php echo $node; ?>_delete" name="<?php echo $node; ?>[]" value="delete" style="opacity: 0;"></span></div>
+                                                     DELETE
+                                                  </div>
+                                               </div>
+                                            </div>  
+                                             <?php
+                                                    }
+                                    
+                                                }
+                                             ?>
+                                         </div>
+                                      </div>
+                                   </div>
+                                    <?php
+                                        }
+                                    ?>
+                                </div>
+                            </div>
+                        </div>
+                     </div>
+                    <?php
+                }
+            }
+        }
+    ?>   
+   <div class="form-actions" style="text-align: center;"><button type="submit" id="saveandclose" name="saveandclose" class="btn btn-small btn-success" onclick="return getformsubmit();"> <i class="icon-ok"></i> Save</button><button style="margin-left:4px;" type="button" class="btn btn-small btn-warning" onclick="history.back();">  <i class=" icon-remove"></i> Cancel</button></div>
+</form>

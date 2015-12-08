@@ -40,7 +40,7 @@ class Core_Controllers_NodeController extends Core_Model_Node
         $this->loadLayout("noActionFound.phtml");
     }
     public function addAction()
-    {
+    {        
         $requestedData=$this->_requestedData;
         if($this->_methodType=="REQUEST")
         {
@@ -63,15 +63,35 @@ class Core_Controllers_NodeController extends Core_Model_Node
                     echo json_encode($output);                   
                 }
                 else
-                {
-                    $nodeSave=new Core_Model_NodeSave();
-                    
-                    $nodeSave->setNode($this->_nodeName);            
+                {                    
+                    $data=array();                  
+                                
                     foreach($this->_showAttributes as $FieldName)
                     {                
-                        $nodeSave->setData($FieldName,$requestedData[$FieldName]);
+                        $fieldNameValue=Core::covertArrayToString($requestedData[$FieldName]);
+                        $data[$FieldName]=$fieldNameValue;                        
                     } 
-                    $nodeSave->save();                    
+                    $data=$this->beforeDataUpdate($data);
+                    $nodeSave=new Core_Model_NodeSave();
+                    $nodeSave->setNode($this->_nodeName);
+                    foreach ($data as $key=>$value)
+                    {
+                        $nodeSave->setData($key,$value);
+                    }
+                    $nodeSave->save();   
+                    $method=Core::covertStringToMethod($this->_nodeName."_afterDataUpdate");
+                    if(Core::methodExists($this, $method))
+                    {
+                        $errorsArray=$this->$method();
+                        if(Core::isArray($errorsArray))
+                        {
+                            $output['status']="error";
+                            $output['errors']=$errorsArray;
+                            $output['redirecturl']=$this->_websiteHostUrl;                 
+                            echo json_encode($output);
+                            exit;
+                        }
+                    }
                     $output=array();
                     $output['status']="success";
                     $output['redirecturl']=$this->_websiteHostUrl;            
@@ -100,8 +120,7 @@ class Core_Controllers_NodeController extends Core_Model_Node
             }
         }
         else
-        {
-            
+        {            
             try
             {
                 $errorsArray=$this->nodeDataValidate("edit",$this);
@@ -114,16 +133,36 @@ class Core_Controllers_NodeController extends Core_Model_Node
                 }
                 else
                 {
-                    $nodeSave=new Core_Model_NodeSave();                    
-                    $nodeSave->setNode($this->_nodeName);
-                    
-                    $nodeSave->setData("id",$requestedData["id"]);
+                    $data=array();                  
+                                
                     foreach($this->_showAttributes as $FieldName)
                     {                
-                        $nodeSave->setData($FieldName,$requestedData[$FieldName]);
+                        $fieldNameValue=Core::covertArrayToString($requestedData[$FieldName]);
+                        $data[$FieldName]=$fieldNameValue;                        
                     } 
-                    
-                    $nodeSave->save();        
+                    $data=$this->beforeDataUpdate($data);
+                    $nodeSave=new Core_Model_NodeSave();
+                    $nodeSave->setNode($this->_nodeName);
+                    $nodeSave->setData("id",$requestedData["id"]);
+                    foreach ($data as $key=>$value)
+                    {
+                        $nodeSave->setData($key,$value);
+                    }
+                    $output=$nodeSave->save();
+                    $method=Core::covertStringToMethod($this->_nodeName."_afterDataUpdate");                    
+                  
+                    if(Core::methodExists($this, $method))
+                    {
+                        $errorsArray=$this->$method();
+                        if(Core::isArray($errorsArray))
+                        {
+                            $output['status']="error";
+                            $output['errors']=$errorsArray;
+                            $output['redirecturl']=$this->_websiteHostUrl;                 
+                            echo json_encode($output);
+                            exit;
+                        }
+                    }                        
                     $output=array();
                     $output['status']="success";
                     $output['redirecturl']=$this->_websiteHostUrl;            
@@ -173,12 +212,14 @@ class Core_Controllers_NodeController extends Core_Model_Node
     }
     public function descriptorAction()
     {
-        $rquestedData=$this->_requestedData;
+        $requestedData=$this->_requestedData;
+        //echo "<pre>"; print_r($requestedData); echo "</pre>";
         $sourceNode=$this->_requestedData['node'];
         $DestinationNode=$this->_requestedData['destinationNode'];         
         $FieldName=$this->_requestedData['idname'];  
 	$noderesult=$this->_requestedData['noderesult'];
         $methodName=CoreClass::getMethod($this,"descriptorAction",$sourceNode,$FieldName); 
+        $idName=$this->_requestedData['idname'];  
         
         if($methodName) 
         {           
@@ -195,8 +236,8 @@ class Core_Controllers_NodeController extends Core_Model_Node
                 $noderesult=array();
             }
             $defaultValue=$noderesult[$FieldName];
-            $readonlyAttributes=$this->readonlyAttributes($rquestedData['action']);
-            $sourceNodeObj=CoreClass::getModel($sourceNode, $rquestedData['action']);           
+            $readonlyAttributes=$this->readonlyAttributes($requestedData['action']);
+            $sourceNodeObj=CoreClass::getModel($sourceNode, $requestedData['action']);           
             $sourceNodeObj->setNodeName($sourceNode);            
             $sourceNodeStructure=$sourceNodeObj->_currentNodeStructure;
             $onchangeEvents=array();
@@ -205,26 +246,35 @@ class Core_Controllers_NodeController extends Core_Model_Node
             {
                 $onchangeEvents=$sourceNodeObj->$eventmethod();
             }
+            $parentCol=0;
+            if(Core::keyInArray("parentformNode", $requestedData))
+            {
+                if($requestedData['parentformvalue']!="" && $idName==$requestedData['parentformkey'])
+                {
+                    $defaultValue=$requestedData['parentformvalue'];
+                    $parentCol=1;
+                }
+            }
             $multiSelectedValues=array();
             if(Core::isArray($sourceNodeStructure))
             {            
-                $readonlyAttributes=Core::covertStringToArray($sourceNodeStructure['readonly_'.$rquestedData['action']]);   
-                $mandotatoryAttributes=Core::covertStringToArray($sourceNodeStructure['mandotatory_'.$rquestedData['action']]);   
+                $readonlyAttributes=Core::covertStringToArray($sourceNodeStructure['readonly_'.$requestedData['action']]);   
+                $mandotatoryAttributes=Core::covertStringToArray($sourceNodeStructure['mandotatory_'.$requestedData['action']]);   
                 $multiSelectedValues=Core::covertStringToArray($sourceNodeStructure['multivalues']);   
             }
             $db=new Core_DataBase_ProcessQuery();
             $db->setTable($this->_tableName, $this->_nodeName);
-            $db->addFieldArray(array($this->_nodeName.".".$this->_primaryKey=>"pid"));
+            $db->addField($this->_nodeName.".".$this->_primaryKey." as pid");
 
             if(in_array($this->_descriptor,$this->_nodeRelations))
             {
 
             }
-            else 
+            //else 
             {
                 $db->addFieldArray(array($this->_nodeName.".".$this->_descriptor=>"pds"));
             }
-            if(in_array($FieldName,$readonlyAttributes) || $rquestedData['action']=='view')
+            if(in_array($FieldName,$readonlyAttributes) || $requestedData['action']=='view' || $parentCol==1)
             {
                 $defaultValue_list=Core::covertStringToArray($defaultValue,"|");
                 $db->addWhere("LOWER(".$this->_nodeName.".".$this->_primaryKey.") in ('".implode("','",$defaultValue_list)."')");
@@ -236,11 +286,11 @@ class Core_Controllers_NodeController extends Core_Model_Node
                 $db->addWhere($this->$methodName());
             }
             $db->addOrderBy($this->_descriptor);
-            $db->buildSelect();        
+            $db->buildSelect(); 
             $result=$db->getRows();        
             try
             {       
-                $idName=$this->_requestedData['idname'];            
+                          
                 if(in_array($idName,  $multiSelectedValues))
                 {
                     $attributeType="checkbox";
@@ -248,8 +298,8 @@ class Core_Controllers_NodeController extends Core_Model_Node
                 else 
                 {
                     $attributeType="select";
-                }       
-
+                }    
+                
                 $attributeDetails=new Core_Attributes_LoadAttribute($attributeType);				
                 $attributeClass=Core_Attributes_.$attributeDetails->_attributeName;
                 $attribute=new $attributeClass;
@@ -262,7 +312,7 @@ class Core_Controllers_NodeController extends Core_Model_Node
                 {
                     $attribute->setRequired();
                 }            
-                if(in_array($FieldName,$readonlyAttributes) || $rquestedData['action']=='view')
+                if(in_array($FieldName,$readonlyAttributes) || $requestedData['action']=='view' || $parentCol==1)
                 {                
                     $attribute->setReadonly();
                 }
@@ -277,15 +327,15 @@ class Core_Controllers_NodeController extends Core_Model_Node
     }
 
     public function gridContent()
-    {        
+    {       
+        
         $this->setSingleActions();  
         $this->setIndividualActions();
         $this->getCollection();
         $this->loadLayout("maingrid.phtml");
     }    
     public function adminRefreshAction()
-    {
-        
+    {        
         $this->setSingleActions();  
         $this->setIndividualActions();
         $this->getCollection();
@@ -331,7 +381,8 @@ class Core_Controllers_NodeController extends Core_Model_Node
                     $db->addWhere($fieldName."='".$requestedData[$fieldName]."'");
                     $db->addWhere($this->_primaryKey."!='".$nodeResult[$this->_primaryKey]."'");
                     
-                    $db->buildSelect();                    
+                    $db->buildSelect();       
+                    
                     $existingRecord=$db->getRow();
                     if(count($existingRecord)>0)
                     {
@@ -341,6 +392,144 @@ class Core_Controllers_NodeController extends Core_Model_Node
             }
         }        
         return $errorsArray;
+    }
+    public function beforeDataUpdate($data)
+    {        
+        $node=$this->_nodeName;
+        $node_properties=$this->_currentNodeStructure;
+        $requestedData=$this->_requestedData;
+        $filesData=$this->_filesData;
+        $action=$this->_currentAction;
+        $table=$this->_tableName;
+        $fileattribute=$node_properties['file'];
+        $fileattribute_list=array();
+        $filesettings_array=array();
+        $file_types=array();
+        $existingResult=Core::convertJsonToArray($requestedData['noderesult']);
+        if(Core::keyInArray("parent_level",$this->_NodeFieldsList))
+        {
+            $parent_level=1;
+            if($requestedData['parent']!="")
+            {
+                $db=new Core_DataBase_ProcessQuery();
+                $db->setTable($table);
+                $db->addField("parent_level");
+                $db->addWhere($table.".".$this->_primaryKey.="'".$requestedData['parent']."'");
+                $parent_level=$db->getValue()+1;
+            }
+            $data['parent_level']=$parent_level;
+        }
+        if($fileattribute!="")
+        {
+            $db=new Core_DataBase_ProcessQuery();
+            $db->setTable("core_file_types");
+            $db->addField("short_code");
+            $db->addWhere("core_file_types.resize='1'");            
+            $file_types=$db->getRows("short_code","short_code");
+            
+            $fileattribute_list=Core::covertStringToArray($fileattribute);            
+            $db=new Core_DataBase_ProcessQuery();
+            $db->setTable("core_node_filetypes");
+            $db->addFieldArray(array("core_node_filetypes.colmanname"=>"colmanname"));
+            $db->addFieldArray(array("core_cms_image_settings.name"=>"tempname"));
+            $db->addFieldArray(array("core_cms_image_settings.witdthvalue"=>"witdthvalue"));
+            $db->addFieldArray(array("core_cms_image_settings.heightvalue"=>"heightvalue"));
+            $db->addJoin("core_cms_image_settings_id", "core_cms_image_settings", "core_cms_image_settings", "core_node_filetypes.core_cms_image_settings_id like concat('%',core_cms_image_settings.id,'%')");
+            $db->addWhere("core_node_filetypes.core_node_settings_id='".$this->_nodeName."'");
+            $db->buildSelect();
+            
+            $filesettings=$db->getRows();
+            if(count($filesettings)>0)
+            {
+                foreach($filesettings as $fs)
+                {
+                        $filesettings_array[$fs['colmanname']][$fs['tempname']]=$fs;
+                }
+            }	    
+        }      
+        if(count($fileattribute_list)>0)
+        {
+            foreach($fileattribute_list as $key)
+            {
+
+                if(Core::keyInArray($key,$filesData))
+                {
+                    
+                        $columnnamedata=$filesData[$key];
+                        if($columnnamedata['name']!="")
+                        {
+                            $db=new Core_DataBase_ProcessQuery();
+                            $db->setTable("core_node_filetypes");
+                            $db->addField("core_cms_uploadfolders_id");
+                            $db->addWhere("core_node_filetypes.core_node_settings_id='".$node."' and core_node_filetypes.colmanname='".$key."'");
+                            $uploadfolder=$db->getValue();
+
+                            $uploadfilepath=$columnnamedata['tmp_name'];
+                            $list=explode(".",$columnnamedata['name']);
+                            $extentioncount=count($list);
+                            $extention=$list[$extentioncount-1];
+                            $filename=strtotime(date('Y-m-d h:i:s'))."_".str_replace(array(" ","_"),array("",""),$list['0'].".".strtolower($extention));
+                            $data[$key]=$filename;                            
+                            $uploadfolder=Core::createFolder($uploadfolder, "U");
+                            $filepath.=$uploadfolder.$filename;
+                            try
+                            {
+                                move_uploaded_file($uploadfilepath,$filepath);		    
+                            }
+                            catch (Exception $ex)
+                            {
+                                Core::Log($ex->getMessage());
+                            }
+                            if(key_exists(strtolower($extention),$file_types))
+                            {
+                                if(key_exists($key,$filesettings_array))
+                                {	    
+                                    $imagesettings=$filesettings_array[$key];
+                                    if(count($imagesettings)>0)
+                                    {
+                                            foreach($imagesettings as $tempname=>$tempdata)
+                                            {                                                    
+                                                $thumbfile=$uploadfolder.$tempname."_".$filename;                                                    			
+                                                $params = array(
+                                                'width' => $tempdata['witdthvalue'],
+                                                'height' => $tempdata['heightvalue'],
+                                                'aspect_ratio' => false,
+                                                'crop' => false);
+                                                img_resize($filepath, $thumbfile, $params);
+                                            }
+                                    }
+                                }
+                            }		    		    		    
+                        }
+                        else
+                        {
+                            if($this->_currentAction=='edit')
+                            {
+                                if($requestedData['check_'.$key]==1)
+                                {
+
+                                }
+                                else   
+                                {
+                                    $fileName=$existingResult[$key];
+                                    $data[$key]=$fileName;
+                                }  
+                            }
+                        }
+                }  
+                else 
+                {
+                    if($this->_currentAction=='edit')
+                    {
+                        $fileName=$existingResult[$key];
+                        $data[$key]=$fileName;
+                    }
+                }
+
+            }  
+        }
+        
+        return $data;
     }
 }
 ?>

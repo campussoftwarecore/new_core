@@ -69,8 +69,9 @@
             $output=$db->executeQuery($this->query);
             $tempresult=$output['result'];
             $i=0;
+            $this->result=NULL;
             while($rs=mysqli_fetch_assoc($tempresult))
-            {
+            {               
                 foreach ($rs as $key=>$value)
                 {
                     $this->result=$value;

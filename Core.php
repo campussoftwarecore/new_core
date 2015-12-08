@@ -31,14 +31,24 @@ class Core
         switch ($type)
         {
             case    "L" :
-                            $folderName="Var/Errors/Core/";
+                            $folderName="Var/Errors/".$wp->identity;
+                            break;
+            case    "U" :
+                            if($folderName)
+                            {
+                                $folderName="uploads/".$wp->identity."/".$folderName;
+                            }
+                            else
+                            {
+                               $folderName="uploads/".$wp->identity;
+                            }
                             break;
             default     :
                             break;
         }
         $tempPath_list=explode("/", $folderName);
         $i=0;
-        $tempFolder=$filename=$wp->documentRoot;
+        $tempFolder=$wp->documentRoot;
         while($i<count($tempPath_list))
         {
             $tempFolder.=$tempPath_list[$i];
@@ -61,6 +71,11 @@ class Core
         {
             return false;
         }
+    }
+    static function covertStringToMethod($string)
+    {
+        $method=lcfirst(str_replace(" ","",ucwords(str_replace("_", " ",$string))));        
+        return $method;
     }
     static  function methodExists($object,$method)
     {
@@ -116,6 +131,19 @@ class Core
         if($stringNeedExplode)
         {
             $output= explode($delimiter, $stringNeedExplode);
+        }
+        return $output;
+    }
+    static function covertArrayToString($arrayNeedTobeString,$delimiter=NULL)
+    {
+        if(!$delimiter)
+        {
+            $delimiter="|";
+        }
+        $output=$arrayNeedTobeString;
+        if(Core::isArray($arrayNeedTobeString))
+        {
+            $output= implode($delimiter, $arrayNeedTobeString);
         }
         return $output;
     }
@@ -185,5 +213,9 @@ class Core
           }
         }
         return $elements[0];  // the single top-level element
+    }
+    static function convertJsonToArray($string)
+    {
+        return json_decode($string,1);
     }
 }

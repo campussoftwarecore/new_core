@@ -6,7 +6,8 @@
         public $websiteAdminUrl=NULL;
         public $documentRoot=NULL;
         public $identity=NULL;
-        public $themeName=NULL;
+        public $themeName=NULL;        
+        public $documentRootUpload=NULL;
                 
         function __construct() 
         {
@@ -16,6 +17,7 @@
             $this->identity="Core";
             $this->themeName="default";
             $this->rpp="10";
+            $this->documentRootUpload="uploads/".$this->identity;
         }
     }
 ?>

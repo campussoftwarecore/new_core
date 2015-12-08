@@ -10,8 +10,9 @@
         public $_nodeLink=array();
         public function __construct() 
         {
+            global $currentProfileCode;
             $np=new Core_Model_NodeProperties();
-            $this->_accessbleNode=$np->getCurrentProfilePermission();            
+            $this->_accessbleNode=$np->getCurrentProfilePermission($currentProfileCode);            
         }       
         public function buildMenu()
         {

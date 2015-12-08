@@ -113,4 +113,11 @@ class Modules_CoreDevelopmentsettings_Controllers_CoreNodeSettings extends Core_
         }
         $attribute->loadAttributeTemplate($attributeType,$FieldName);
     }
+    public function coreNodeSettingsAfterDataUpdate()
+    {
+        $cache=new Core_Cache_Refresh();
+        $cache->nodeStructure();
+        $cache->profilePrivileges();
+        return TRUE;  
+    }
 }
