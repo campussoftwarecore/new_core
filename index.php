@@ -1,31 +1,21 @@
 <?php  
     error_reporting(0);
-    include_once 'Boostrap.php'; 
-   
+    include_once 'Boostrap.php';     
+    $wp=new Core_WebsiteSettings();
     $extension=substr($_REQUEST['reditectpath'], -3);     
     if($extension==".js" || $extension=="css")
     {
        exit; 
     }
+    session_start();
     global $globalnode_settings_details;
     global $nodefiledetails;    
     if($_REQUEST['logout'])
     {
-        unset($_SESSION);
         session_destroy();
-        $page=new Core_Pages_PageLayout();
-        $page->loadLayout("login.phtml");
-        exit;
+        Core::redirectUrl("login.php");
     }    
-    global $currentNode;  
-    $session=new Core_Session("ramesh");
-    $session->getSessionMaganager();
-    $header=true;
-    $navigation=true;
-    $footer=true;
-    $currentProfileCode="ROOT";
-    $methodType="REQUEST";
-   
+    global $currentNode;
     try
     {
         $np=new Core_Model_AdminSettings($_REQUEST,$_FILES);
@@ -38,6 +28,13 @@
         $currentModuleDisplay=$np->_nodeDetails['moduledisplay'];
         $currentRootModule=$np->_nodeDetails['rootmodule'];
         $currentSelector=$np->_currentSelector;
+        $methodType=$np->_methodType;
+        
+        $currentProfileCode=$_SESSION[$wp->identity]['profile_id'];
+        $header=true;
+        $navigation=true;
+        $footer=true;
+        
         if($currentAction!="")
         {
             $action=$currentAction;
@@ -46,9 +43,8 @@
         {
             $action="admin";
         }       
-        if(count($_POST)>0)
+        if($methodType=="POST")
         {            
-           $methodType="POST";
            $header=false;
            $navigation=false;
            $footer=false;
@@ -56,6 +52,7 @@
         
         if($header)
         {
+            
             $page=new Core_Pages_HeaderPage();
         }
         if($navigation)
@@ -64,7 +61,7 @@
         }     
         if($currentNode!="")
         {  
-            $node=CoreClass::getController($currentNode,$currentModule,$action);        
+            $node=CoreClass::getController($currentNode,$currentModule,$action);                    
             $node->setActionName($action);
             $node->setParentNode($parentNode);
             $node->setParentValue($parentValue);
@@ -73,6 +70,7 @@
             $node->setMethodType($methodType);
             $node->setRequestedData($_REQUEST);
             $node->setFilesData($_FILES);
+            $node->checkSession();
             $functionName=$action."Action";           
             if(method_exists($node,$functionName))
             {
@@ -85,7 +83,7 @@
             
         }
         else
-        {
+        {           
             include_once 'pages/home.phtml';
 
         }

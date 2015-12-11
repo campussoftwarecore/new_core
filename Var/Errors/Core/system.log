@@ -1,14 +1,9 @@
  
- SELECT rnd.nodename
-                                        ,rnd.icon
-                                        ,rnd.menu
-                                        ,rnd.is_module
-                                        ,rnd.displayvalue
-                                        ,if(rnd.core_module_id is null,rnd.nodename,rnd.core_module_id) as core_module_id
-                                        ,if(rnd.core_module_display_id is null,rnd.nodename,rnd.core_module_display_id) as core_module_display_id
-                                        ,if(rnd.core_root_module_id is null,rnd.nodename,rnd.core_root_module_id) as core_root_module_id
-                                        ,group_concat(nac.short_code ORDER BY nac.sort_no ASC separator ',') as core_node_actions_id
-                                        ,group_concat(concat(nac.name,'||',nac.short_code) ORDER BY nac.sort_no ASC separator ',') as action_name_code  FROM  core_registernode AS rnd  LEFT JOIN core_node_settings AS ns ON (rnd.nodename=ns.core_registernode_id ) LEFT JOIN core_node_actions AS nac ON ( ns.core_node_actions_id like concat('%','|',nac.short_code,'|','%') 
-                        || ns.core_node_actions_id like concat(nac.short_code,'|','%') 
-                        || ns.core_node_actions_id like concat('%','|',nac.short_code) 
-                        || (ns.core_node_actions_id=nac.short_code)  ) LEFT JOIN core_access AS urac ON ( urac.action like concat('%',nac.short_code,'%') and urac.node=rnd.nodename  ) WHERE  rnd.core_profile_id='ADMIN' || is_module='1' GROUP BY rnd.nodename ORDER BY rnd.is_module DESC ,rnd.sort_value ASC
+ SELECT *  FROM  core_access AS core_access  WHERE  core_access.='' 
+ SELECT *  FROM  core_access AS core_access  WHERE  core_access.='' 
+ SELECT *  FROM  core_access AS core_access  WHERE  core_access.='' 
+ SELECT *  FROM  core_access AS core_access  WHERE  core_access.='' 
+ SELECT *  FROM  core_access AS core_access  WHERE  core_access.='' 
+ SELECT *  FROM  core_access AS core_access  WHERE  core_access.='' 
+ SELECT *  FROM  core_access AS core_access  WHERE  core_access.='' 
+ SELECT *  FROM  core_access AS core_access  WHERE  core_access.=''

@@ -7,6 +7,12 @@ class Core_Pages_PageLayout extends Core_Model_Language
     protected $_themeName=NULL;
     protected $_isFooter=NULL;
     protected $_PagePropties=array();
+    public $_currentNodeName=NULL;
+    
+    public function setCurrentNodeName($nodeName)
+    {
+        $this->_currentNodeName=$nodeName;
+    }
     protected function setTheme($themeName)
     {
         $this->_themeName=$themeName;
@@ -205,30 +211,42 @@ class Core_Pages_PageLayout extends Core_Model_Language
         $this->loadLayout($filename,1);
         return true;
     }
-    public function loadLayout($filename,$duplicateLoad=0)
+    public function loadLayout($filename,$duplicateLoad=0,$returnFile=0)
     {
+        $flag=0;
+        $ws=new Core_WebsiteSettings();            
         
-        $ws=new Core_WebsiteSettings();
-        global $currentnode;        
-        if(file_exists($ws->documentRoot."pages/".$ws->themeName."/".$currentnode."/".$filename))
+        $currentnode=$this->_currentNodeName;
+        if($currentnode)
         {
-            $filename=$ws->documentRoot."pages/".$ws->themeName."/".$currentnode."/".$filename;
+            if(file_exists($ws->documentRoot."pages/".$ws->themeName."/".$currentnode."/".$filename))
+            {
+                $filename=$ws->documentRoot."pages/".$ws->themeName."/".$currentnode."/".$filename;
+                $flag=1;
+            }
+            if(file_exists($ws->documentRoot."pages/".$currentnode."/".$filename) && $flag==0)
+            {
+                $filename=$ws->documentRoot."pages/".$currentnode."/".$filename;
+                $flag=1;
+            }
         }
-        else if(file_exists($ws->documentRoot."pages/".$currentnode."/".$filename))
-        {
-            $filename=$ws->documentRoot."pages/".$currentnode."/".$filename;
-        }
-        else if(file_exists($ws->documentRoot."pages/".$ws->themeName."/".$filename))
+        if(file_exists($ws->documentRoot."pages/".$ws->themeName."/".$filename) && $flag==0)
         {
             $filename=$ws->documentRoot."pages/".$ws->themeName."/".$filename;
+            $flag=1;
         }
-        else if(file_exists($ws->documentRoot."pages/".$filename))
+        if(file_exists($ws->documentRoot."pages/".$filename) && $flag==0)
         {
             $filename=$ws->documentRoot."pages/".$filename;
+            $flag=1;
         } 
         
         if(file_exists($filename))
         {
+            if($returnFile==1)
+            {
+                return $filename;
+            }
             if($duplicateLoad=="0")
             {
                 include_once $filename;

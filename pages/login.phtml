@@ -50,6 +50,7 @@ $wp=new Core_WebsiteSettings();
                   <div class="input-prepend">
                       <span class="add-on"><i class="icon-user"></i></span>
                       <input id="username" name="username" type="text" placeholder="Username" />
+                      <div class="error_message" id="error_username"></div>
                   </div>
               </div>
           </div>
@@ -58,6 +59,7 @@ $wp=new Core_WebsiteSettings();
                   <div class="input-prepend">
                       <span class="add-on"><i class="icon-key"></i></span>
                       <input id="userpassword" name="userpassword" type="password" placeholder="Password" />
+                      <div class="error_message" id="error_userpassword"></div>
                   </div>
                   <div class="mtop10">
                       
@@ -75,32 +77,41 @@ $wp=new Core_WebsiteSettings();
       <input type="button" id="login-btn" class="btn btn-block login-btn" value="Login" onclick="return validatelogin();"/>
     </form>    
     <script type="text/javascript">
-        $("#loginform").submit(function(e){
-            alert('hi');
-        });
+       
       function validatelogin()
       {
+          $(".error_message").html("");
         var formdata = $("form" ).serialize();
 	$.ajax({
 		url : "<?php echo $wp->websiteUrl; ?>core_users/validateLogin",
 		type : "POST",
 		dataType : "html",
 		data : formdata,
-		success : function (html)
+		success : function (responseData)
 		{
-                    $("#error_div").html(html);
-                    return false;
-			if(html!="success")
-			{
-			    alert(html);
-				$("#error_div").html(html)
-				return false;
-			}
-                        else
+                    
+                    var obj = jQuery.parseJSON(responseData)
+                    if(obj.status=='success')
+                    {
+                        window.location.replace(obj.redirecturl);
+                    }   
+                    else
+                    {
+                        var errorsArray=obj.errors;
+                        $.each(errorsArray, function(key, errorMessage) 
                         {
-                          window.location.href = 'index.php';
-                          return true;
-                        }
+                            try
+                            {
+                                var idname="#error_"+key;                                                    
+                                $(idname).html(errorMessage);                                                        
+                            }
+                            catch(e)
+                            {
+                                console.log(e);
+
+                            }
+                        });
+                    }
 		}
 	});
       }

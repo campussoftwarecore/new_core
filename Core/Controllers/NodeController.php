@@ -39,6 +39,10 @@ class Core_Controllers_NodeController extends Core_Model_Node
     {
         $this->loadLayout("noActionFound.phtml");
     }
+    public function checkSession()
+    {
+        $wp=new Core_WebsiteSettings();
+    }
     public function addAction()
     {       
         
@@ -50,6 +54,7 @@ class Core_Controllers_NodeController extends Core_Model_Node
         $requestedData=$this->_requestedData;
         if($this->_methodType=="REQUEST")
         {
+            $this->setCurrentNodeName($this->_nodeName);
             $loadResponse=$this->loadLayout("addform.phtml");
             if($loadResponse==false)
             {
@@ -123,6 +128,7 @@ class Core_Controllers_NodeController extends Core_Model_Node
         {
             
             $this->getRecordLoad();
+            $this->setCurrentNodeName($this->_nodeName);
             $loadResponse=$this->loadLayout("editform.phtml");
             if($loadResponse==false)
             {
@@ -192,6 +198,7 @@ class Core_Controllers_NodeController extends Core_Model_Node
         {
             
             $this->getRecordLoad();
+            $this->setCurrentNodeName($this->_nodeName);
             $loadResponse=$this->loadLayout("viewform.phtml");
             if($loadResponse==false)
             {
@@ -347,6 +354,7 @@ class Core_Controllers_NodeController extends Core_Model_Node
         $this->setSingleActions();  
         $this->setIndividualActions();
         $this->getCollection();
+        $this->setCurrentNodeName($this->_nodeName);
         $this->loadLayout("maingrid.phtml");
     }    
     public function adminRefreshAction()
@@ -354,6 +362,7 @@ class Core_Controllers_NodeController extends Core_Model_Node
         $this->setSingleActions();  
         $this->setIndividualActions();
         $this->getCollection();
+        $this->setCurrentNodeName($this->_nodeName);
         $this->loadLayout("grid.phtml");
     }
 

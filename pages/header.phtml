@@ -133,19 +133,20 @@ $wp=new Core_WebsiteSettings();
                                 {
                                         $root=$rootmoduledata['nodename'];
                                         $rootdata=$menuObject->_menuItems[$root];
-                                        $output.='
+                                        $child=0;
+                                        $output1='
                                         <li class="has-sub ">'; 
-                                        $output.='<a href="javascript:;"  >
+                                        $output1.='<a href="javascript:;"  >
                                                     <div>
                                                         <span class="icon-box">
                                                         <i class="'.$rootmoduledata['icon'].'"></i>'
                                                 . '     </span>'.$menuObject->_nodeDisplay[$root].'</div>
            </a>';
-                                         $output.=' <ul class="sub"  >';
+                                         $output1.=' <ul class="sub"  >';
 
                                                         foreach($rootdata as $moduledisplay=>$moduledata)
-                                                        {
-                                                                $output.='<li class="has-supersub"   name="link_'.$root.'" id="link_'.$root."-".$moduledisplay.'" >
+                                                        {                                                            
+                                                                $output1.='<li class="has-supersub"   name="link_'.$root.'" id="link_'.$root."-".$moduledisplay.'" >
                                                                                        <a href="javascript:;" >
                                                                                         <div>
                                                                                            <span class="icon-box">
@@ -161,24 +162,30 @@ $wp=new Core_WebsiteSettings();
                                                                                                         {
                                                                                                             if($node!=$moduledisplay)
                                                                                                             {
-                                                                                                                $output.='
+                                                                                                                $output1.='
 
         <li>
                 <a  href="'.$menuObject->_nodeLink[$node].'">'.$menuObject->_nodeDisplay[$node].'</a>
         </li>';
+                                                                                                                $child=1;
                                                                                                             }
                                                                                                         }
                                                                                                 }
-                                                                $output.='	
+                                                                $output1.='	
                                                                                         </ul>';
                                                         }						
 
-                                        $output.='		 
+                                        $output1.='		 
                                                         </li>							
                                                   </ul>';							
 
-                                        $output.="
+                                        $output1.="
                                         </li>";
+                                        if($child==1)
+                                        {
+                                            $output.=$output1;
+                                            $output1="";
+                                        }
                                 }
                         }
                 }

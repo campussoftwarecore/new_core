@@ -17,11 +17,14 @@ class Core_Model_AdminSettings
         public $_descriptor=NULL;
         public $_filesData=array();
         public $_nodeProperties=array();
-
+        public $_methodType="REQUEST";
 
         public function __construct($requesteddata,$filesData) 
         {
-            
+            if($_POST)
+            {
+                $this->_methodType="POST";
+            }
             $this->_requestedData=$requesteddata;
             $this->_filesData=$filesData;            
             if(isset($this->_requestedData['reditectpath']))
@@ -57,8 +60,7 @@ class Core_Model_AdminSettings
                 if(Core::keyInArray("parentformAction", $this->_requestedData))
                 {
                     $this->_parentAction=$this->_requestedData['parentformAction'];
-                }
-                
+                }                
                 
                 $np = new Core_Model_NodeProperties();
                 $np->setNode($this->_currentNode);

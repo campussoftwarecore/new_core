@@ -1,5 +1,6 @@
 <?php
-    
+    define("ADMINNAME", "admin");
+    define("ADMINPASS", 'Ramesh');
     class Core_WebsiteSettings
     {
         public $websiteUrl=NULL;
@@ -7,7 +8,7 @@
         public $documentRoot=NULL;
         public $identity=NULL;
         public $themeName=NULL;        
-        public $documentRootUpload=NULL;
+        public $documentRootUpload=NULL;       
                 
         function __construct() 
         {

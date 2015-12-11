@@ -3642,4 +3642,5 @@ ul > li .has-supersub >ul
 .error_message
 {
     color:red;
+    font-size:15px;
 }
