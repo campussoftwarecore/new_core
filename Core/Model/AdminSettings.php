@@ -46,6 +46,20 @@ class Core_Model_AdminSettings
                 {
                     $this->_parentAction=$this->_requestedData['parentaction'];
                 }
+                if(Core::keyInArray("parentformNode", $this->_requestedData))
+                {
+                    $this->_parentNode=$this->_requestedData['parentformNode'];
+                }
+                if(Core::keyInArray("parentformkey", $this->_requestedData))
+                {
+                    $this->_parentValue=$this->_requestedData['parentformkey'];
+                }
+                if(Core::keyInArray("parentformAction", $this->_requestedData))
+                {
+                    $this->_parentAction=$this->_requestedData['parentformAction'];
+                }
+                
+                
                 $np = new Core_Model_NodeProperties();
                 $np->setNode($this->_currentNode);
                 $this->_nodeDetails=$np->getNodeDetails();

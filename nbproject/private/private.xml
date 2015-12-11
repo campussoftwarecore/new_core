@@ -12,7 +12,18 @@
     </editor-bookmarks>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/wamp/www/new_core/js/project/functions.js</file>
+            <file>file:/C:/wamp/www/new_core/pages/grid.phtml</file>
+            <file>file:/C:/wamp/www/new_core/Var/Core/profileacess.json</file>
+            <file>file:/C:/wamp/www/new_core/Core/Controllers/NodeController.php</file>
+            <file>file:/C:/wamp/www/new_core/Core.php</file>
+            <file>file:/C:/wamp/www/new_core/index.php</file>
+            <file>file:/C:/wamp/www/new_core/CoreClass.php</file>
+            <file>file:/C:/wamp/www/new_core/pages/form.phtml</file>
+            <file>file:/C:/wamp/www/new_core/Core/Model/Abstract.php</file>
+            <file>file:/C:/wamp/www/new_core/pages/Attributes/FileTemplate.phtml</file>
+            <file>file:/C:/wamp/www/new_core/Core/Model/AdminSettings.php</file>
+            <file>file:/C:/wamp/www/new_core/Core/Model/Node.php</file>
+            <file>file:/C:/wamp/www/new_core/Modules/CoreDevelopmentsettings/Controllers/CoreNodeSettings.php</file>
         </group>
     </open-files>
 </project-private>

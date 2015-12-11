@@ -1,12 +1,32 @@
-<form id="accessrights" name="accessrights" action="http://localhost/smartcode/modules/users/access.php" method="POST">   
-   <input type="hidden" id="parent_id" name="parent_id" value="profile_id">
-   <input type="hidden" id="profile_id" name="profile_id" value="SA">
-   <input type="hidden" id="node" name="node" value="access"></a>
-   <div class="actionslist"><a href="javascript:void(0);">
+<form id="result_<?php echo $this->_nodeName;?>" name="result_<?php echo $this->_nodeName;?>">   
+    <input type="hidden" id="parentnode" name="parentnode" value="<?php echo $this->_parentNode;?>">
+   <input type="hidden" id="parentidvalue" name="parentidvalue" value="<?php echo $this->_parentSelector;?>">
+   <input type="hidden" id="parentaction" name="parentaction" value="<?php echo $this->_parentAction;?>">
+   <input type="hidden" id="action" name="action" value="save">
+   <input type="hidden" id="node" name="node" value="<?php echo $this->_nodeName;?>">
+   <input type="hidden" id="module" name="module" value="<?php echo $this->_currentNodeModule;?>">
+</form>
+   <form id="<?php echo $this->_nodeName;?>" name="<?php echo $this->_nodeName;?>"> 
+   <input type="hidden" id="parentnode" name="parentnode" value="<?php echo $this->_parentNode;?>">
+   <input type="hidden" id="parentidvalue" name="parentidvalue" value="<?php echo $this->_parentSelector;?>">
+   <input type="hidden" id="parentaction" name="parentaction" value="<?php echo $this->_parentAction;?>">
+   <input type="hidden" id="action" name="action" value="save">
+   <input type="hidden" id="node" name="node" value="<?php echo $this->_nodeName;?>">
+   <input type="hidden" id="module" name="module" value="<?php echo $this->_currentNodeModule;?>">
+   <div id="error_div">
+   </div>
+   <?php
+    if($this->_parentAction!='view')
+    {
+        ?>
+   <div class="actionslist">
+       <a href="javascript:void(0);">
       </a><a href="javascript:void(0);" class="btn btn-mini btn-primary" onclick="checkaction('userpermissionnodes',true,'class');">Check All</a>
       <a href="javascript:void(0);" class="btn btn-mini btn-warning" onclick="checkaction('userpermissionnodes',false,'class');">Un Check All</a>
    </div>
+   
     <?php
+    }
        // echo "<pre>"; print_r($this->_profileAccess); echo "</pre>";
         if(count($this->_profileAccess->_rootModules)>0)
         {
@@ -46,7 +66,12 @@
                                                 {
                                                     foreach($nodedata as $node=>$action)
                                                     {
-                                                
+                                                        $ActionData=$this->_profileAccess->_accessbleNode[$node];
+                                                        $action_name_code=$ActionData['action_name_code'];
+                                                        if($action_name_code)
+                                                        {
+                                                            $action_name_code_list=  explode(",", $action_name_code);
+                                                            
                                             ?>                                                
                                             <div class="accordion-group">
                                                <div class="accordion-heading">
@@ -54,24 +79,56 @@
                                                   <?php echo $this->_profileAccess->_nodeDisplay[$node]; ?>
                                                   </a>
                                                </div>
+                                                <?php
+                                                if($this->_parentAction!='view')
+                                                {
+                                                    ?>
+                                                
                                                <div class="actionslist">
                                                   <a href="javascript:void(0);" class="btn btn-mini btn-primary" onclick="checkaction('<?php echo $node; ?>',true);">Check All</a>
                                                   <a href="javascript:void(0);" class="btn btn-mini btn-warning" onclick="checkaction('<?php echo $node; ?>',false);">Un Check All</a>
                                                </div>
+                                                <?php
+                                                }
+                                                ?>
                                                <div id="collapse<?php echo $root."_".$moduledisplay."_".$node; ?>" class="accordion-body collapse" style="height:auto;">
                                                   <div class="accordion-inner">
-                                                     <div class="checker" id="uniform-<?php echo $node; ?>_admin"><span><input type="checkbox" class="userpermissionnodes" id="<?php echo $node; ?>_admin" name="<?php echo $node; ?>[]" value="admin" style="opacity: 0;"></span></div>
-                                                     ADMIN
-                                                     <div class="checker" id="uniform-<?php echo $node; ?>_add"><span><input type="checkbox" class="userpermissionnodes" id="<?php echo $node; ?>_add" name="<?php echo $node; ?>[]" value="add" style="opacity: 0;"></span></div>
-                                                     ADD
-                                                     <div class="checker" id="uniform-<?php echo $node; ?>_edit"><span><input type="checkbox" class="userpermissionnodes" id="<?php echo $node; ?>_edit" name="<?php echo $node; ?>[]" value="edit" style="opacity: 0;"></span></div>
-                                                     EDIT
-                                                     <div class="checker" id="uniform-<?php echo $node; ?>_delete"><span><input type="checkbox" class="userpermissionnodes" id="<?php echo $node; ?>_delete" name="<?php echo $node; ?>[]" value="delete" style="opacity: 0;"></span></div>
-                                                     DELETE
+                                                      <?php
+                                                            $existingData=$this->_existingRecord[$node];
+                                                            $existingData_Actions=  explode("|", $existingData['action']);
+                                                            
+                                                            foreach ($action_name_code_list as $nameWithCode)
+                                                            {
+                                                                $checked="";
+                                                                $type="checkbox";
+                                                                $style="";
+                                                                if($this->_parentAction=='view')
+                                                                {
+                                                                    $style='style="display:none;"';
+                                                                    $type="hidden";
+                                                                }
+                                                                $nameWithCode=explode("||",$nameWithCode);
+                                                                if(in_array($nameWithCode[1],$existingData_Actions))
+                                                                {
+                                                                    $checked=" checked ";
+                                                                }
+                                                                
+                                                            ?>
+                                                                <div <?php echo $style; ?> class="checker" id="uniform-<?php echo $node; ?>_<?php echo $nameWithCode[1];?>">
+                                                                    <span>
+                                                                        <input type="<?php echo $type; ?>" class="userpermissionnodes" id="<?php echo $node; ?>_<?php echo $nameWithCode[1];?>" name="<?php echo $node; ?>[]" value="<?php echo $nameWithCode[1];?>" <?php echo $checked; ?>  >
+                                                                    </span>
+                                                                </div>
+                                                     <?php echo $nameWithCode[0];?>,
+                                                            <?php
+                                                            }
+                                                      ?>
+                                                    
                                                   </div>
                                                </div>
                                             </div>  
                                              <?php
+                                                        }
                                                     }
                                     
                                                 }
@@ -91,5 +148,7 @@
             }
         }
     ?>   
-   <div class="form-actions" style="text-align: center;"><button type="submit" id="saveandclose" name="saveandclose" class="btn btn-small btn-success" onclick="return getformsubmit();"> <i class="icon-ok"></i> Save</button><button style="margin-left:4px;" type="button" class="btn btn-small btn-warning" onclick="history.back();">  <i class=" icon-remove"></i> Cancel</button></div>
-</form>
+    <div class="form-actions" style="text-align: center;">
+        <button type="button" id="access_save" class="btn btn-small btn-success formsubmit" onclick="return getformsubmit('<?php echo $this->_nodeName; ?>','save');"> <i class="icon-ok"></i> Save</button>
+    </div>
+   </form>

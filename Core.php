@@ -24,6 +24,12 @@ class Core
             fclose($fp);                
         }
     }
+    static function getUploadPath()
+    {
+        $wp=new Core_WebsiteSettings();
+        $folderName=$wp->websiteUrl."uploads/".$wp->identity."/";
+        return $folderName;
+    }
     static function createFolder($folderName,$type)
     {
         $wp=new Core_WebsiteSettings();

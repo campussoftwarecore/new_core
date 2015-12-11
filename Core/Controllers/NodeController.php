@@ -40,7 +40,13 @@ class Core_Controllers_NodeController extends Core_Model_Node
         $this->loadLayout("noActionFound.phtml");
     }
     public function addAction()
-    {        
+    {       
+        
+        $backUrl=$this->_websiteHostUrl;
+        if($this->_parentNode)
+        {
+            $backUrl=$this->_websiteAdminUrl.$this->_parentNode."/".$this->_parentAction."/".$this->_parentSelector;
+        }
         $requestedData=$this->_requestedData;
         if($this->_methodType=="REQUEST")
         {
@@ -59,7 +65,7 @@ class Core_Controllers_NodeController extends Core_Model_Node
                 {   
                     $output['status']="error";
                     $output['errors']=$errorsArray;
-                    $output['redirecturl']=$this->_websiteHostUrl;                 
+                    $output['redirecturl']=$backUrl;                 
                     echo json_encode($output);                   
                 }
                 else
@@ -87,14 +93,14 @@ class Core_Controllers_NodeController extends Core_Model_Node
                         {
                             $output['status']="error";
                             $output['errors']=$errorsArray;
-                            $output['redirecturl']=$this->_websiteHostUrl;                 
+                            $output['redirecturl']=$backUrl;                 
                             echo json_encode($output);
                             exit;
                         }
                     }
                     $output=array();
                     $output['status']="success";
-                    $output['redirecturl']=$this->_websiteHostUrl;            
+                    $output['redirecturl']=$backUrl;            
                     echo json_encode($output);
                 }
             }
@@ -108,7 +114,11 @@ class Core_Controllers_NodeController extends Core_Model_Node
     public function editAction()
     {       
         $requestedData=$this->_requestedData;
-         
+        $backUrl=$this->_websiteHostUrl;
+        if($this->_parentNode)
+        {
+            $backUrl=$this->_websiteAdminUrl.$this->_parentNode."/".$this->_parentAction."/".$this->_parentSelector;
+        }
         if($this->_methodType=="REQUEST")
         {
             
@@ -128,7 +138,7 @@ class Core_Controllers_NodeController extends Core_Model_Node
                 {   
                     $output['status']="error";
                     $output['errors']=$errorsArray;
-                    $output['redirecturl']=$this->_websiteHostUrl;                 
+                    $output['redirecturl']=$backUrl;                 
                     echo json_encode($output);                   
                 }
                 else
@@ -158,14 +168,14 @@ class Core_Controllers_NodeController extends Core_Model_Node
                         {
                             $output['status']="error";
                             $output['errors']=$errorsArray;
-                            $output['redirecturl']=$this->_websiteHostUrl;                 
+                            $output['redirecturl']=$backUrl;                 
                             echo json_encode($output);
                             exit;
                         }
                     }                        
                     $output=array();
                     $output['status']="success";
-                    $output['redirecturl']=$this->_websiteHostUrl;            
+                    $output['redirecturl']=$backUrl;            
                     echo json_encode($output);
                 }
             }
@@ -192,17 +202,22 @@ class Core_Controllers_NodeController extends Core_Model_Node
     }
     public function deleteAction()
     {
-        
+        $backUrl=$this->_websiteHostUrl;
+        if($this->_parentNode)
+        {
+            $backUrl=$this->_websiteAdminUrl.$this->_parentNode."/".$this->_parentAction."/".$this->_parentSelector;
+        }
+       
         $nodeDelete=new Core_Model_NodeDelete();
         $nodeDelete->setNode($this->_nodeName);
         $nodeDelete->addFilterCondition("(".$this->_tableName.".".$this->_primaryKey." = '".$this->_currentSelector."'".")");           
         $nodeDelete->delete();
         $output=array();
         $output['status']="success";
-        $output['redirecturl']=$this->_websiteHostUrl;         
+        $output['redirecturl']=$backUrl;         
         if($this->_methodType=='REQUEST')
         {
-            Core::redirectUrl($this->_websiteHostUrl);
+            Core::redirectUrl($backUrl);
         }
         else
         {

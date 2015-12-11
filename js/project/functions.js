@@ -96,11 +96,14 @@ function hidevalues()
 		document.getElementById("row_module_display").style.display = "";
 	}	
 }
-function getformsubmit()
+function getformsubmit(node,action)
 {
+        if(node==undefined)
 	var node=document.getElementById("node").value;
+        if(action==undefined)
 	var action=document.getElementById("action").value;	
-	var postUrl=window.hosturl+node+"/"+action;                    
+	var postUrl=window.hosturl+node+"/"+action;       
+        console.log(postUrl);
 	var x=confirm("Due Want to Submit");
 	if(x==true)
 	{		
@@ -110,7 +113,7 @@ function getformsubmit()
                     {
                         var formData = new FormData($("form#"+node)[0]);		
                         event.preventDefault();
-		
+                        
 			
 			$.ajax({
 				url : postUrl,
@@ -121,9 +124,8 @@ function getformsubmit()
 				contentType: false,
 				processData: false,
 				success: function (responseData)
-				{
-                                        $("#error_div").html(responseData);
-                                        
+				{     
+                                    
                                         try
                                         {
                                             var obj = jQuery.parseJSON(responseData)
@@ -551,8 +553,7 @@ function rameshajaxfunction(fileurl,formdata,replacediv,type)
 }
 function checkaction(nodename,value,type)
 {
-	console.log(type);
-        console.log(nodename);
+	
 	if(type == undefined) 
 	{
 		var namevaluearray=document.getElementsByName(nodename+"[]");
@@ -565,8 +566,7 @@ function checkaction(nodename,value,type)
 	for(var i=0;i<namevaluearray.length;i++)
 	{
 		var idvalue=namevaluearray[i].id;
-                console.log(idvalue);
-		$("#"+idvalue).attr('checked',value);
+                $("#"+idvalue).attr('checked',value);
 		$("#"+idvalue).css("opacity","1");
 	}
 	return true;

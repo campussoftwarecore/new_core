@@ -1,8 +1,7 @@
 <?php  
     error_reporting(0);
     include_once 'Boostrap.php'; 
-    $ch=new Core_Cache_Refresh();
-    $ch->setRelations();
+   
     $extension=substr($_REQUEST['reditectpath'], -3);     
     if($extension==".js" || $extension=="css")
     {
@@ -19,15 +18,17 @@
         exit;
     }    
     global $currentNode;  
-    
+    $session=new Core_Session("ramesh");
+    $session->getSessionMaganager();
     $header=true;
     $navigation=true;
     $footer=true;
     $currentProfileCode="ROOT";
     $methodType="REQUEST";
+   
     try
     {
-        $np=new Core_Model_AdminSettings($_REQUEST,$_FILES); 
+        $np=new Core_Model_AdminSettings($_REQUEST,$_FILES);
         $parentNode=$np->_parentNode;
         $parentValue=$np->_parentValue;
         $parentAction=$np->_parentAction;
