@@ -17,7 +17,7 @@ class Core_Model_NodeProperties
         $fp=fopen($filename,"r");
         $filecontent=  fread($fp,filesize($wp->documentRoot."Var/".$wp->identity."/nodestructure.json"));
         //$this->_globalNodeStructure=json_decode($filecontent,true);
-		fclose($fp);
+        fclose($fp);
         return json_decode($filecontent,true);
     }
     public function getNodeFileProperties()

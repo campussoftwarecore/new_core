@@ -224,4 +224,41 @@ class Core
     {
         return json_decode($string,1);
     }
+    static function getKeysFromArray($array)
+    {
+        $output=array();
+        if(Core::isArray($array))
+        {
+            $output=  array_keys($array);
+        }
+        return $output;
+    }
+    static function diffArray($firstArray,$secondArray)
+    {        
+        if(!Core::isArray($firstArray))
+        {
+            $firstArray=array();
+        }
+        if(!Core::isArray($secondArray))
+        {
+            $secondArray=array();
+        }
+        return array_diff($firstArray,$secondArray);
+    }
+    static function mergeArrays($firstArray,$secondArray)
+    {        
+        if(!Core::isArray($firstArray))
+        {
+            $firstArray=array();
+        }
+        if(!Core::isArray($secondArray))
+        {
+            $secondArray=array();
+        }
+        return array_merge(array_values($firstArray),array_values($secondArray));
+    }
+    static function countArray($array)
+    {                
+        return count($array);
+    }
 }

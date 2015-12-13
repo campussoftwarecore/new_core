@@ -7,6 +7,7 @@ class Core_Controllers_NodeController extends Core_Model_Node
     public $_currentAction="Admin";
     public $_websiteAdminUrl=NULL;
     public $_methodType=NULL;    
+    public $_removeActionRecords=array();
             
     function __construct($nodeName,$action) 
     {
@@ -234,8 +235,7 @@ class Core_Controllers_NodeController extends Core_Model_Node
     }
     public function descriptorAction()
     {
-        $requestedData=$this->_requestedData;
-        //echo "<pre>"; print_r($requestedData); echo "</pre>";
+        $requestedData=$this->_requestedData;        
         $sourceNode=$this->_requestedData['node'];
         $DestinationNode=$this->_requestedData['destinationNode'];         
         $FieldName=$this->_requestedData['idname'];  
@@ -355,6 +355,7 @@ class Core_Controllers_NodeController extends Core_Model_Node
         $this->setIndividualActions();
         $this->getCollection();
         $this->setCurrentNodeName($this->_nodeName);
+        $this->actionRestriction();
         $this->loadLayout("maingrid.phtml");
     }    
     public function adminRefreshAction()
@@ -363,6 +364,7 @@ class Core_Controllers_NodeController extends Core_Model_Node
         $this->setIndividualActions();
         $this->getCollection();
         $this->setCurrentNodeName($this->_nodeName);
+        $this->actionRestriction();
         $this->loadLayout("grid.phtml");
     }
 
@@ -555,5 +557,84 @@ class Core_Controllers_NodeController extends Core_Model_Node
         
         return $data;
     }
+    public function actionRestriction()
+    {
+        
+        if(count($this->_individualActions)>0)
+        {
+            foreach ($this->_individualActions as $actionData)
+            {                 
+                $methodName=$actionData['code']."_".$this->_nodeName."_actionRestriction";
+                $methodName=Core::covertStringToMethod($methodName);
+                if(Core::methodExists($this, $methodName))
+                {
+                    $this->$methodName();
+                }
+                else
+                {
+                    $methodName=$actionData['code']."_actionRestriction";
+                    $methodName=Core::covertStringToMethod($methodName);    
+                    if(Core::methodExists($this, $methodName))
+                    {
+                        $this->$methodName();
+                    }
+                }
+            }
+        }        
+    }
+    protected  function deleteActionRestriction()
+    {
+        $primaryKeys=array_keys($this->_collections);
+        $processkeys=$primaryKeys;        
+        $restrictionKeys=array();
+        if(count($processkeys)>0)
+        {
+            if(count($this->_nodeOTMRelations)>0)
+            {
+                foreach ($this->_nodeOTMRelations as $node=>$parentKey)
+                {          
+                    if(count($processkeys)>0)
+                    {
+                        $np=new Core_Model_NodeProperties();
+                        $np->setNode($node);
+                        $currentNodeStructure=$np->currentNodeStructure();
+                        $tableName=$currentNodeStructure['tablename'];
+
+                        $db=new Core_DataBase_ProcessQuery();
+                        $db->setTable($tableName);
+                        $db->addFieldArray(array("distinct(".$tableName.".".$parentKey.")"=>$parentKey));
+                        $db->addWhere($tableName.".".$parentKey." in ('".Core::covertArrayToString($processkeys, "','")."')");
+                        $db->buildSelect();                
+                        $childRecords=$db->getRows($parentKey);  
+                        $parentKeysContainsRecords=Core::getKeysFromArray($childRecords);
+                        if(count($parentKeysContainsRecords)>0)
+                        {                            
+                            $processkeys=Core::diffArray($processkeys, $parentKeysContainsRecords);
+                            $restrictionKeys=Core::mergeArrays($restrictionKeys,$parentKeysContainsRecords);
+                        }
+                    }
+                    else
+                    {
+                        break;
+                    }
+                }
+            }
+        }
+        $this->_removeActionRecords['delete']=$restrictionKeys;
+    }
+    function recordActionPerform($action,$primaryKeyValue)
+    {
+        $removeActionRecords=$this->_removeActionRecords[$action];
+        if(Core::countArray($removeActionRecords)>0)
+        {
+            if(Core::inArray($primaryKeyValue, $removeActionRecords))
+            {
+                return false;
+            }
+        }              
+        return true;
+        
+    }
+    
 }
 ?>

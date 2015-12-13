@@ -35,9 +35,14 @@ class Core_Session
 
     public function getSessionMaganager()
     {       
+        $this->checkSession();
         if($this->_sessionExists)
         {
-            
+            return $_SESSION[$this->siteObject->identity];
+        }
+        else
+        {
+            Core::redirectUrl("login.php");
         }
         
         

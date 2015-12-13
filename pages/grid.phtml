@@ -204,7 +204,10 @@
                                                                 }
                                                                 if($performAction==1 || $actionData['code']=='view')
                                                                 {
-                                                                    echo '<a href="'.$this->_websiteHostUrl.$actionData['code'].'/'.$primarykeyValue.'/'.$parentPath.'">'.$actionData['name']."</a>";
+                                                                    if($this->recordActionPerform($actionData['code'],$primarykeyValue))
+                                                                    {
+                                                                        echo '<a href="'.$this->_websiteHostUrl.$actionData['code'].'/'.$primarykeyValue.'/'.$parentPath.'">'.$actionData['name']."</a>";
+                                                                    }
                                                                 }
                                                             }
                                                         ?>

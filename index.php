@@ -83,7 +83,9 @@
             
         }
         else
-        {           
+        { 
+            $session=new Core_Session();
+            $session=$session->getSessionMaganager();            
             include_once 'pages/home.phtml';
 
         }

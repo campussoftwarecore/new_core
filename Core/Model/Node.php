@@ -142,8 +142,7 @@
             $db->addOrderBy("id DESC");
             $db->setLimit(($page-1)*$this->_rpp,$this->_rpp);     
             $db->buildSelect();                   
-            $this->_collections=$db->getRows("id"); 
-            
+            $this->_collections=$db->getRows($this->_primaryKey);             
         }
         public function getTotalResultCount()
         {
