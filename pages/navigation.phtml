@@ -1,6 +1,6 @@
 <?php
     $wp=new Core_WebsiteSettings();
-    global $currentNode;
+    global $currentNode;    
 ?>
 <div class="container-fluid">
     <div id="<?php echo $currentNode; ?>_format">
@@ -11,9 +11,8 @@
                 </a>
                 <span class="divider">&nbsp;</span>
             </li>
-            <?php
-                    $navigationMenu=new Core_Pages_NavigationPage();
-                    $navigationArray=$navigationMenu->getNavigationPath();                
+            <?php                   
+                    $navigationArray=$this->getNavigationPath();                
                     if(count($navigationArray)>0)
                     {                        
                         foreach($navigationArray as $menuData)

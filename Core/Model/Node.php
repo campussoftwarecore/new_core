@@ -85,15 +85,20 @@
         {
             $this->getTotalResultCount();
             $db=new Core_DataBase_ProcessQuery();            
-            $db->setTable($this->_tableName);            
+            $db->setTable($this->_tableName);  
+            $indexKey=$this->_primaryKey;
             if(count($this->_showAttributes)>0)
             {
                 $db->addField("id");
                 foreach ($this->_showAttributes as $fieldName) 
                 {
-                    if(key_exists($fieldName, $this->_nodeRelations))
+                    if(key_exists($fieldName, $this->_nodeMTORelations))
                     {
-                        $relationNode=  $this->_nodeRelations[$fieldName];                        
+                        if($indexKey==$fieldName)
+                        {
+                            $indexKey=$fieldName."pk";
+                        }
+                        $relationNode=  $this->_nodeMTORelations[$fieldName];                        
                         $np=new Core_Model_NodeProperties($relationNode);
                         $relationNodeStructure=$np->currentNodeStructure();                        
                         $relationNodeTable=$relationNodeStructure['tablename'];
@@ -121,7 +126,7 @@
                         $db->addField($fieldName);
                     }
                 }                
-            }
+            }            
             $ws=new Core_WebsiteSettings();
             $rpp=$ws->rpp;
             $page=1;
@@ -141,8 +146,8 @@
             $db->addGroupBy("id");
             $db->addOrderBy("id DESC");
             $db->setLimit(($page-1)*$this->_rpp,$this->_rpp);     
-            $db->buildSelect();                   
-            $this->_collections=$db->getRows($this->_primaryKey);             
+            $db->buildSelect();
+            $this->_collections=$db->getRows($indexKey);             
         }
         public function getTotalResultCount()
         {

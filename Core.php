@@ -18,8 +18,10 @@ class Core
         }
         else
         {
+            
             $fp=  fopen($filename,"a");
             fwrite($fp, " \n ");
+            fwrite($fp, date('Y-m-d H:i:s')."  :");            
             fwrite($fp, $string);
             fclose($fp);                
         }

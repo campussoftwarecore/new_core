@@ -125,7 +125,7 @@
             $wb=new Core_WebsiteSettings();
             $qry=new Core_DataBase_ProcessQuery();
             $qry->setTable("core_node_actions");
-            $qry->addFieldArray(array("lower(short_code)"=>"short_code","name"=>"name"));
+            $qry->addFieldArray(array("lower(core_node_actions.short_code)"=>"short_code","name"=>"name"));
             $result=$qry->getRows("short_code", "name");
             $folderpath=$wb->documentRoot.'var/'.$wb->identity;					    
             if (!file_exists($folderpath))

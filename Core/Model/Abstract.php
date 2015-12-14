@@ -11,13 +11,14 @@ class Core_Model_Abstract extends Core_Pages_PageLayout
     public $_currentAction;
     public $_singleActions=array();    
     public $_individualActions=array();
+    public $_mraActions=array();
     public $_showAttributes=array(); 
     public $_collections=array();
     public $_tableName=NULL;
     public $_nodeMTORelations=array();   
     public $_NodeFieldAttributes=array();
     public $_NodeFieldsList=array();
-    public $_nodeMOTORelations=array(); 
+    public $_nodeOTORelations=array(); 
     public $_nodeOTMRelations=array(); 
     
     public function setNodeName($nodename) 
@@ -110,6 +111,23 @@ class Core_Model_Abstract extends Core_Pages_PageLayout
             if(in_array("IN", $actionTypeList))                {
 
                 $this->_individualActions[]=array("name"=>$actionDataList[0],"code"=>$actionDataList[1]);                   
+
+            }                
+        }            
+    }
+    public function setMraActions()
+    {
+        $nodeActions=$this->getNodeActions();            
+        $np= new Core_Model_NodeProperties($this->_nodeName);
+        foreach ($nodeActions as $actionData) 
+        {
+            $actionDataList=explode("||",$actionData);
+            $np->getActionType($actionDataList[1]);
+            $actionType=$np->getActionType($actionDataList[1]);
+            $actionTypeList=explode("|",$actionType);                
+            if(in_array("MRA", $actionTypeList))                {
+
+                $this->_mraActions[]=array("name"=>$actionDataList[0],"code"=>$actionDataList[1]);                   
 
             }                
         }            
@@ -208,11 +226,7 @@ class Core_Model_Abstract extends Core_Pages_PageLayout
         
         $nr=new Core_Model_NodeRelations();
         $nr->setNode($this->_nodeName);        
-        $this->_nodeMTORelations=$nr->getCurrentNodeRelation();
-        if($this->_parentNode)
-        {
-            //$this->_nodeMTORelations=  array_merge(array($this->_parentColName=>$this->_parentNode),$this->_nodeMTORelations);
-        }        
+        $this->_nodeMTORelations=$nr->getCurrentNodeRelation();          
         $this->_nodeOTORelations=$nr->getCurrentNodeOneToOneRelation();
         $this->_nodeOTMRelations=$nr->getCurrentNodeOneToManyRelation();
     }

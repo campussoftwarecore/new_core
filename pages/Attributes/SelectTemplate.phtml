@@ -1,16 +1,26 @@
 <?php
-
 if($this->_readonly=='1')
 {
+    
 	$displayValue=$this->_options['0']['pds'];
 	?>
 	<input type="hidden" id="<?php echo $this->_idName; ?>" name="<?php echo $this->_idName; ?>" value="<?php echo $this->_Value; ?>" /> <span class="text_display" ><?php echo $displayValue;?> </span>
+        <?php
+        
+        if($this->_onchange)
+        {
+        ?>
+        <script>
+            <?php echo $this->_onchange; ?>
+        </script>
+               
 	<?php
-}
+        }
+}           
 else
 {
 	?>
-<select  id="<?php echo $this->_idName; ?>" name="<?php echo $this->_idName; ?>" class="chosen-with-diselect " >
+        <select  id="<?php echo $this->_idName; ?>" name="<?php echo $this->_idName; ?>" class="chosen-with-diselect " onchange="<?php echo $this->_onchange; ?>" >
    <option value="">  Select <?php echo $this->getLabel($this->_idName); ?>  </option>
    <?php
         if(count($this->_options)>0)

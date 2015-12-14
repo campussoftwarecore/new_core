@@ -16,6 +16,9 @@ class Core_Model_NodeSave extends Core_Model_Settings
 
     public function save()
     {
+        $mts=new Core_Model_TableStructure();
+        $mts->setTable($this->_tableName);
+        $tableStructure=$mts->getStructure();        
         $db=new Core_DataBase_ProcessQuery();            
         $db->setTable($this->_tableName);              
         if(count($this->_tableFieldWithData)>0)
@@ -59,15 +62,24 @@ class Core_Model_NodeSave extends Core_Model_Settings
                 $db->addWhere($this->_pkName."='".$this->_tableFieldWithData[$this->_pkName]."'");
             }
         }
+        $datetime=date('Y-m-d H:i:s');
+        if(Core::keyInArray("updatedat", $tableStructure))                
+        {
+            $db->addFieldArray(array("updatedat"=>$datetime));
+        }
         if($buildUpdate==1)
         {
             $db->buildUpdate();
         }
         else
-        {
+        {            
+            if(Core::keyInArray("createdat", $tableStructure))                
+            {
+                $db->addFieldArray(array("createdat"=>$datetime));
+            }
             $db->buildInsert();
         }
-        $db->executeQuery($query);
+        $db->executeQuery();
         return $this->_tableFieldWithData[$this->_pkName];
     }
     //put your code here

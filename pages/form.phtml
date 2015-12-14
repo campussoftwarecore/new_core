@@ -33,7 +33,7 @@
                                             ?>
                                         
                                             <li>
-                                            <a href="#tab_<?php echo $childNode; ?>" data-toggle="tab" onclick="return samplefun('<?php echo $childNode; ?>')" ><?php echo $this->getLabel($childNode); ?></a>
+                                            <a href="#tab_<?php echo $childNode; ?>" data-toggle="tab" onclick="return samplefun('<?php echo $childNode; ?>');" ><?php echo $this->getLabel($childNode); ?></a>
                                             </li>
                                             <?php
                                         }
@@ -103,7 +103,8 @@
                                                         <input type="hidden" id="parentformvalue" name="parentformvalue" value="<?php echo $this->_parentSelector; ?>" >
                                                         <input type="hidden" id="parentformAction" name="parentformAction" value="<?php echo $this->_parentAction; ?>" >
                                                         <input type="hidden" id="noderesult" name="noderesult" value='<?php echo json_encode($this->_record);?>'>
-							<input type="hidden" id="noderelations" name="noderelations" value='<?php echo json_encode($this->_nodeMTORelations);?>'>                                                	
+							<input type="hidden" id="noderelations" name="noderelations" value='<?php echo json_encode($this->_nodeMTORelations);?>'>
+                                                        
 							<?php
 							if($this->_currentAction!="view")
 							{
@@ -129,11 +130,11 @@
                                             <div class="tab-pane" id="tab_<?php echo $childNode; ?>">
                                                 <div id="total_<?php echo $childNode; ?>" name="total_<?php echo $childNode; ?>" >
                                                     <form id="result_<?php echo $childNode; ?>" name="result_<?php echo $childNode; ?>" >
-                                                    <input type="hidden" id="action_id" name="action_id" value="admin">			
-                                                            <input type="hidden" id="multiedit" name="multiedit" value="0">
-                                                            <input type="hidden" id="parentaction" name="parentaction" value="<?php echo $this->_currentAction;?>">
-                                                            <input type="hidden" id="parentnode" name="parentnode" value="<?php echo $this->_nodeName; ?>">
-                                                            <input type="hidden" id="parentidvalue" name="parentidvalue" value="<?php echo $this->_currentSelector;?>">
+                                                            <input type="hidden" id="<?php echo $childNode;?>_action_id" name="<?php echo $childNode;?>_action_id" value="admin">			
+                                                            <input type="hidden" id="<?php echo $childNode;?>_multiedit" name="<?php echo $childNode;?>_multiedit" value="0">
+                                                            <input type="hidden" id="<?php echo $childNode;?>_parentaction" name="<?php echo $childNode;?>_parentaction" value="<?php echo $this->_currentAction;?>">
+                                                            <input type="hidden" id="<?php echo $childNode;?>_parentnode" name="<?php echo $childNode;?>_parentnode" value="<?php echo $this->_nodeName; ?>">
+                                                            <input type="hidden" id="<?php echo $childNode;?>_parentidvalue" name="<?php echo $childNode;?>_parentidvalue" value="<?php echo $this->_currentSelector;?>">
                                                     </form>
                                                 </div>
                                             </div>                                            

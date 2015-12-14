@@ -19,13 +19,13 @@
         {
             $nodeRelations=array();
             $wp=new Core_WebsiteSettings();    
-            $filename=$wp->documentRoot."var/".$wp->identity."/noderelations.json";
+            $filename=$wp->documentRoot."Var/".$wp->identity."/noderelations.json";
             $fp=fopen($filename,"r");
             $filecontent=  fread($fp,filesize($filename));
-            $globalNodeRelations=json_decode($filecontent,true);            
+            $globalNodeRelations=json_decode($filecontent,true); 
             if(count($globalNodeRelations)>0)
             {
-                $nodeRelations=$globalNodeRelations[$this->getNode()];                
+                $nodeRelations=$globalNodeRelations[$this->_nodeName];                
                 if(!is_array($nodeRelations))
                 {
                     $nodeRelations=array();
@@ -36,7 +36,7 @@
                     if(!Core::isArray($nodeRelations))
                     {
                         $nodeRelations=array();
-                    }
+                    }                    
                 }
                 
             }

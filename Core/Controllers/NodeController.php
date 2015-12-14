@@ -38,7 +38,19 @@ class Core_Controllers_NodeController extends Core_Model_Node
     }
     public function noAction()
     {
-        $this->loadLayout("noActionFound.phtml");
+        if($this->_methodType=='POST')
+        {
+            
+            $output=array();
+            $output['status']="error";
+            $output['errors']=$this->getLabel($this->_currentAction)." is Not Existing";
+            echo json_encode($output);
+            exit;
+        }
+        else
+        {
+            $this->loadLayout("noActionFound.phtml");
+        }
     }
     public function checkSession()
     {
@@ -123,8 +135,9 @@ class Core_Controllers_NodeController extends Core_Model_Node
         $backUrl=$this->_websiteHostUrl;
         if($this->_parentNode)
         {
-            $backUrl=$this->_websiteAdminUrl.$this->_parentNode."/".$this->_parentAction."/".$this->_parentSelector;
+                $backUrl=$this->_websiteAdminUrl.$this->_parentNode."/".$this->_parentAction."/".$this->_parentSelector;
         }
+        
         if($this->_methodType=="REQUEST")
         {
             
@@ -137,7 +150,7 @@ class Core_Controllers_NodeController extends Core_Model_Node
             }
         }
         else
-        {            
+        {   
             try
             {
                 $errorsArray=$this->nodeDataValidate("edit",$this);
@@ -259,14 +272,15 @@ class Core_Controllers_NodeController extends Core_Model_Node
             }
             $defaultValue=$noderesult[$FieldName];
             $readonlyAttributes=$this->readonlyAttributes($requestedData['action']);
-            $sourceNodeObj=CoreClass::getModel($sourceNode, $requestedData['action']);           
+            $sourceNodeObj=CoreClass::getModel($sourceNode, $requestedData['action']);   
+            
             $sourceNodeObj->setNodeName($sourceNode);            
             $sourceNodeStructure=$sourceNodeObj->_currentNodeStructure;
             $onchangeEvents=array();
             $eventmethod=lcfirst(str_replace(" ","",ucwords(str_replace("_", " ",$sourceNode)))."Onchange");
             if(Core::methodExists($sourceNodeObj, $eventmethod))
             {
-                $onchangeEvents=$sourceNodeObj->$eventmethod();
+                $onchangeEvents=$sourceNodeObj->$eventmethod();                
             }
             $parentCol=0;
             if(Core::keyInArray("parentformNode", $requestedData))
@@ -328,7 +342,10 @@ class Core_Controllers_NodeController extends Core_Model_Node
                 $attribute->setIdName($idName);
                 $attribute->setOptions($result);
                 $attribute->setValue($defaultValue);
-
+                if(Core::keyInArray($FieldName, $onchangeEvents))
+                {
+                    $attribute->setOnchange($onchangeEvents[$FieldName]);
+                }
                 $attribute->setAction($this->_requestedData['action']);
                 if(in_array($FieldName,$mandotatoryAttributes))
                 {
@@ -353,6 +370,7 @@ class Core_Controllers_NodeController extends Core_Model_Node
         
         $this->setSingleActions();  
         $this->setIndividualActions();
+        $this->setMraActions();
         $this->getCollection();
         $this->setCurrentNodeName($this->_nodeName);
         $this->actionRestriction();
@@ -362,6 +380,7 @@ class Core_Controllers_NodeController extends Core_Model_Node
     {        
         $this->setSingleActions();  
         $this->setIndividualActions();
+        $this->setMraActions();
         $this->getCollection();
         $this->setCurrentNodeName($this->_nodeName);
         $this->actionRestriction();
@@ -440,7 +459,7 @@ class Core_Controllers_NodeController extends Core_Model_Node
                 $db=new Core_DataBase_ProcessQuery();
                 $db->setTable($table);
                 $db->addField("parent_level");
-                $db->addWhere($table.".".$this->_primaryKey.="'".$requestedData['parent']."'");
+                $db->addWhere($table.".".$this->_primaryKey."='".$requestedData['parent']."'");
                 $parent_level=$db->getValue()+1;
             }
             $data['parent_level']=$parent_level;
@@ -586,7 +605,7 @@ class Core_Controllers_NodeController extends Core_Model_Node
     {
         $primaryKeys=array_keys($this->_collections);
         $processkeys=$primaryKeys;        
-        $restrictionKeys=array();
+        $restrictionKeys=array();        
         if(count($processkeys)>0)
         {
             if(count($this->_nodeOTMRelations)>0)
@@ -604,7 +623,7 @@ class Core_Controllers_NodeController extends Core_Model_Node
                         $db->setTable($tableName);
                         $db->addFieldArray(array("distinct(".$tableName.".".$parentKey.")"=>$parentKey));
                         $db->addWhere($tableName.".".$parentKey." in ('".Core::covertArrayToString($processkeys, "','")."')");
-                        $db->buildSelect();                
+                        $db->buildSelect();                          
                         $childRecords=$db->getRows($parentKey);  
                         $parentKeysContainsRecords=Core::getKeysFromArray($childRecords);
                         if(count($parentKeysContainsRecords)>0)
@@ -620,7 +639,7 @@ class Core_Controllers_NodeController extends Core_Model_Node
                 }
             }
         }
-        $this->_removeActionRecords['delete']=$restrictionKeys;
+        $this->_removeActionRecords['delete']=$restrictionKeys;        
     }
     function recordActionPerform($action,$primaryKeyValue)
     {
@@ -633,6 +652,13 @@ class Core_Controllers_NodeController extends Core_Model_Node
             }
         }              
         return true;
+        
+    }
+    function mradeleteAction()
+    {
+        $pidname=$this->_nodeName.'_selector';
+        $primaryids=Core::covertStringToArray($this->_requestedData[$pidname],'|');
+        echo "<pre>";print_r($primaryids);echo "</pre>";
         
     }
     

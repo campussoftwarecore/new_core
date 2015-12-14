@@ -22,6 +22,11 @@ class CoreClass
         {
             return new $className($node,$action);
         }
+        $className="Core_Modules_".str_replace(" ","",ucwords(str_replace("_", " ",$module)))."_Controllers"."_".str_replace(" ","",ucwords(str_replace("_", " ",$node)));
+        if(Core::fileExists(str_replace("_","/",$className).".php"))
+        {
+            return new $className($node,$action);
+        }
         else
         {
             return new Core_Controllers_NodeController($node,$action);
@@ -38,6 +43,11 @@ class CoreClass
         $np->setNodeName($node);
         $module=$np->_currentNodeModule;
         $className="Modules_".str_replace(" ","",ucwords(str_replace("_", " ",$module)))."_Models"."_".str_replace(" ","",ucwords(str_replace("_", " ",$node)));       
+        if(Core::fileExists(str_replace("_","/",$className).".php"))
+        {
+            return new $className($node,$action);
+        }
+        $className="Core_Modules_".str_replace(" ","",ucwords(str_replace("_", " ",$module)))."_Models"."_".str_replace(" ","",ucwords(str_replace("_", " ",$node)));       
         if(Core::fileExists(str_replace("_","/",$className).".php"))
         {
             return new $className($node,$action);

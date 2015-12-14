@@ -1,9 +1,3 @@
- 
- SELECT *  FROM  core_access AS core_access  WHERE  core_access.='' 
- SELECT *  FROM  core_access AS core_access  WHERE  core_access.='' 
- SELECT *  FROM  core_access AS core_access  WHERE  core_access.='' 
- SELECT *  FROM  core_access AS core_access  WHERE  core_access.='' 
- SELECT *  FROM  core_access AS core_access  WHERE  core_access.='' 
- SELECT *  FROM  core_access AS core_access  WHERE  core_access.='' 
- SELECT *  FROM  core_access AS core_access  WHERE  core_access.='' 
- SELECT *  FROM  core_access AS core_access  WHERE  core_access.=''
+SELECT .  FROM   AS   WHERE  ='loader.gif' 
+ 2015-12-14 23:59:35  :SELECT .  FROM   AS   WHERE  ='loader.gif' 
+ 2015-12-15 00:02:22  :SELECT .  FROM   AS   WHERE  ='loader.gif'

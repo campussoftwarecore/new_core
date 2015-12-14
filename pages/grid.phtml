@@ -1,9 +1,14 @@
-<?php 
+<?php
     $performAction=0;
     if($this->_parentAction=='edit' || $this->_parentAction=="" )
     {
         $performAction=1;
     }
+    $performMraAction=0;
+    if(count($this->_mraActions)>0)
+    {
+        $performMraAction=1;
+    }    
 ?>
 <div id="total_<?php echo $this->_nodeName;?>" name="total_<?php echo $this->_nodeName;?>">
     <div>
@@ -36,40 +41,18 @@
                 <label></label>
             </div>
         </div>
-    <div id="sample-table-2_wrapper" class="dataTables_wrapper" role="grid">
-        <form id="result_<?php echo $this->_nodeName;?>" name="result_<?php echo $this->_nodeName;?>" method="POST">
-            <div id="result_report_template_div" name="result_<?php echo $this->_nodeName;?>_div">
-                <div style=" padding-left: 18px;">
-                    <span style=" padding-left: 18px;">RPP:</span>
-                    <span style=" padding-left: 18px;">
-                        <select size="1" name="rpp_<?php echo $this->_nodeName;?>" aria-controls="rpp_<?php echo $this->_nodeName;?>" class="input-mini" onchange="setrpp(this.value); samplefun('<?php echo $this->_nodeName;?>');">
-                            <?php
-                                $in="1";
-                                while($this->_wsrpp*($in-1)<$this->_totalRecordsCount)
-                                {
-                                        if($this->_wsrpp*$in==$this->_rpp)
-                                        {
-                                                $sel=" selected ";
-                                        }
-                                        else
-                                        {
-                                                $sel="";
-                                        }
-                                        echo $output='<option value="'.($this->_wsrpp*$in).'" '.$sel.'>'.($this->_wsrpp*$in).'</option>';
-                                        $in++;		    
-                                }
-                            ?>
-                        </select>
-                    </span>
-                    <span style=" padding-left: 18px;">Page:</span>
-                    <span style=" padding-left: 18px;">
-                        
-                        <select size="1" name="page_<?php echo $this->_nodeName;?>" aria-controls="page_<?php echo $this->_nodeName;?>" class="input-mini" onchange="setpage(this.value); samplefun('<?php echo $this->_nodeName;?>');">
-                            <?php
+        <div id="sample-table-2_wrapper" class="dataTables_wrapper" role="grid">
+            <form id="result_<?php echo $this->_nodeName;?>" name="result_<?php echo $this->_nodeName;?>" >
+                <div id="result_<?php echo $this->_nodeName;?>_div" name="result_<?php echo $this->_nodeName;?>_div">
+                    <div style=" padding-left: 18px;">
+                        <span style=" padding-left: 18px;">RPP:</span>
+                        <span style=" padding-left: 18px;">
+                            <select size="1" name="rpp" aria-controls="rpp" class="input-mini" onchange="setrpp('<?php echo $this->_nodeName;?>',this.value); samplefun('<?php echo $this->_nodeName;?>');">
+                                <?php
                                     $in="1";
-                                    while($this->_rpp*($in-1)<=$this->_totalRecordsCount)
+                                    while($this->_wsrpp*($in-1)<$this->_totalRecordsCount)
                                     {
-                                            if($in==$this->_page)
+                                            if($this->_wsrpp*$in==$this->_rpp)
                                             {
                                                     $sel=" selected ";
                                             }
@@ -77,164 +60,241 @@
                                             {
                                                     $sel="";
                                             }
-                                            echo '<option value="'.$in.'" '.$sel.'>'.$in.'</option>';
+                                            echo $output='<option value="'.($this->_wsrpp*$in).'" '.$sel.'>'.($this->_wsrpp*$in).'</option>';
                                             $in++;		    
                                     }
-                            ?>
-                        </select>
-                    </span>
-                    <span style=" padding-left: 18px;">Display Records: <?php  echo $this->_rpp*($this->_page-1);  ?> to <?php  echo $this->_rpp*($this->_page)>$this->_totalRecordsCount?$this->_totalRecordsCount:$this->_rpp*($this->_page);  ?>  of <?php echo $this->_totalRecordsCount; ?></span>
-                    </span>
-                </div>
-                <div id="sample_div" name="sample_div" style="color:red;"></div>
-                <div style="text-align: center;margin-top: 13px;">                                            
-                    <table id="sample-table-2" class="table table-striped table-bordered table-hover dataTable">
-                        <thead>
-                            <tr role="row">
-                                <th></th>
-                                <?php                                    
-                                    if(count($this->_showAttributes)>0)
+                                ?>
+                            </select>
+                        </span>
+                        <span style=" padding-left: 18px;">Page:</span>
+                        <span style=" padding-left: 18px;">
+
+                            <select size="1" name="page" aria-controls="page" class="input-mini" onchange="setpage('<?php echo $this->_nodeName;?>',this.value); samplefun('<?php echo $this->_nodeName;?>');">
+                                <?php
+                                        $in="1";
+                                        while($this->_rpp*($in-1)<=$this->_totalRecordsCount)
+                                        {
+                                                if($in==$this->_page)
+                                                {
+                                                        $sel=" selected ";
+                                                }
+                                                else
+                                                {
+                                                        $sel="";
+                                                }
+                                                echo '<option value="'.$in.'" '.$sel.'>'.$in.'</option>';
+                                                $in++;		    
+                                        }
+                                ?>
+                            </select>
+                        </span>
+                        <span style=" padding-left: 18px;">Display Records: <?php  echo $this->_rpp*($this->_page-1);  ?> to <?php  echo $this->_rpp*($this->_page)>$this->_totalRecordsCount?$this->_totalRecordsCount:$this->_rpp*($this->_page);  ?>  of <?php echo $this->_totalRecordsCount; ?></span>
+                        </span>
+                    </div>
+                    <div id="sample_div" name="sample_div" style="color:red;"></div>
+                    <div style="text-align: center;margin-top: 13px;">                                            
+                        <table id="sample-table-2" class="table table-striped table-bordered table-hover dataTable">
+                            <thead>
+                                <tr role="row">
+                                    <th>
+                                        <?php
+                                            if($performAction==1 && $performMraAction==1)
+                                            {
+                                                ?>
+                                        <input type="checkbox" id="checkall" value="1" onclick="checkaction('mra_<?php echo $this->_nodeName;?>',this.checked,'class');"/> 
+                                            <?php
+                                            }
+                                            ?>
+                                    </th>
+                                    <?php                                    
+                                        if(count($this->_showAttributes)>0)
+                                        {
+                                            foreach($this->_showAttributes as $FieldName)
+                                            {
+                                                ?>
+                                                    <th><?php echo $this->getLabel($FieldName); ?></th>
+                                                <?php
+                                            }
+                                        }
+                                    ?>
+                                </tr>
+                                <tr role="row">
+                                    <th>
+                                        <input type="hidden" id="action_id" name="action_id" value="admin">
+                                        <input type="button" id="buttonsearch" name="buttonsearch" value="Search" onclick="setpagezero(); samplefun('<?php echo $this->_nodeName;?>');" class="btn bsetpagezerotn-info" style="border-radius: 15px;" />	   
+                                        <input type="hidden" id="<?php echo $this->_nodeName;?>_module" name="<?php echo $this->_nodeName;?>_module" value="codebasedsettings">
+                                        <input type="hidden" id="<?php echo $this->_nodeName;?>_node" name="<?php echo $this->_nodeName;?>_node" value="<?php echo $this->_nodeName;?>">
+                                        <input type="hidden" id="rpp_<?php echo $this->_nodeName;?>" name="rpp_<?php echo $this->_nodeName;?>" value="<?php echo $this->_rpp;?>">
+                                        <input type="hidden" id="page_<?php echo $this->_nodeName;?>" name="page_<?php echo $this->_nodeName;?>" value="<?php echo $this->_page;?>">			    
+                                        <input type="hidden" id="<?php echo $this->_nodeName;?>_parentaction" name="<?php echo $this->_nodeName;?>_parentaction" value="<?php echo $this->_parentAction; ?>">
+                                        <input type="hidden" id="<?php echo $this->_nodeName;?>_parentnode" name="<?php echo $this->_nodeName;?>_parentnode" value="<?php echo $this->_parentNode; ?>">
+                                        <input type="hidden" id="<?php echo $this->_nodeName;?>_parentidvalue" name="<?php echo $this->_nodeName;?>_parentidvalue" value="<?php echo $this->_parentSelector; ?>">
+                                        <input type="hidden" id="<?php echo $this->_nodeName;?>_multiedit" name="<?php echo $this->_nodeName;?>_multiedit" value="0">
+
+                                    </th>
+                                    <?php                                    
+                                        if(count($this->_showAttributes)>0)
+                                        {
+                                            foreach($this->_showAttributes as $FieldName)
+                                            {
+                                                ?>
+                                                    <th>
+                                                        <?php
+                                                        if(in_array($FieldName,$this->_searchAttributes))
+                                                        {
+                                                        ?>
+                                                            <div id="value_<?php echo $FieldName; ?>" name="value_<?php echo $FieldName; ?>">
+
+                                                                <span id="admin_<?php echo $FieldName; ?>" name="admin_<?php echo $FieldName; ?>">
+                                                                    <?php
+                                                                        if(in_array($FieldName, $this->_boolAttributes))
+                                                                        {
+                                                                            ?>
+                                                                                <select class="input-small m-wrap" name="<?php echo $FieldName; ?>" id="<?php echo $FieldName; ?>">
+                                                                                    <option value=""> ALL </option>
+                                                                                    <option value="1"> YES </option>
+                                                                                    <option value="0"> NO </option>
+                                                                                </select>
+                                                                            <?php
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                    ?>
+
+                                                                    <input type="text" class="input-small" name="<?php echo $FieldName; ?>" id="<?php echo $FieldName; ?>" value="<?php echo $this->_requestedData[$FieldName];?>">
+                                                                    <?php
+                                                                        }
+                                                                    ?>
+                                                                </span>	
+                                                            </div>
+                                                        <?php
+                                                            }
+                                                        ?>
+                                                    </th>
+                                                <?php
+                                            }
+                                        }
+                                    ?> 
+                                    <th style="display:none">
+                                        <input type="hidden" name="defaultselectnodes" id="defaultselectnodes" value="">
+                                    </th>
+                                </tr>                            
+                            </thead>
+                            <tbody role="alert" aria-live="polite" aria-relevant="all">
+                                <?php
+                                    if(count($this->_collections)>0)
                                     {
-                                        foreach($this->_showAttributes as $FieldName)
+                                        foreach($this->_collections as $row)
                                         {
                                             ?>
-                                                <th><?php echo $this->getLabel($FieldName); ?></th>
+                                            <tr>
+                                                <td>
+                                                    <span>
+                                                        <?php
+                                                        if($performAction==1 && $performMraAction==1)
+                                                        {
+                                                            if(key_exists($this->_primaryKey."pk", $row))
+                                                            {
+                                                                $primarykeyValue=$row[$this->_primaryKey."pk"];
+                                                            }
+                                                            else
+                                                            {
+                                                                $primarykeyValue=$row[$this->_primaryKey];
+                                                            }
+                                                            ?>
+                                                        <input type="checkbox" class="mra_<?php echo $this->_nodeName;?>" id="<?php echo $this->_nodeName."_".$primarykeyValue;?>" name="mra_<?php echo $this->_nodeName;?>[]" value="<?php echo $primarykeyValue;?>" /> 
+                                                        <?php
+                                                        }
+                                                        ?>
+
+                                                    </span>
+                                                    <?php
+                                                        if(count($this->_individualActions)>0)
+                                                        {
+                                                            ?>
+                                                                <span class="action-buttons">
+                                                            <?php
+                                                                foreach($this->_individualActions as $actionData)
+                                                                {
+                                                                    if(key_exists($this->_primaryKey."pk", $row))
+                                                                    {
+                                                                        $primarykeyValue=$row[$this->_primaryKey."pk"];
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        $primarykeyValue=$row[$this->_primaryKey];
+                                                                    }
+                                                                    if($performAction==1 || $actionData['code']=='view')
+                                                                    {
+                                                                        if($this->recordActionPerform($actionData['code'],$primarykeyValue))
+                                                                        {
+                                                                            echo '<a href="'.$this->_websiteHostUrl.$actionData['code'].'/'.$primarykeyValue.'/'.$parentPath.'">'.$actionData['name']."</a>";
+                                                                        }
+                                                                    }
+                                                                }
+                                                            ?>
+                                                                </span>
+                                                            <?php
+                                                        }
+                                                    ?>
+                                                </td>
+                                                <?php   
+                                                foreach($this->_showAttributes as $FieldName)
+                                                {
+                                                    ?>
+                                                        <td><?php echo $this->nodeFieldDisplay($row,$FieldName); ?></td>
+                                                    <?php
+                                                }
+                                                ?>
+
+                                            </tr>
                                             <?php
                                         }
                                     }
                                 ?>
-                            </tr>
-                            <tr role="row">
-                                <th>
-                                    <input type="hidden" id="action_id" name="action_id" value="admin">
-                                    <input type="button" id="buttonsearch" name="buttonsearch" value="Search" onclick="setpagezero(); samplefun('<?php echo $this->_nodeName;?>');" class="btn bsetpagezerotn-info" style="border-radius: 15px;" />	   
-                                    <input type="hidden" id="module" name="module" value="codebasedsettings">
-                                    <input type="hidden" id="node" name="node" value="<?php echo $this->_nodeName;?>">
-                                    <input type="hidden" id="rpp" name="rpp" value="25">
-                                    <input type="hidden" id="page" name="page" value="1">			    
-                                    <input type="hidden" id="parentaction" name="parentaction" value="<?php echo $this->_parentAction; ?>">
-                                    <input type="hidden" id="parentnode" name="parentnode" value="<?php echo $this->_parentNode; ?>">
-                                    <input type="hidden" id="parentidvalue" name="parentidvalue" value="<?php echo $this->_parentSelector; ?>">
-                                    <input type="hidden" id="multiedit" name="multiedit" value="0">
-
-                                </th>
-                                <?php                                    
-                                    if(count($this->_showAttributes)>0)
-                                    {
-                                        foreach($this->_showAttributes as $FieldName)
-                                        {
-                                            ?>
-                                                <th>
-                                                    <?php
-                                                    if(in_array($FieldName,$this->_searchAttributes))
-                                                    {
-                                                    ?>
-                                                        <div id="value_<?php echo $FieldName; ?>" name="value_<?php echo $FieldName; ?>">
-                                                            
-                                                            <span id="admin_<?php echo $FieldName; ?>" name="admin_<?php echo $FieldName; ?>">
-                                                                <?php
-                                                                    if(in_array($FieldName, $this->_boolAttributes))
-                                                                    {
-                                                                        ?>
-                                                                            <select class="input-small m-wrap" name="<?php echo $FieldName; ?>" id="<?php echo $FieldName; ?>">
-                                                                                <option value=""> ALL </option>
-                                                                                <option value="1"> YES </option>
-                                                                                <option value="0"> NO </option>
-                                                                            </select>
-                                                                        <?php
-                                                                    }
-                                                                    else
-                                                                    {
-                                                                ?>
-                                                                
-                                                                <input type="text" class="input-small" name="<?php echo $FieldName; ?>" id="<?php echo $FieldName; ?>" value="<?php echo $this->_requestedData[$FieldName];?>">
-                                                                <?php
-                                                                    }
-                                                                ?>
-                                                            </span>	
-                                                        </div>
-                                                    <?php
-                                                        }
-                                                    ?>
-                                                </th>
-                                            <?php
-                                        }
-                                    }
-                                ?> 
-                                <th style="display:none">
-                                    <input type="hidden" name="defaultselectnodes" id="defaultselectnodes" value="">
-                                </th>
-                            </tr>                            
-                        </thead>
-                        <tbody role="alert" aria-live="polite" aria-relevant="all">
-                            <?php
-                                if(count($this->_collections)>0)
-                                {
-                                    foreach($this->_collections as $row)
-                                    {
-                                        ?>
-                                        <tr>
-                                            <td>
-                                                <span>
-                                                    <?php
-                                                    if($performAction==1)
-                                                    {
-                                                        ?>
-                                                    <!-- <input type="checkbox" class="mra_<?php echo $this->_nodeName;?>" name="selectid[]" /> -->
-                                                    <?php
-                                                    }
-                                                    ?>
-                                                    
-                                                </span>
-                                                <?php
-                                                    if(count($this->_individualActions)>0)
-                                                    {
-                                                        ?>
-                                                            <span class="action-buttons">
-                                                        <?php
-                                                            foreach($this->_individualActions as $actionData)
-                                                            {
-                                                                if(key_exists($this->_primaryKey."pk", $row))
-                                                                {
-                                                                    $primarykeyValue=$row[$this->_primaryKey."pk"];
-                                                                }
-                                                                else
-                                                                {
-                                                                    $primarykeyValue=$row[$this->_primaryKey];
-                                                                }
-                                                                if($performAction==1 || $actionData['code']=='view')
-                                                                {
-                                                                    if($this->recordActionPerform($actionData['code'],$primarykeyValue))
-                                                                    {
-                                                                        echo '<a href="'.$this->_websiteHostUrl.$actionData['code'].'/'.$primarykeyValue.'/'.$parentPath.'">'.$actionData['name']."</a>";
-                                                                    }
-                                                                }
-                                                            }
-                                                        ?>
-                                                            </span>
-                                                        <?php
-                                                    }
-                                                ?>
-                                            </td>
-                                            <?php   
-                                            foreach($this->_showAttributes as $FieldName)
-                                            {
-                                                ?>
-                                                    <td><?php echo $this->nodeFieldDisplay($row,$FieldName); ?></td>
-                                                <?php
-                                            }
-                                            ?>
-                                            
-                                        </tr>
-                                        <?php
-                                    }
-                                }
-                            ?>
-                        </tbody>
-                    </table>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
-            </div>
-        </form>
+            </form>
+                <?php
+                    if($performMraAction==1 && $performAction==1)
+                    {                        
+                ?>
+                <form id="mradata_<?php echo $this->_nodeName;  ?>" name="mradata_<?php echo $this->_nodeName;  ?>">
+                                        
+
+                            <input type="hidden" id="<?php echo $this->_nodeName;  ?>_parentaction" name="<?php echo $this->_nodeName;  ?>_parentaction" value="<?php echo $this->_parentAction; ?>">
+                            <input type="hidden" id="<?php echo $this->_nodeName;  ?>_parentnode" name="<?php echo $this->_nodeName;  ?>_parentnode" value="<?php echo $this->_parentNode; ?>">
+                            <input type="hidden" id="<?php echo $this->_nodeName;  ?>_parentidvalue" name="<?php echo $this->_nodeName;  ?>_parentidvalue" value="<?php echo $this->_parentSelector; ?>">
+                            <input type="hidden" id="<?php echo $this->_nodeName;  ?>_selector" name="<?php echo $this->_nodeName;  ?>_selector" value="">
+
+                            <span style="align:left">
+                            <select id="<?php echo $this->_nodeName;  ?>_mraAction" name="<?php echo $this->_nodeName;  ?>_mraAction" class="input-medium m-wrap" >
+                                    <option value="">Select Action</option>
+                                    <?php
+                                        foreach ($this->_mraActions as $actionData)
+                                        {
+                                            echo '<option value="mra'.$actionData['code'].'"> '.$actionData['name'].'  </option>';
+                                        }
+                                    ?>                                	
+                            </select>
+                            </span>
+                            <span id="mrahtml_<?php echo $this->_nodeName;  ?>" name="mrahtml_<?php echo $this->_nodeName;  ?>">
+                            </span>
+                            <span id="mraerror_<?php echo $this->_nodeName;  ?>" name="mraerror_<?php echo $this->_nodeName;  ?>" style="color:red;">
+                            </span>
+
+                    
+                    <div>
+                            <input type="button" id="mra_submit" name="mra_submit" class="btn btn-danger" value="Go" onclick="getmraaction('<?php echo $this->_nodeName; ?>');">
+                    </div>
+                </form>
+                <?php                    
+                    }
+                ?>                
+            
+        </div>
     </div>
-    </div>
+    
 </div>

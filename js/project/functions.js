@@ -192,7 +192,8 @@ function removedisable()
 }
 function samplefun(node)
 {
-	$('#multiedit').val("0");
+    
+	$('#multiedit_'+node).val("0");
 	$('#mrahtml_'+node).val("");
 	updateresultdiv("cancel",node);
 	return true;
@@ -201,17 +202,15 @@ function updateresultdiv(action,node)
 {
 	if(action=="cancel")
 	{
-		$('#multiedit').val("0");
+		$('#multiedit_'+node).val("0");
 	}
 	else
 	{
-		$('#multiedit').val("1");	
+		$('#multiedit_'+node).val("1");	
 	}
         var formname="form#result_"+node;
-	var formdata = $(formname).serialize();
-	//$("#div_loading").show();
-	
-	//return false;
+        
+	var formdata = $(formname).serialize();	
 	$.ajax({
 			url : window.hosturl+node+"/adminRefresh",
 			type : "POST",
@@ -283,6 +282,7 @@ function getPrimarykey()
 }
 function getNodeStructure()
 {
+    
     var destinationNode=$("#node").val();
     var formData = $("form").serialize();
     var posturl=window.hosturl+destinationNode+"/getNodeStructureDetails";
@@ -301,169 +301,32 @@ function getNodeStructureFields(columnname)
     var posturl=window.hosturl+destinationNode+"/getNodeStructureDetails";
     
         $.ajax({
-         url : posturl,
-         type : "POST",
-         dataType : "html",
-         data : formData+"&idname="+columnname,
-         success : function (html)
-         {                
-            var ivid="#value_"+columnname;
-            console.log(ivid);
-            $(ivid).html(html);
+        url : posturl,
+        type : "POST",
+        dataType : "html",
+        data : formData+"&idname="+columnname,
+        success : function (html)
+        {                
+           var ivid="#value_"+columnname;
+           $(ivid).html(html);
 
-         }
+        }
     });
    
     
 }
-function setpagezero()
+function setpagezero(node)
 {
-	$('#page').val("");
+	$('#page_'+node).val(1);
 }
-function setpage(pagevalue)
+function setpage(node,pagevalue)
 {
-	$('#page').val(pagevalue);
+	$('#page_'+node).val(pagevalue);
 }
-function setrpp(rppvalue)
-{
-	
-	$('#rpp').val(rppvalue);
-	$('#page').val("");
-}
-function checkall(formname,node,idname,source)
-{
-	var checkvalue=source.checked;
-	var mraselect="mra_"+node;
-	var actionidvaluelist=new Array();
-	var action=$("#mra_action").val();
-	if(action)
-	{
-		var actionidname=node+"_"+action;
-		var actionidvalue=document.getElementById(actionidname).value;
-		if(actionidvalue!="")
-		{
-			actionidvaluelist=actionidvalue.split('|');
-		}
-	}	
-	
-	var namevaluearray=document.getElementsByClassName(mraselect);
-	for (var i = 0; i < document.getElementById(formname).elements.length; i++)
-	{
-		if(document.getElementById(formname).elements[i].type=="checkbox")
-		{
-			var idvalue1=document.getElementById(formname).elements[i].id;
-			if(idvalue1!="" && idvalue1!=null)
-			{
-				var idvalue="#"+idvalue1;				
-				var spanidvalue="#"+node+"_"+idvalue1;
-				
-				var idactualvalue=document.getElementById(idvalue1).value;
-				if(checkvalue==true)
-				{
-					var keyvalue=$(idvalue).val();
-					var t=0;
-					for(var k=0;actionidvaluelist.length;k++)
-					{
-						if(actionidvaluelist[k]==undefined)
-						{
-							break;
-						}
-						else
-						{
-							if(actionidvaluelist[k]==keyvalue)
-							{
-								t=1;
-							}
-						}
-					}
-					if(t==0)
-					{
-						var checkedvalue="checked";
-						//$(idvalue).css("opacity","1");
-						$(idvalue).attr("checked",true);
-					}
-					
-					
-				}
-				else
-				{				
-					$(idvalue).attr("checked",false);
-					var checkedvalue="";
-				}		
-			}			
-		}
-	}
-	return true;
-
-}
-function checkactionsrestrictions(action,node)
-{
-	var checkallname="#check_"+node;
-	if(action!="")
-	{
-		var actionidname=node+"_"+action;
-		var actionidvalue=document.getElementById(actionidname).value;
-		var actionidvaluelist=new Array();
-		if(actionidvalue!="")
-		{
-			actionidvaluelist=actionidvalue.split('|');
-		}
-		var mraselect="mra_"+node;		
-		//var namearray=document.getElementsByClassName(mraselect);
-		for(var i=0;i<namearray.length;i++)
-		{
-			var idvalue="#"+namearray[i].id;			
-			var keyvalue=document.getElementById(namearray[i].id).value;
-			var t=0;
-			for(var k=0;actionidvaluelist.length;k++)
-			{
-				if(actionidvaluelist[k]==undefined)
-				{
-					break;
-				}
-				else
-				{
-					if(actionidvaluelist[k]==keyvalue)
-					{
-						t=1;
-					}
-				}
-			}
-			if(t==1)
-			{
-				$(idvalue).attr("disabled", true);
-				$(idvalue).attr("checked", false);
-				$(idvalue).addClass("checked");
-			}
-			else
-			{
-				$(idvalue).attr("disabled", false);
-				$(idvalue).removeClass("checked");
-			}
-			
-		}
-		
-		//$(checkallname).attr("disabled", true);
-		//$(checkallname).attr("checked", false);
-		return true;
-	}
-	else
-	{
-		
-		var mraselect="mra_"+node;
-		var namearray=document.getElementsByClassName(mraselect);
-		for(var i=0;i<namearray.length;i++)
-		{
-			var idvalue="#"+namearray[i].id;
-			$(idvalue).attr("disabled", false);
-			//$(idvalue).attr("checked", false);
-		}
-		
-		//$(checkallname).attr("disabled", false);
-		//$(checkallname).attr("checked", false);
-		return true;
-	}
-	
+function setrpp(node,rppvalue)
+{	
+	$('#rpp_'+node).val(rppvalue);
+	$('#page_'+node).val(1);
 }
 function formvalidations(value,colname,type)
 {
@@ -570,4 +433,108 @@ function checkaction(nodename,value,type)
 		$("#"+idvalue).css("opacity","1");
 	}
 	return true;
+}
+function getmraaction(nodeName)
+{   
+    var actionName=$("#"+nodeName+"_mraAction").val();
+    var selectorValues="";
+    if(actionName)
+    {
+        var selected=0;
+        var namevaluearray=document.getElementsByName("mra_"+nodeName+"[]");
+        for(var i=0;i<namevaluearray.length;i++)
+        {
+            var idvalue=namevaluearray[i].id;            
+            if(namevaluearray[i].checked)
+            {
+                selected=1;   
+                if(selectorValues!="")
+                {
+                    selectorValues=selectorValues+"|";
+                }
+                selectorValues=selectorValues+$("#"+idvalue).val();
+            }
+        }
+        if(selected==0)
+        {
+            $("#"+nodeName+"_selector").val("");
+            alert("Please Select Records");
+            return false;
+        }    
+        else
+        {          
+            var x=confirm("Due Want to Submit");
+            if(x==true)
+            {
+                $("#"+nodeName+"_selector").val(selectorValues);
+                var parentAction=$("#"+nodeName+"_parentaction").val();
+                var parentNode=$("#"+nodeName+"_parentnode").val();
+                var parentSelector=$("#"+nodeName+"_parentidvalue").val();
+                var postUrl=window.hosturl+nodeName+"/"+actionName;
+                if(parentNode)
+                {
+                    postUrl=postUrl+"/0/"+parentNode+"/"+parentAction+"/"+parentSelector;
+                }
+                var formData =$("#mradata_"+nodeName).serialize(); 
+                $.ajax({
+                            url : postUrl,
+                            type: 'POST',
+                            data: formData,				
+                            success: function (responseData)
+                            {   
+                                try
+                                {
+                                    var obj = jQuery.parseJSON(responseData)
+                                    if(obj.status=="success")
+                                    {
+                                        window.location.replace(obj.redirecturl);
+                                    }
+                                    else if(obj.status=="error")
+                                    {
+                                        $("#mraerror_"+nodeName).html(responseData.errors);
+                                        return false;
+                                    }
+                                    else
+                                    {
+
+                                        $("#mraerror_"+nodeName).html(responseData);
+                                        return false;
+                                    }
+                                    return true;
+                                }
+                                catch(e)
+                                {
+                                    $("#mraerror_"+nodeName).html(responseData);
+                                    return false;
+                                }                                       
+                            }
+                    });
+            }            
+        }
+    }
+    else
+    {
+        alert("Please Select Action ");
+        return false;
+    }
+    
+}
+function getFieldsForUniqueFieldset()
+{
+    var node=$("#node").val();    
+    var formData=$("form#"+node).serialize();
+  
+    var posturl=window.hosturl+node+"/getStructure";
+     
+    $.ajax({
+            url : posturl,
+            type : "POST",
+            dataType : "html",
+            data : formData+"&idname=uniquefieldset",
+            success : function (responseData)
+            {   
+               $("#value_uniquefieldset").html(responseData);
+
+            }
+     });
 }

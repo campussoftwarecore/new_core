@@ -1,9 +1,10 @@
 <?php  
     error_reporting(0);
-    include_once 'Boostrap.php';     
+    include_once 'Boostrap.php';  
+    
     $wp=new Core_WebsiteSettings();
     $extension=substr($_REQUEST['reditectpath'], -3);     
-    if($extension==".js" || $extension=="css")
+    if(Core::inArray($extension, array(".js","css","png","jpg")))
     {
        exit; 
     }
@@ -18,7 +19,7 @@
     global $currentNode;
     try
     {
-        $np=new Core_Model_AdminSettings($_REQUEST,$_FILES);
+        $np=new Core_Model_AdminSettings($_REQUEST,$_FILES);    
         $parentNode=$np->_parentNode;
         $parentValue=$np->_parentValue;
         $parentAction=$np->_parentAction;
@@ -29,7 +30,6 @@
         $currentRootModule=$np->_nodeDetails['rootmodule'];
         $currentSelector=$np->_currentSelector;
         $methodType=$np->_methodType;
-        
         $currentProfileCode=$_SESSION[$wp->identity]['profile_id'];
         $header=true;
         $navigation=true;
@@ -57,7 +57,7 @@
         }
         if($navigation)
         {
-            $page=new Core_Pages_NavigationPage();
+            $page=new Core_Pages_NavigationPage($np);           
         }     
         if($currentNode!="")
         {  
