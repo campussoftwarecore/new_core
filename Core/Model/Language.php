@@ -23,11 +23,10 @@ class Core_Model_Language
         if($module=="" && $node!="")
         {
             $nodewise_name=$module."_".$label;
-        }
-        $cp=new Core_CodeProcess();
+        }        
         if($modulewise_node_name)
         {            
-            if($cp->keyExistsInArray($modulewise_node_name,$lablelist))
+            if(Core::keyInArray($modulewise_node_name,$lablelist))
             {
                 return  $lablelist[$modulewise_node_name];
             }
@@ -35,19 +34,19 @@ class Core_Model_Language
         
         if($modulewise_name)
         {            
-            if($cp->keyExistsInArray($modulewise_name,$lablelist))
+            if(Core::keyInArray($modulewise_name,$lablelist))
             {
                 return  $lablelist[$modulewise_name];
             }
         }
         if($nodewise_name)
         {            
-            if($cp->keyExistsInArray($nodewise_name,$lablelist))
+            if(Core::keyInArray($nodewise_name,$lablelist))
             {
                 return  $lablelist[$nodewise_name];
             }
         }        
-        if($cp->keyExistsInArray($label,$lablelist))
+        if(Core::keyInArray($label,$lablelist))
         {
             return  $lablelist[$label];
         }
@@ -55,26 +54,26 @@ class Core_Model_Language
         $customLabels=$np->getLableNames();        
         if($modulewise_node_name)
         {            
-            if($cp->keyExistsInArray($modulewise_node_name,$customLabels))
+            if(Core::keyInArray($modulewise_node_name,$customLabels))
             {
                 return  $customLabels[$modulewise_node_name];
             }
         }
         if($modulewise_name)
         {            
-            if($cp->keyExistsInArray($modulewise_name,$customLabels))
+            if(Core::keyInArray($modulewise_name,$customLabels))
             {
                 return  $customLabels[$modulewise_name];
             }
         }
         if($nodewise_name)
         {            
-            if($cp->keyExistsInArray($nodewise_name,$customLabels))
+            if(Core::keyInArray($nodewise_name,$customLabels))
             {
                 return  $customLabels[$nodewise_name];
             }
         }
-        if($cp->keyExistsInArray($label,$customLabels))
+        if(Core::keyInArray($label,$customLabels))
         {
             return  $customLabels[$label];
         }

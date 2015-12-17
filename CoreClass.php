@@ -29,6 +29,7 @@ class CoreClass
         }
         else
         {
+            Core::Log(__METHOD__." ".$className,"controllers.log");
             return new Core_Controllers_NodeController($node,$action);
         }        
         
@@ -65,6 +66,7 @@ class CoreClass
             return false;
         }
         $methodName=lcfirst(str_replace(" ","",ucwords(str_replace("_", " ",$node))).str_replace(" ","",ucwords(str_replace("_", " ",$FieldName))).ucwords($action));
+        
         if(Core::methodExists($object, $methodName))
         {
             return   $methodName;

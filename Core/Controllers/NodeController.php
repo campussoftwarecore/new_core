@@ -274,7 +274,10 @@ class Core_Controllers_NodeController extends Core_Model_Node
             $readonlyAttributes=$this->readonlyAttributes($requestedData['action']);
             $sourceNodeObj=CoreClass::getModel($sourceNode, $requestedData['action']);   
             
-            $sourceNodeObj->setNodeName($sourceNode);            
+            $sourceNodeObj->setNodeName($sourceNode);
+            $sourceNodeObj->setActionName($requestedData['action']);
+            $sourceNodeObj->setActionName($requestedData['action']);
+            $sourceNodeObj->setActionName($requestedData['action']);
             $sourceNodeStructure=$sourceNodeObj->_currentNodeStructure;
             $onchangeEvents=array();
             $eventmethod=lcfirst(str_replace(" ","",ucwords(str_replace("_", " ",$sourceNode)))."Onchange");

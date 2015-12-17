@@ -11,7 +11,7 @@
  *
  * @author ramesh
  */
-class Modules_CoreUsermanagement_Controllers_CoreUsers extends Core_Controllers_NodeController
+class Core_Modules_CoreUsermanagement_Controllers_CoreUsers extends Core_Controllers_NodeController
 {
     //put your code here
     function checkSession()

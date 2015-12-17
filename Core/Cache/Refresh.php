@@ -12,7 +12,7 @@
             $this->setLables();
             $this->nodeActions();
             $this->actionTypeList();
-            $this->setRelations();
+            $this->setRelations();            
         }
 
         public  function nodeStructure()
@@ -30,6 +30,18 @@
             $fp=fopen($folderpath."/nodestructure.json","w+");
             fwrite($fp,  json_encode($result));
             fclose($fp);
+            if(count($result)>0)
+            {
+                foreach ($result as $key=>$rs)
+                {
+                    $this->setLayout($key,$rs);
+                    $this->setTableStructure($key,$rs);
+                    $folderpath=Core::createFolder("structure/".$key, "C");
+                    $fp=fopen($folderpath."/nodestructure.json","w+");
+                    fwrite($fp,  json_encode($rs));
+                    fclose($fp);
+                }
+            }
             return ;
         }
         public function nodeFiles()
@@ -48,6 +60,16 @@
             $fp=fopen($folderpath."/nodefiles.json","w+");
             fwrite($fp,  json_encode($result));
             fclose($fp);
+            if(count($result)>0)
+            {
+                foreach ($result as $key=>$rs)
+                {
+                    $folderpath=Core::createFolder("structure/".$key, "C");
+                    $fp=fopen($folderpath."/nodefiles.json","w+");
+                    fwrite($fp,  json_encode($rs));
+                    fclose($fp);
+                }
+            }            
             return ;
         }
         public function profilePrivileges()
@@ -118,6 +140,16 @@
             $fp=fopen($folderpath."/profileacess.json","w+");
             fwrite($fp,  json_encode($totalResult));
             fclose($fp);
+            if(count($totalResult)>0)
+            {
+                foreach ($totalResult as $key=>$rs)
+                {
+                    $folderpath=Core::createFolder("profileaccess/".$key, "C");
+                    $fp=fopen($folderpath."/profileacess.json","w+");
+                    fwrite($fp,  json_encode($rs));
+                    fclose($fp);
+                }
+            }
             return ;
         }
         public function nodeActions()
@@ -135,6 +167,7 @@
             $fp=fopen($folderpath."/nodeactions.json","w+");
             fwrite($fp,  json_encode($result));
             fclose($fp);
+            
             return ;
              
         }
@@ -226,7 +259,57 @@
             $fp=fopen($folderpath."/noderelations.json","w+");
             fwrite($fp,  json_encode($finalresult));
             fclose($fp);
+            if(count($finalresult)>0)
+            {
+                foreach ($finalresult as $key=>$rs)
+                {
+                    $folderpath=Core::createFolder("structure/".$key, "C");
+                    $fp=fopen($folderpath."/nodeactions.json","w+");
+                    fwrite($fp,  json_encode($rs));
+                    fclose($fp);
+                }
+            }
+            return ;
+        }
+        public function setLayout($key,$data)
+        {
+            $layout=array();
+            $default=array();
+            $table=$data['tablename'];
+            $db=new Core_Model_TableStructure();
+            $db->setTable($table);
+            $nodeStructure=$db->getStructure();
+            $fields=Core::getKeysFromArray($nodeStructure);            
+            $layout['default_tab']=$fields;
+            $folderpath=Core::createFolder("structure/".$key, "C");
+            $fp=fopen($folderpath."/layout.json","w+");
+            fwrite($fp,  json_encode($layout));
+            fclose($fp);
+            return ;
+        }
+        public function setTableStructure($key,$data)
+        {
+                   
+            $table=$data['tablename'];
+            $db=new Core_Model_TableStructure();
+            $db->setTable($table);
+            $nodeStructure=$db->getStructure();            
+            $tableWithType=  array();
+            if(count($nodeStructure)>0)
+            {
+                foreach ($nodeStructure as $Field => $keydata) 
+                {
+                    $tableWithType[$keydata['Field']]=$keydata['Type'];
+                }
+            }            
+            $fields=Core::getKeysFromArray($nodeStructure);            
+            $layout['default_tab']=$fields;
+            $folderpath=Core::createFolder("structure/".$key, "C");
+            $fp=fopen($folderpath."/tablestructure.json","w+");
+            fwrite($fp,  json_encode($tableWithType));
+            fclose($fp);            
             return ;
         }
     }
+    
 ?>

@@ -15,7 +15,8 @@
         {            
             global $currentNode;
             $wp=new Core_WebsiteSettings();
-            $lb=new Core_Model_Language(); 
+            $lb=new Core_Model_Language();
+            
             if($this->_currentDetails->_currentNode)
             {
                 $i=0;

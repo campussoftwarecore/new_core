@@ -33,7 +33,7 @@
             
             try
             {
-                $this->output['result'] = mysqli_query($this->default,$query) or die (Core::Log($query)); 
+                $this->output['result'] = mysqli_query($this->default,$query) or die (Core::Log(mysqli_error($this->default))); 
                 $this->output['affetedrows'] =mysqli_num_rows($this->output['result']);
                 $this->output['affetedfields']=mysqli_num_fields($this->output['result']);
                 return $this->output;         

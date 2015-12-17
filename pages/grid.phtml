@@ -90,8 +90,7 @@
                         </span>
                         <span style=" padding-left: 18px;">Display Records: <?php  echo $this->_rpp*($this->_page-1);  ?> to <?php  echo $this->_rpp*($this->_page)>$this->_totalRecordsCount?$this->_totalRecordsCount:$this->_rpp*($this->_page);  ?>  of <?php echo $this->_totalRecordsCount; ?></span>
                         </span>
-                    </div>
-                    <div id="sample_div" name="sample_div" style="color:red;"></div>
+                    </div>                    
                     <div style="text-align: center;margin-top: 13px;">                                            
                         <table id="sample-table-2" class="table table-striped table-bordered table-hover dataTable">
                             <thead>
@@ -152,8 +151,22 @@
                                                                             ?>
                                                                                 <select class="input-small m-wrap" name="<?php echo $FieldName; ?>" id="<?php echo $FieldName; ?>">
                                                                                     <option value=""> ALL </option>
-                                                                                    <option value="1"> YES </option>
-                                                                                    <option value="0"> NO </option>
+                                                                                    <?php
+                                                                                    $sel="";                                                                                    
+                                                                                    if($this->_requestedData[$FieldName]==1)
+                                                                                    {
+                                                                                            $sel=" selected ";
+                                                                                    }
+                                                                                    ?>
+                                                                                    <option <?php echo $sel; ?> value="1"> YES </option>
+                                                                                    <?php
+                                                                                    $sel="";                                                                                    
+                                                                                    if($this->_requestedData[$FieldName]=="0")
+                                                                                    {
+                                                                                            $sel=" selected ";
+                                                                                    }
+                                                                                    ?>
+                                                                                    <option <?php echo $sel; ?> value="0"> NO </option>
                                                                                 </select>
                                                                             <?php
                                                                         }

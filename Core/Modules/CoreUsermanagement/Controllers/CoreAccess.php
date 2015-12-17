@@ -1,5 +1,5 @@
 <?php
-class Modules_CoreUsermanagement_Controllers_CoreAccess extends Core_Controllers_NodeController
+class Core_Modules_CoreUsermanagement_Controllers_CoreAccess extends Core_Controllers_NodeController
 {
     public $_profileAccess;
     public $_existingRecord;

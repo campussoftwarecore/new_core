@@ -6,18 +6,7 @@
 		$value = is_array($value) ?array_map('stripslashes_deep', $value) :stripslashes($value);
 	
 		return $value;
-	}
-        public function keyExistsInArray($key,$array=  array())
-        {
-            if(is_array($array))
-            {                
-                return array_key_exists($key,$array);
-            }
-            else
-            {
-                return false;
-            }
-        }
+	}        
         public function convertEncryptDecrypt($action,$string)
         {
             $output = false;
@@ -43,6 +32,81 @@
 	    }
 	
 	    return $output ;
+        }
+        public function dirToArray($dir) 
+        { 
+   
+            $result = array();
+            $cdir = scandir($dir); 
+            foreach ($cdir as $key => $value) 
+            { 
+               if (!in_array($value,array(".",".."))) 
+               { 
+                  if (is_dir($dir . DIRECTORY_SEPARATOR . $value)) 
+                  { 
+                     $result[$value] = $this->dirToArray($dir . DIRECTORY_SEPARATOR . $value); 
+                  } 
+                  else 
+                  { 
+                     $result[] = $value; 
+                  } 
+               } 
+            } 
+
+            return $result; 
+        }
+        function rmdir_recursive($dir) 
+        {
+            foreach(scandir($dir) as $file) 
+            {
+                if ('.' === $file || '..' === $file) continue;
+                if (is_dir("$dir/$file")) 
+                {
+                    $this->rmdir_recursive("$dir/$file");
+                }
+                else 
+                {
+                    unlink("$dir/$file");
+                }
+            }
+            rmdir($dir);
+        }
+        function createZipFile($path,$targetfilepath)
+        {
+            $zip_name="temfolder.zip";
+            $zip = new ZipArchive();		
+            if($zip->open($zip_name, ZIPARCHIVE::CREATE)!==TRUE)
+            {
+                    $error .= "* Sorry ZIP creation failed at this time";
+            }
+            $valid_files=$this->dirToArray($path);
+            
+            foreach($valid_files as $key=>$file)
+            {
+                    if(is_array($file))
+                    {				
+                            foreach($file as $subfile)
+                            {
+                                    $filepath=$path."/".$key."/".$subfile;
+                                    if(file_exists($filepath))
+                                    {
+                                            $zip->addFile($filepath,$foldername."/".$key."/".$subfile);
+                                    }
+                            }
+                    }
+                    else
+                    {
+                            $filepath=$path."/".$file;
+                            if(file_exists($filepath))
+                            {
+                                    $zip->addFile($filepath,$foldername."/".$file);
+                            }
+                    }
+
+            }		 
+            $zip->close();           
+            rename($zip_name, $targetfilepath.".zip");
+            return true;
         }
     }
 ?>

@@ -124,6 +124,8 @@ $wp=new Core_WebsiteSettings();
                 </a>
             </li>    
             <?php
+                global $currentNodePropertices;
+                $nodeDetails=$currentNodePropertices->_nodeDetails;       
                 $output="";			
                 if(count($menuObject->_rootModules)>0)
                 {
@@ -134,19 +136,33 @@ $wp=new Core_WebsiteSettings();
                                         $root=$rootmoduledata['nodename'];
                                         $rootdata=$menuObject->_menuItems[$root];
                                         $child=0;
+                                        $style="";
+                                        $className="";
+                                        if($root==$nodeDetails['rootmodule'])
+                                        {
+                                            $style='style="display:block;"';
+                                            $className=" open ";
+                                        }
                                         $output1='
-                                        <li class="has-sub ">'; 
+                                        <li class="has-sub '.$className.'" '.$style.' >'; 
                                         $output1.='<a href="javascript:;"  >
                                                     <div>
                                                         <span class="icon-box">
                                                         <i class="'.$rootmoduledata['icon'].'"></i>'
                                                 . '     </span>'.$menuObject->_nodeDisplay[$root].'</div>
            </a>';
-                                         $output1.=' <ul class="sub"  >';
+                                         $output1.=' <ul class="sub '.$className.'" '.$style.' >';
 
                                                         foreach($rootdata as $moduledisplay=>$moduledata)
-                                                        {                                                            
-                                                                $output1.='<li class="has-supersub"   name="link_'.$root.'" id="link_'.$root."-".$moduledisplay.'" >
+                                                        {         
+                                                                $style="";
+                                                                $className="";
+                                                                if($moduledisplay==$nodeDetails['moduledisplay'])
+                                                                {
+                                                                    $style='style="display:block;"';
+                                                                    $className=" open ";
+                                                                }
+                                                                $output1.='<li class="has-supersub '.$className.' " '.$style.'  name="link_'.$root.'" id="link_'.$root."-".$moduledisplay.'" >
                                                                                        <a href="javascript:;" >
                                                                                         <div>
                                                                                            <span class="icon-box">
@@ -154,7 +170,7 @@ $wp=new Core_WebsiteSettings();
                                                                                             </span>'.$menuObject->_nodeDisplay[$moduledisplay].'
                                                                                         </div>
                                                                                         </a>
-                                                                                        <ul class="supersub" style="display:block;" name="menu_'.$root.'" id="menu_'.$root.'-'.$moduledisplay.'">';
+                                                                                        <ul class="supersub '.$className.' " '.$style.' name="menu_'.$root.'" id="menu_'.$root.'-'.$moduledisplay.'">';
 
                                                                                                 foreach($moduledata as $module=>$nodedata)
                                                                                                 {

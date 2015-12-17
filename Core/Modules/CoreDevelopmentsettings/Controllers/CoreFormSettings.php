@@ -11,11 +11,11 @@
  *
  * @author ramesh
  */
-class Modules_CoreDevelopmentsettings_Controllers_CoreFormSettings extends  Core_Controllers_NodeController
+class Core_Modules_CoreDevelopmentsettings_Controllers_CoreFormSettings extends  Core_Controllers_NodeController
 {
     public function coreFormSettingsParentFilter() 
-    {
-        $requestedData=$this->_requestedData;
-        return $this->_tableName.".core_node_settings_id='".$requestedData['parentformvalue']."'";
+    {          
+        $requestedData=$this->_requestedData;        
+        return $this->_tableName.".core_node_settings_id='".$requestedData['core_node_settings_id']."'";
     }
 }

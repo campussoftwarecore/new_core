@@ -98,22 +98,24 @@ function hidevalues()
 }
 function getformsubmit(node,action)
 {
+        $(".formsubmit").prop( "disabled", true);
         if(node==undefined)
 	var node=document.getElementById("node").value;
         if(action==undefined)
 	var action=document.getElementById("action").value;	
-	var postUrl=window.hosturl+node+"/"+action;       
-        console.log(postUrl);
+	var postUrl=window.hosturl+node+"/"+action;
 	var x=confirm("Due Want to Submit");
+        
 	if(x==true)
 	{		
+                $(".formsubmit").prop( "disabled", false);
 		$("form#"+node).click(function(event){
                     
                     if($("#"+event.toElement.id).hasClass("formsubmit"))
                     {
                         var formData = new FormData($("form#"+node)[0]);		
                         event.preventDefault();
-                        
+                        $(".formsubmit").prop( "disabled", true);
 			
 			$.ajax({
 				url : postUrl,
@@ -153,6 +155,7 @@ function getformsubmit(node,action)
                                             }
                                             else
                                             {
+                                                $(".formsubmit").prop( "disabled", false);
                                                 $("#error_div").html(responseData);
                                                 return false;
                                             }
@@ -160,6 +163,7 @@ function getformsubmit(node,action)
                                         }
                                         catch(e)
                                         {
+                                            $(".formsubmit").prop( "disabled", false);
                                             $("#error_div").html(responseData);
                                             return false;
                                         }
@@ -176,6 +180,7 @@ function getformsubmit(node,action)
 	}
 	else
 	{
+            $(".formsubmit").prop( "disabled", false);
 		$('#validate_value').val("0");
 		$("#error_div").html("");
 		$( "#saveandclose").prop( "disabled", false);
@@ -534,6 +539,25 @@ function getFieldsForUniqueFieldset()
             success : function (responseData)
             {   
                $("#value_uniquefieldset").html(responseData);
+
+            }
+     });
+}
+function getFieldsForFormSettings()
+{
+    var node=$("#node").val();    
+    var formData=$("form#"+node).serialize();
+  
+    var posturl=window.hosturl+node+"/getStructure";
+     
+    $.ajax({
+            url : posturl,
+            type : "POST",
+            dataType : "html",
+            data : formData+"&idname=filedname",
+            success : function (responseData)
+            {   
+               $("#value_filedname").html(responseData);
 
             }
      });

@@ -8,6 +8,7 @@
             try
             {
                 $this->query=$this->buildSelect();
+                
                 $db=new Core_DataBase_DbConnect();
                 $output=$db->executeQuery($this->query);
                 $tempresult=$output['result'];
@@ -123,5 +124,62 @@
                 Core::Log($ex->getMessage());
             }
         }
+        public function getTablesFromDatabase()
+        {
+            try
+            {
+                $db=new Core_DataBase_DbConnect();
+                $output=$db->executeQuery("SHOW TABLES"); 
+                $tables=array();
+                while($rs=mysqli_fetch_assoc($output['result']))
+                {
+                    $tables=Core::mergeArrays($tables, Core::getValuesFromArray($rs));
+                    
+                }
+                $output['tables']=$tables;
+                return $output;
+            }
+            catch (Exception $ex)
+            {
+                Core::Log($ex->getMessage());                
+            }
+            return false;
+        }
+        public function getTableCreateQuery()
+        {
+            try
+            {
+                $query="SHOW CREATE TABLE ".$this->table;
+                $db=new Core_DataBase_DbConnect();
+                $output=$db->executeQuery($query); 
+                $result=$output['result'];
+                $result=mysqli_fetch_row($result);
+               if($result)
+               {
+                   return $result[1];
+               }
+            }
+            catch (Exception $ex)
+            {
+                Core::Log($ex->getMessage());                
+            }
+            return false;
+        }
+        public function getTableDataQuery($fileName)
+        {
+            try
+            {
+                $query="SELECT * INTO OUTFILE '".$fileName."' FIELDS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '".'"'."' LINES TERMINATED BY '),\\".'n'."(' FROM ".$this->table;
+                $db=new Core_DataBase_DbConnect();
+                $output=$db->executeQuery($query);      
+                return true;
+            }
+            catch (Exception $ex)
+            {
+                Core::Log($ex->getMessage());                
+            }
+            return false;
+        }
     }
+    
 ?>

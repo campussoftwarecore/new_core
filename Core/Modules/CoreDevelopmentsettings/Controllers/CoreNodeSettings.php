@@ -11,7 +11,7 @@
  *
  * @author ramesh
  */
-class Modules_CoreDevelopmentsettings_Controllers_CoreNodeSettings extends Core_Controllers_NodeController
+class Core_Modules_CoreDevelopmentsettings_Controllers_CoreNodeSettings extends Core_Controllers_NodeController
 {
     //put your code here
     public function getPrimaryKeyAction() 

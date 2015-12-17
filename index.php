@@ -1,10 +1,10 @@
 <?php  
     error_reporting(0);
-    include_once 'Boostrap.php';  
-    
+    include_once 'Boostrap.php'; 
+    Core::checkCache();
     $wp=new Core_WebsiteSettings();
     $extension=substr($_REQUEST['reditectpath'], -3);     
-    if(Core::inArray($extension, array(".js","css","png","jpg")))
+    if(Core::inArray($extension, array(".js","css","png","jpg","gif")))
     {
        exit; 
     }
@@ -17,19 +17,20 @@
         Core::redirectUrl("login.php");
     }    
     global $currentNode;
+    global $currentNodePropertices;
     try
     {
-        $np=new Core_Model_AdminSettings($_REQUEST,$_FILES);    
-        $parentNode=$np->_parentNode;
-        $parentValue=$np->_parentValue;
-        $parentAction=$np->_parentAction;
-        $currentNode=$np->_currentNode;  
-        $currentAction=$np->_currentAction;
-        $currentModule=$np->_nodeDetails['module'];
-        $currentModuleDisplay=$np->_nodeDetails['moduledisplay'];
-        $currentRootModule=$np->_nodeDetails['rootmodule'];
-        $currentSelector=$np->_currentSelector;
-        $methodType=$np->_methodType;
+        $currentNodePropertices=new Core_Model_AdminSettings($_REQUEST,$_FILES);    
+        $parentNode=$currentNodePropertices->_parentNode;
+        $parentValue=$currentNodePropertices->_parentValue;
+        $parentAction=$currentNodePropertices->_parentAction;
+        $currentNode=$currentNodePropertices->_currentNode;  
+        $currentAction=$currentNodePropertices->_currentAction;
+        $currentModule=$currentNodePropertices->_nodeDetails['module'];
+        $currentModuleDisplay=$currentNodePropertices->_nodeDetails['moduledisplay'];
+        $currentRootModule=$currentNodePropertices->_nodeDetails['rootmodule'];
+        $currentSelector=$currentNodePropertices->_currentSelector;
+        $methodType=$currentNodePropertices->_methodType;
         $currentProfileCode=$_SESSION[$wp->identity]['profile_id'];
         $header=true;
         $navigation=true;
@@ -42,7 +43,8 @@
         else
         {
             $action="admin";
-        }       
+        }      
+        
         if($methodType=="POST")
         {            
            $header=false;
@@ -51,17 +53,16 @@
         }
         
         if($header)
-        {
-            
-            $page=new Core_Pages_HeaderPage();
+        {            
+            $page=new Core_Pages_HeaderPage();            
         }
         if($navigation)
         {
-            $page=new Core_Pages_NavigationPage($np);           
+            $page=new Core_Pages_NavigationPage($currentNodePropertices);           
         }     
         if($currentNode!="")
         {  
-            $node=CoreClass::getController($currentNode,$currentModule,$action);                    
+            $node=CoreClass::getController($currentNode,$currentModule,$action);              
             $node->setActionName($action);
             $node->setParentNode($parentNode);
             $node->setParentValue($parentValue);
@@ -78,7 +79,14 @@
             }
             else
             {
-                $node->noAction();
+                if($methodType=='REQUEST')
+                {
+                    $node->noAction();
+                }
+                else 
+                {
+                    echo get_class($node)."::".$functionName." not Existing ";
+                }
             }
             
         }

@@ -20,7 +20,8 @@ class Core
         {
             
             $fp=  fopen($filename,"a");
-            fwrite($fp, " \n ");
+            fwrite($fp, "
+                    ");
             fwrite($fp, date('Y-m-d H:i:s')."  :");            
             fwrite($fp, $string);
             fclose($fp);                
@@ -38,8 +39,21 @@ class Core
         $tempPath="";
         switch ($type)
         {
-            case    "L" :
-                            $folderName="Var/Errors/".$wp->identity;
+            case    "C" :   
+                            if($folderName)
+                            {
+                                $folderName="Var/".$wp->identity."/Cache/".$folderName;
+                            }
+                            else
+                            {
+                               $folderName="Var/".$wp->identity."/Cache";
+                            }                            
+                            break;
+            case    "E" :
+                            $folderName="Var/".$wp->identity."/Errors";
+                            break;
+			case    "L" :
+                            $folderName="Var/".$wp->identity."/Logs";
                             break;
             case    "U" :
                             if($folderName)
@@ -49,6 +63,16 @@ class Core
                             else
                             {
                                $folderName="uploads/".$wp->identity;
+                            }
+                            break;
+            case    "B" :
+                            if($folderName)
+                            {
+                                $folderName="backup/".$wp->identity."/".$folderName;
+                            }
+                            else
+                            {
+                               $folderName="backup/".$wp->identity;
                             }
                             break;
             default     :
@@ -80,6 +104,17 @@ class Core
             return false;
         }
     }
+	static function checkCache()
+	{
+		$wp=new Core_WebsiteSettings();
+		$fileName="Var/".$wp->identity."/cache/";
+		if(!Core::fileExists($fileName))
+		{
+			$ch=new Core_Cache_Refresh();
+			$ch->refreshCache();
+		}
+		return true;
+	}
     static function covertStringToMethod($string)
     {
         $method=lcfirst(str_replace(" ","",ucwords(str_replace("_", " ",$string))));        
@@ -87,6 +122,7 @@ class Core
     }
     static  function methodExists($object,$method)
     {
+        
         if(method_exists($object,$method))           
         {
             return true;
@@ -235,6 +271,16 @@ class Core
         }
         return $output;
     }
+    static function getValuesFromArray($array)
+    {
+        $output=array();
+        if(Core::isArray($array))
+        {
+            $output= array_values($array);
+        }
+        return $output;
+    }
+
     static function diffArray($firstArray,$secondArray)
     {        
         if(!Core::isArray($firstArray))
