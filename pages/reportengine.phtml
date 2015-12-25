@@ -1,0 +1,23 @@
+<div class="container-fluid">
+<div class="row-fluid">
+<div class="span12">
+								<div class="widget">
+									<div class="widget-title">
+										<h4><i class="icon-reorder"></i>Report-View</h4>
+													<span class="tools">
+													<a href="javascript:;" class="icon-chevron-down"></a>
+													</span>
+									</div>
+									<div class="widget-body"><div id="reportengine_div" name="reportengine_div" class="form-horizontal"><div id="div_loading" class="loader1" style="display:none"> Data will be under processing </div><form><div class="control-group">
+						  <label class="control-label">Reports </label>
+						  <div class="controls">
+							<input type="hidden" name="page" id="page" value="1">	
+						 <select data-placeholder="Select Report" class="chosen-with-diselect  chzn-done" tabindex="-1" id="reportname" name="reportname" onchange="getreportfilter(this.value);" style="display: none;">
+							<option value=""></option><optgroup label="Development Settings"><option value="1"> Register Node </option><option value="3"> Easy Info </option> </optgroup>                    
+						 </select><div id="reportname_chzn" class="chzn-container chzn-container-single" style="width: 220px;"><a href="javascript:void(0)" class="chzn-single chzn-default" tabindex="-1"><span>Select Report</span><div><b></b></div></a><div class="chzn-drop" style="left: -9000px; width: 218px; top: 32px;"><div class="chzn-search"><input type="text" autocomplete="off" tabindex="-1" style="width: 183px;"></div><ul class="chzn-results"><li id="reportname_chzn_g_1" class="group-result" style="display: list-item;">Development Settings</li><li id="reportname_chzn_o_2" class="active-result group-option" style=""> Register Node </li><li id="reportname_chzn_o_3" class="active-result group-option" style=""> Easy Info </li></ul></div></div>
+						  </div>
+					   </div><div id="filterdiv" name="filterdiv"></div><div class="form-actions"><button type="button" class="btn btn-success" id="report_submit" name="report_submit" onclick="return reportdatasubmit();"><i class="icon-ok icon-white"></i> Submit </button></div></form><div id="reportoutput_div" name="reportoutput_div"></div></div> </div>
+ </div>
+ </div>
+</div>
+</div>

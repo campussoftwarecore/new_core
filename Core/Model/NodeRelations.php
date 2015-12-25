@@ -18,83 +18,53 @@
         public function getCurrentNodeRelation()
         {
             $nodeRelations=array();
-            $wp=new Core_WebsiteSettings();    
-            $filename=$wp->documentRoot."Var/".$wp->identity."/noderelations.json";
-            $fp=fopen($filename,"r");
-            $filecontent=  fread($fp,filesize($filename));
-            $globalNodeRelations=json_decode($filecontent,true); 
-            if(count($globalNodeRelations)>0)
+            $filePath=Core::getCachefilePath($this->_nodeName, "R");
+            $nodeRelations=Core::getFileContent($filePath);
+            if($nodeRelations)
             {
-                $nodeRelations=$globalNodeRelations[$this->_nodeName];                
-                if(!is_array($nodeRelations))
+                $nodeRelations=Core::JsontoArray($nodeRelations);
+                $nodeRelations=$nodeRelations['MTO'];
+                if(!Core::isArray($nodeRelations))
                 {
                     $nodeRelations=array();
                 }
-                else 
-                {
-                    $nodeRelations=$nodeRelations['MTO'];
-                    if(!Core::isArray($nodeRelations))
-                    {
-                        $nodeRelations=array();
-                    }                    
-                }
-                
-            }
-            return $nodeRelations;          
+
+            }           
+            return $nodeRelations;                  
         }
         public function getCurrentNodeOneToOneRelation()
         {
             $nodeRelations=array();
-            $wp=new Core_WebsiteSettings();    
-            $filename=$wp->documentRoot."var/".$wp->identity."/noderelations.json";
-            $fp=fopen($filename,"r");
-            $filecontent=  fread($fp,filesize($filename));
-            $globalNodeRelations=json_decode($filecontent,true);            
-            if(count($globalNodeRelations)>0)
+            $filePath=Core::getCachefilePath($this->_nodeName, "R");
+            $nodeRelations=Core::getFileContent($filePath);
+            if($nodeRelations)
             {
-                $nodeRelations=$globalNodeRelations[$this->getNode()];                
-                if(!is_array($nodeRelations))
+                $nodeRelations=Core::JsontoArray($nodeRelations);
+                $nodeRelations=$nodeRelations['OTO'];
+                if(!Core::isArray($nodeRelations))
                 {
                     $nodeRelations=array();
                 }
-                else 
-                {
-                    $nodeRelations=$nodeRelations['OTO'];
-                    if(!Core::isArray($nodeRelations))
-                    {
-                        $nodeRelations=array();
-                    }
-                }
-                
-            }
-            return $nodeRelations;          
+
+            }           
+            return $nodeRelations;                      
         }
         public function getCurrentNodeOneToManyRelation()
         {
             $nodeRelations=array();
-            $wp=new Core_WebsiteSettings();    
-            $filename=$wp->documentRoot."var/".$wp->identity."/noderelations.json";
-            $fp=fopen($filename,"r");
-            $filecontent=  fread($fp,filesize($filename));
-            $globalNodeRelations=json_decode($filecontent,true);                
-            if(count($globalNodeRelations)>0)
+            $filePath=Core::getCachefilePath($this->_nodeName, "R");
+            $nodeRelations=Core::getFileContent($filePath);
+            if($nodeRelations)
             {
-                $nodeRelations=$globalNodeRelations[$this->getNode()];                
-                if(!is_array($nodeRelations))
+                $nodeRelations=Core::JsontoArray($nodeRelations);
+                $nodeRelations=$nodeRelations['OTM'];
+                if(!Core::isArray($nodeRelations))
                 {
                     $nodeRelations=array();
                 }
-                else 
-                {
-                    $nodeRelations=$nodeRelations['OTM'];
-                    if(!Core::isArray($nodeRelations))
-                    {
-                        $nodeRelations=array();
-                    }
-                }
-                
-            }
-            return $nodeRelations;          
+
+            }           
+            return $nodeRelations;                    
         }
         public function getParentColName()
         {

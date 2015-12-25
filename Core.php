@@ -120,6 +120,11 @@ class Core
         $method=lcfirst(str_replace(" ","",ucwords(str_replace("_", " ",$string))));        
         return $method;
     }
+    static function covertStringToFileName($string)
+    {
+        $fileName=str_replace(" ","",ucwords(str_replace("_", " ",$string)));        
+        return $fileName;
+    }
     static  function methodExists($object,$method)
     {
         
@@ -308,5 +313,95 @@ class Core
     static function countArray($array)
     {                
         return count($array);
+    }
+    static function getCachefilePath($nodeName,$type)
+    {
+        $wp=new Core_WebsiteSettings();
+        $filename=$wp->documentRoot."Var/".$wp->identity."/Cache/structure/".$nodeName."/";
+        switch ($type) 
+        {
+            case 'R':
+                    $filename.="noderelations.json";
+                    break;
+            case 'L':
+                    $filename.="layout.json";
+                    break;
+            case 'T':
+                    $filename.="tablestructure.json";
+                    break;
+            case 'S':
+                    $filename.="nodestructure.json";
+                    break;
+            case 'N':
+                    $filename.="nodefiles.json";
+                    break;
+
+            default:
+                break;
+        }        
+        if(!Core::fileExists($filename))
+        {
+            return false;
+        }
+        else
+        {
+            return $filename;
+        }
+    }
+    static function getCachefilePathProfile($profile)
+    {
+        $wp=new Core_WebsiteSettings();
+        $filename=$wp->documentRoot."Var/".$wp->identity."/Cache/profileaccess/".$profile."/profileacess.json";        
+        if(!Core::fileExists($filename))
+        {
+            return false;
+        }
+        else
+        {
+            return $filename;
+        }
+    }
+    static function getFileContent($fileName)
+    {
+        $content="";
+        if(Core::fileExists($fileName))
+        {
+            $content=file_get_contents($fileName);
+        }
+        return $content;
+    }
+    static function JsontoArray($content)
+    {
+        $output=array();
+        if($content)
+        {
+            $output=  json_decode($content, 1);
+        }
+        return $output;
+    }
+    static function getStripslashes($valueNeed)
+    {
+        try 
+        {
+            if(Core::isArray($valueNeed))
+            {
+                $temp=array();
+                foreach ($valueNeed as $key => $value) 
+                {
+                    $temp[stripslashes($key)]=stripslashes($value);
+                }
+                return $temp;
+            }
+            else
+            {
+                return $value = stripslashes($valueNeed);
+            }
+            
+        } 
+        catch (Exception $ex) 
+        {
+            Core::Log($ex->getMessage(),"exception.log");
+        }
+        return $value;
     }
 }

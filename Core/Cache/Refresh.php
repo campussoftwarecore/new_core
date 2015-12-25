@@ -264,7 +264,7 @@
                 foreach ($finalresult as $key=>$rs)
                 {
                     $folderpath=Core::createFolder("structure/".$key, "C");
-                    $fp=fopen($folderpath."/nodeactions.json","w+");
+                    $fp=fopen($folderpath."/noderelations.json","w+");
                     fwrite($fp,  json_encode($rs));
                     fclose($fp);
                 }

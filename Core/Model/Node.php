@@ -9,7 +9,7 @@
         public $_page=null;
         public $_wsrpp=null;
         public $_eventMethods=array();
-        
+        public $_conditionMTO=array();
         public function __construct() 
         {
             
@@ -146,7 +146,8 @@
             $db->addGroupBy("id");
             $db->addOrderBy("id DESC");
             $db->setLimit(($page-1)*$this->_rpp,$this->_rpp);     
-            $db->buildSelect();
+            $db->buildSelect();  
+            Core::Log(__METHOD__.$db->sql,"query.log");
             $this->_collections=$db->getRows($indexKey);             
         }
         public function getTotalResultCount()
@@ -155,6 +156,17 @@
             $db->setTable($this->_tableName); 
             $this->addFilter();
             $db->addFieldArray(array("count(distinct(".$this->_tableName.".id))"=>"count"));
+            if(Core::countArray($this->_conditionMTO)>0)
+            {
+                foreach ($this->_conditionMTO as $FieldName => $parentNode) 
+                {
+                    $parentNodeDetails=new Core_Model_NodeProperties();
+                    $parentNodeDetails->setNode($parentNode);
+                    $parentStructure=$parentNodeDetails->currentNodeStructure(); 
+                    $joinCondition=$this->_nodeName.".".$FieldName."=".$FieldName.".".$parentStructure['primkey'];
+                    $db->addJoin($FieldName, $parentStructure['tablename'], $FieldName, $joinCondition);
+                }
+            }
             $db->addWhere($this->_whereCon);            
             $db->buildSelect();            
             $this->_totalRecordsCount=$db->getValue();             
@@ -181,12 +193,11 @@
                         
             return $displayValue;
         }
-        public function loadAttribute($FieldName)
-        {            
-            
+        public function loadAttribute($FieldName,$record=  array())
+        {               
+            $currentNodeStructure=  $this->_currentNodeStructure;
             $mandotatoryAttributes=$this->mandotatoryAttributes();			
             $readonlyAttributes=$this->readonlyAttributes();            
-            
             $onchangeEvents=array();
             $eventmethod=lcfirst(str_replace(" ","",ucwords(str_replace("_", " ",$this->_nodeName)))."Onchange");
             if(Core::methodExists($this, $eventmethod))
@@ -216,13 +227,27 @@
                 }
             }
             try
-            {                
+            {   
+                $FieldNameOptions=array();
+                $actionName=$this->_currentAction;
+                if($actionName=="adminRefresh")
+                {
+                    $actionName="admin";
+                    
+                }                
+                if($actionName!="admin")
+                {
+                    $record=$this->_record;
+                }
+                $defaultValue=$record[$FieldName];
                 $attributeDetails=new Core_Attributes_LoadAttribute($attributeType);				
-				$attributeClass=Core_Attributes_.$attributeDetails->_attributeName;
-				$attribute=new $attributeClass;
-				
+                $attributeClass=Core_Attributes_.$attributeDetails->_attributeName;                
+                $attribute=new $attributeClass;
+		$attribute->setNodeName($this->_nodeName);
+                $attribute->setPkName($currentNodeStructure['primkey']);
                 $attribute->setIdName($FieldName);
-                $attribute->setValue($this->_record[$FieldName]);
+                $attribute->setValue($defaultValue);                
+                $attribute->setRecord($record);
                 if(Core::keyInArray($FieldName, $onchangeEvents))
                 {
                     $attribute->setOnchange($onchangeEvents[$FieldName]);
@@ -234,24 +259,55 @@
                 if(in_array($FieldName,$readonlyAttributes))
                 {					
                     $attribute->setReadonly();                  
-                }				
-                $attribute->setAction($this->_currentAction);
-                $attribute->loadAttributeTemplate($attributeType,$FieldName);
+                }		
+                if($actionName=="admin")
+                {
+                    $multiEditFields=$this->getMultiEditAttributes(); 
+                    
+                    if($this->checkMultiEditActionInProgress())
+                    {
+                           
+                        if(Core::inArray($FieldName, $multiEditFields))
+                        {              
+                            if(Core::keyInArray($FieldName, $this->_nodeMTORelations))
+                            {
+                                $sourceNodeObj=CoreClass::getModel($this->_nodeMTORelations[$FieldName]);   
+            
+                                $sourceNodeObj->setNodeName($this->_nodeMTORelations[$FieldName]);  
+                                
+                                $db=new Core_DataBase_ProcessQuery();
+                                $db->setTable($sourceNodeObj->_currentNodeStructure['tablename'], $sourceNodeObj->_nodeName);
+                                $db->addField($sourceNodeObj->_nodeName.".".$sourceNodeObj->_primaryKey." as pid");
+                                $db->addFieldArray(array($sourceNodeObj->_nodeName.".".$sourceNodeObj->_descriptor=>"pds"));                    
+                                $methodName=CoreClass::getMethod($this,"filter",$sourceNodeObj->_nodeName,$FieldName);       
+                                if($methodName) 
+                                { 
+                                    $db->addWhere($this->$methodName());
+                                }
+                                $db->addOrderBy($sourceNodeObj->_descriptor);
+                                $db->buildSelect();      
+                                $FieldNameOptions=$db->getRows();
+                            }
+                            $attribute->setMultiEdit();                    
+                        }
+                    }                    
+                }
+                $attribute->setOptions($FieldNameOptions);
+                $attribute->setAction($actionName);
+                $attribute->loadAttributeTemplate($attributeType,$FieldName,$actionName);
             }
             catch (Exception $ex)
-            {
-                
-                echo $ex->getMessage();
+            {                
+                Core::Log(__METHOD__.$ex->getMessage(),"exception.log");
             }
             catch (ErrorException $ex)
             {
-                echo $ex->getTraceAsString();
+                Core::Log(__METHOD__.$ex->getMessage(),"exception.log");
             }
             return true;
         } 
         public function addFilter()
-        {
-            
+        {   
             $this->_whereCon=null;
             if($this->_parentNode)
             {
@@ -268,7 +324,19 @@
                         {
                             $this->_whereCon.=" and ";
                         }
-                        $this->_whereCon.=$FieldName." like '%".$requestedData[$FieldName]."%'";
+                        if(Core::keyInArray($FieldName, $this->_nodeMTORelations))
+                        {
+                            $this->_conditionMTO[$FieldName]=$this->_nodeMTORelations[$FieldName];
+                            $parentNodeDetails=new Core_Model_NodeProperties();
+                            $parentNodeDetails->setNode($this->_nodeMTORelations[$FieldName]);
+                            $parentStructure=$parentNodeDetails->currentNodeStructure();                            
+                            $this->_whereCon.=$FieldName.".".$parentStructure['descriptor']." like '%".$requestedData[$FieldName]."%'";
+                        }
+                        else
+                        {
+                            $this->_whereCon.=$this->_nodeName.".".$FieldName." like '%".$requestedData[$FieldName]."%'";
+                        }
+                        
                     }
                 }
             }

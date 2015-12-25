@@ -1,4 +1,10 @@
 <?php
+if($this->_action=='admin')
+{
+    echo $this->_Value;
+}
+else
+{
     if($this->_readonly==1)
     {
         echo $this->_Value;
@@ -9,4 +15,5 @@
 <textarea class="input-large" id="<?php echo $this->_idName;?>" name="<?php echo $this->_idName;?>" rows="3"> <?php echo $this->_Value;?></textarea>
 <?php
     }
+}
 ?>

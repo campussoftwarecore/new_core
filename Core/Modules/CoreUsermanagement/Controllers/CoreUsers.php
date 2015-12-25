@@ -61,7 +61,8 @@ class Core_Modules_CoreUsermanagement_Controllers_CoreUsers extends Core_Control
             session_start();
             $_SESSION[$ws->identity]['profile_id']="ROOT";
             $_SESSION[$ws->identity]['name']="Ramesh";
-            $_SESSION[$ws->identity]['last_activity']=time();
+            $_SESSION[$ws->identity]['user_id']=0;
+            $_SESSION[$ws->identity]['_lastactivity']=time();
             return true;
         }
         else
@@ -77,6 +78,7 @@ class Core_Modules_CoreUsermanagement_Controllers_CoreUsers extends Core_Control
             {
                 $_SESSION[$ws->identity]['profile_id']=$userData['core_profile_id'];
                 $_SESSION[$ws->identity]['name']=$userData['name'];
+                $_SESSION[$ws->identity]['user_id']=$userData['id'];
                 $_SESSION[$ws->identity]['last_activity']=time();
                 return true;
             }

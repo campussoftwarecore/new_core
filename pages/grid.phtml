@@ -1,16 +1,14 @@
 <?php
-    $performAction=0;
-    if($this->_parentAction=='edit' || $this->_parentAction=="" )
-    {
-        $performAction=1;
-    }
-    $performMraAction=0;
-    if(count($this->_mraActions)>0)
-    {
-        $performMraAction=1;
-    }    
+    $performAction=$this->checkActionPerform();
+    $performMraAction=$this->checkMraActionPerform();    
+    $performMultiEditAction=$this->checkMultiEditActionInProgress();
+    $multiEditFields=$this->getMultiEditAttributes();   
+
 ?>
 <div id="total_<?php echo $this->_nodeName;?>" name="total_<?php echo $this->_nodeName;?>">
+    <?php if(!$performMultiEditAction) 
+    {
+    ?>
     <div>
         <?php
             $parentPath="";
@@ -35,6 +33,9 @@
             }
         ?>
     </div>
+    <?php 
+    }
+    ?>
     <div class="table-responsive" style="margin-top:15px; overflow-x:auto; overflow-y:hidden;">
         <div>
             <div class="dataTables_filter" id="sample_1_filter">
@@ -44,6 +45,10 @@
         <div id="sample-table-2_wrapper" class="dataTables_wrapper" role="grid">
             <form id="result_<?php echo $this->_nodeName;?>" name="result_<?php echo $this->_nodeName;?>" >
                 <div id="result_<?php echo $this->_nodeName;?>_div" name="result_<?php echo $this->_nodeName;?>_div">
+                    <?php 
+                        if(!$performMultiEditAction) 
+                        {
+                    ?>
                     <div style=" padding-left: 18px;">
                         <span style=" padding-left: 18px;">RPP:</span>
                         <span style=" padding-left: 18px;">
@@ -91,16 +96,52 @@
                         <span style=" padding-left: 18px;">Display Records: <?php  echo $this->_rpp*($this->_page-1);  ?> to <?php  echo $this->_rpp*($this->_page)>$this->_totalRecordsCount?$this->_totalRecordsCount:$this->_rpp*($this->_page);  ?>  of <?php echo $this->_totalRecordsCount; ?></span>
                         </span>
                     </div>                    
+                    <?php
+                        }
+                        if($this->checkMultiEditAction())
+                        {
+                            ?>
+                            <div>
+                                <span>
+                                    <?php
+                                        if($performMultiEditAction)
+                                        {
+                                    ?>
+                                    <div id="error_div" name="error_div"></div>
+                                    <input type="button" id="multieditbutton" name="multieditbutton" value="Cancel" class="btn btn-danger" onclick="updateresultdiv('cancel','<?php echo $this->_nodeName;?>')">
+                                    <?php
+                                        }
+                                        else 
+                                        {
+                                    ?>      
+                                    
+                                    <input type="button" id="multieditbutton" name="multieditbutton" value="Multiedit" class="btn btn-danger" onclick="updateresultdiv('edit','<?php echo $this->_nodeName;?>')">
+                                    <?php
+                                        }
+                                    ?>
+                                </span>
+                            </div>
+                            <?php
+                        }
+                    ?>
+                    
                     <div style="text-align: center;margin-top: 13px;">                                            
                         <table id="sample-table-2" class="table table-striped table-bordered table-hover dataTable">
                             <thead>
                                 <tr role="row">
-                                    <th>
+                                    <?php 
+                                    $style="";
+                                    if($performMultiEditAction) 
+                                    {
+                                        $style='style="display:none;"';
+                                    }
+                                ?>
+                                    <th >
                                         <?php
                                             if($performAction==1 && $performMraAction==1)
                                             {
                                                 ?>
-                                        <input type="checkbox" id="checkall" value="1" onclick="checkaction('mra_<?php echo $this->_nodeName;?>',this.checked,'class');"/> 
+                                        <input <?php echo $style;?> type="checkbox" id="checkall" value="1" onclick="checkaction('mra_<?php echo $this->_nodeName;?>',this.checked,'class');"/> 
                                             <?php
                                             }
                                             ?>
@@ -117,7 +158,14 @@
                                         }
                                     ?>
                                 </tr>
-                                <tr role="row">
+                                <?php 
+                                    $style="";
+                                    if($performMultiEditAction) 
+                                    {
+                                        $style='style="display:none;"';
+                                    }
+                                ?>
+                                <tr role="row" <?php echo $style; ?>>
                                     <th>
                                         <input type="hidden" id="action_id" name="action_id" value="admin">
                                         <input type="button" id="buttonsearch" name="buttonsearch" value="Search" onclick="setpagezero(); samplefun('<?php echo $this->_nodeName;?>');" class="btn bsetpagezerotn-info" style="border-radius: 15px;" />	   
@@ -202,18 +250,24 @@
                                             ?>
                                             <tr>
                                                 <td>
+                                                    <?php
+                                                    if(key_exists($this->_primaryKey."pk", $row))
+                                                    {
+                                                        $primarykeyValue=$row[$this->_primaryKey."pk"];
+                                                    }
+                                                    else
+                                                    {
+                                                        $primarykeyValue=$row[$this->_primaryKey];
+                                                    }
+                                                    if(!$performMultiEditAction) 
+                                                    {
+                                                        
+                                                    ?>
                                                     <span>
                                                         <?php
                                                         if($performAction==1 && $performMraAction==1)
-                                                        {
-                                                            if(key_exists($this->_primaryKey."pk", $row))
-                                                            {
-                                                                $primarykeyValue=$row[$this->_primaryKey."pk"];
-                                                            }
-                                                            else
-                                                            {
-                                                                $primarykeyValue=$row[$this->_primaryKey];
-                                                            }
+                                                        {      
+                                                            
                                                             ?>
                                                         <input type="checkbox" class="mra_<?php echo $this->_nodeName;?>" id="<?php echo $this->_nodeName."_".$primarykeyValue;?>" name="mra_<?php echo $this->_nodeName;?>[]" value="<?php echo $primarykeyValue;?>" /> 
                                                         <?php
@@ -221,22 +275,14 @@
                                                         ?>
 
                                                     </span>
-                                                    <?php
+                                                    <?php                                                        
                                                         if(count($this->_individualActions)>0)
                                                         {
                                                             ?>
                                                                 <span class="action-buttons">
                                                             <?php
                                                                 foreach($this->_individualActions as $actionData)
-                                                                {
-                                                                    if(key_exists($this->_primaryKey."pk", $row))
-                                                                    {
-                                                                        $primarykeyValue=$row[$this->_primaryKey."pk"];
-                                                                    }
-                                                                    else
-                                                                    {
-                                                                        $primarykeyValue=$row[$this->_primaryKey];
-                                                                    }
+                                                                {                                                                    
                                                                     if($performAction==1 || $actionData['code']=='view')
                                                                     {
                                                                         if($this->recordActionPerform($actionData['code'],$primarykeyValue))
@@ -249,13 +295,21 @@
                                                                 </span>
                                                             <?php
                                                         }
+                                                    }  
                                                     ?>
                                                 </td>
                                                 <?php   
                                                 foreach($this->_showAttributes as $FieldName)
                                                 {
                                                     ?>
-                                                        <td><?php echo $this->nodeFieldDisplay($row,$FieldName); ?></td>
+                                                        <td>
+                                                            <?php 
+                                                                           
+                                                                   $this->loadAttribute($FieldName,$row);
+                                                                    ?>
+                                                                    <div id="error_<?php echo $this->_nodeName."_".$primarykeyValue."_".$FieldName; ?>"></div>
+                                                                
+                                                        </td>
                                                     <?php
                                                 }
                                                 ?>
@@ -270,7 +324,10 @@
                     </div>
                 </div>
             </form>
+            
                 <?php
+                if(!$performMultiEditAction) 
+                {
                     if($performMraAction==1 && $performAction==1)
                     {                        
                 ?>
@@ -305,6 +362,19 @@
                 </form>
                 <?php                    
                     }
+                }
+                else
+                {
+                   ?>
+                   <div>
+                   <span style="margin-top:15px;" >
+			<button id=" multieditsave" name="multieditsave" class="btn btn-danger" onclick="return multieditformsubmit('<?php echo $this->_nodeName; ?>');">Save
+		   </span>
+                   </div>
+                   <?php
+                    
+                  
+                }
                 ?>                
             
         </div>

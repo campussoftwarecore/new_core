@@ -29,7 +29,7 @@ class CoreClass
         }
         else
         {
-            Core::Log(__METHOD__." ".$className,"controllers.log");
+            Core::Log($className,"controller.log");
             return new Core_Controllers_NodeController($node,$action);
         }        
         

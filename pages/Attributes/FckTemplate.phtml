@@ -1,1 +1,14 @@
-<textarea class="ckeditor" id="defaulttemplate" name="defaulttemplate" rows="6" ></textarea>
+<?php 
+if($this->_action=='admin')
+{
+    echo $this->_Value;
+}
+else
+{
+    ?>
+<textarea class="ckeditor" id="defaulttemplate" name="defaulttemplate" rows="6" >
+    
+</textarea>
+<?php
+}
+?>

@@ -18,16 +18,7 @@ class Core_Model_NodeProperties
         $filecontent=  fread($fp,filesize($wp->documentRoot."Var/".$wp->identity."/nodestructure.json"));
         fclose($fp);
         return json_decode($filecontent,true);
-    }
-    public function getNodeFileProperties()
-    {
-        $wp=new Core_WebsiteSettings();    
-        $filename=$wp->documentRoot."Var/".$wp->identity."/nodefiles.json";
-        $fp=fopen($filename,"r");
-        $filecontent=  fread($fp,filesize($wp->documentRoot."Var/".$wp->identity."/nodefiles.json"));
-		fclose($fp);
-        return json_decode($filecontent,true);
-    }
+    }    
     public function getDefaultLabels()
     {
         $wp=new Core_WebsiteSettings();    
@@ -39,19 +30,14 @@ class Core_Model_NodeProperties
     }
     public function getCurrentProfilePermission($profile_id="ROOT")
     {
-        $wp=new Core_WebsiteSettings();    
-        try
+        $filePath=Core::getCachefilePathProfile($profile_id);        
+        if($filePath)
         {
-                $filename=$wp->documentRoot."Var/".$wp->identity."/profileacess.json";
-                $fp=fopen($filename,"r");
-                $filecontent= fread($fp,filesize($filename));
-                fclose($fp);
-                return json_decode($filecontent,true)[$profile_id];
+            return Core::JsontoArray(Core::getFileContent($filePath));
         }
-        catch(Exception $e) 
+        else 
         {
-            $e->getMessage();
-            return false;
+            return array();
         }
     }
     public function getCurrentProfilePermissionNodeAction()
@@ -81,13 +67,31 @@ class Core_Model_NodeProperties
     }
     public function currentNodeStructure()
     {
-        $nodeStructure=$this->nodeSettings();
-        return $nodeStructure[$this->_nodeName];
+        
+        $filePath=Core::getCachefilePath($this->_nodeName, "S");
+        $nodeStructure=Core::getFileContent($filePath);
+        if($nodeStructure)
+        {
+            return Core::JsontoArray($nodeStructure);
+            
+        }
+        else
+        {
+            return array();
+        }        
     }
     public function getNodeDetails()
     {
-        $nodeProperties=$this->getNodeFileProperties();
-        return $nodeProperties[$this->_nodeName];
+        $filePath=Core::getCachefilePath($this->_nodeName, "N");
+        $nodeStructure=Core::getFileContent($filePath);
+        if($nodeStructure)
+        {
+            return Core::JsontoArray($nodeStructure);            
+        }
+        else
+        {
+            return array();
+        }         
     }    
     public function getActionType($action=NULL)
     {

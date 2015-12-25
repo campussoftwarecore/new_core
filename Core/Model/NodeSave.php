@@ -63,6 +63,7 @@ class Core_Model_NodeSave extends Core_Model_Settings
             }
         }
         $datetime=date('Y-m-d H:i:s');
+        $action="edit";
         if(Core::keyInArray("updatedat", $tableStructure))                
         {
             $db->addFieldArray(array("updatedat"=>$datetime));
@@ -72,14 +73,43 @@ class Core_Model_NodeSave extends Core_Model_Settings
             $db->buildUpdate();
         }
         else
-        {            
+        {     
+            $action="add";
             if(Core::keyInArray("createdat", $tableStructure))                
             {
                 $db->addFieldArray(array("createdat"=>$datetime));
             }
-            $db->buildInsert();
+            $db->buildInsert();            
         }
-        $db->executeQuery();
+        $db->executeQuery();   
+        if($this->_autoKey)
+        {
+            if(!$this->_tableFieldWithData[$this->_autoKey])
+            {
+                $newDb =new Core_DataBase_ProcessQuery();
+                $newDb->setTable($this->_tableName);
+                $newDb->addFieldArray(array("max(".$this->_tableName.".".$this->_autoKey.")"=>"lastinsert"));
+                $newDb->buildSelect();                
+                $this->_tableFieldWithData[$this->_autoKey]=$newDb->getValue();                
+            }
+        }
+        try
+        {
+            $session=new Core_Session();
+            $session->setProcessActive();
+            $session=$session->getSessionMaganager();    
+            $host_ip=$session['ipaddress'];
+            $ns=new Core_DataBase_ProcessQuery();
+            $ns->setTable("core_node_history");
+            $ns->addFieldArray(array("node_id"=>$this->_nodeName,"table_name"=>$this->_tableName,"pk_value"=>$this->_tableFieldWithData[$this->_pkName],"core_node_actions_id"=>$action,"datetime"=>$datetime,"core_user_id"=>$core_user_id,"host_ip"=>$host_ip));
+            $ns->buildInsert();
+            $ns->executeQuery();
+        }
+        catch(Exception $ex)
+        {
+            Mage::log($ex->getMessage());
+        }
+        
         return $this->_tableFieldWithData[$this->_pkName];
     }
     //put your code here

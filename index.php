@@ -50,16 +50,7 @@
            $header=false;
            $navigation=false;
            $footer=false;
-        }
-        
-        if($header)
-        {            
-            $page=new Core_Pages_HeaderPage();            
-        }
-        if($navigation)
-        {
-            $page=new Core_Pages_NavigationPage($currentNodePropertices);           
-        }     
+        }    
         if($currentNode!="")
         {  
             $node=CoreClass::getController($currentNode,$currentModule,$action);              
@@ -72,6 +63,14 @@
             $node->setRequestedData($_REQUEST);
             $node->setFilesData($_FILES);
             $node->checkSession();
+            if($header)
+            {            
+                $page=new Core_Pages_HeaderPage();            
+            }
+            if($navigation)
+            {
+                $page=new Core_Pages_NavigationPage($currentNodePropertices);           
+            }
             $functionName=$action."Action";           
             if(method_exists($node,$functionName))
             {
@@ -94,6 +93,14 @@
         { 
             $session=new Core_Session();
             $session=$session->getSessionMaganager();            
+            if($header)
+            {            
+                $page=new Core_Pages_HeaderPage();            
+            }
+            if($navigation)
+            {
+                $page=new Core_Pages_NavigationPage($currentNodePropertices);           
+            }
             include_once 'pages/home.phtml';
 
         }

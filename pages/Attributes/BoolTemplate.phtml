@@ -1,4 +1,19 @@
 <?php    
+    if($this->_action=='admin')
+    {
+        if($this->_Value==1)
+        {
+            echo 'Yes';
+        }
+        else 
+        {
+            echo 'No';
+        }
+    }
+    else 
+    {
+
+    
     $type="checkbox";
     $class="";
     if($this->_readonly==1)
@@ -29,5 +44,6 @@
                 echo "No";
             }
 
+        }
         }
     ?>

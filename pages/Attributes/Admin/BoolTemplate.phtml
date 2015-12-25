@@ -1,0 +1,35 @@
+<?php
+    if($this->_multiedit==1)
+    {        
+        if(key_exists($this->_pkName."pk", $this->_record))
+        {
+            $primarykeyValue=$this->_record[$this->_pkName."pk"];
+        }
+        else
+        {
+            $primarykeyValue=$this->_record[$this->_pkName];
+        }
+        $checked=" ";
+        if($this->_Value==1)
+        {
+            $checked=" checked ";
+        }
+        ?>
+        
+        <input type="checkbox" id="<?php echo $this->_nodeName."_".$primarykeyValue."_".$this->_idName; ?>" name="<?php echo $this->_nodeName."_save[".$primarykeyValue."][".$this->_idName."]"; ?>" value="1"  <?php echo $checked; ?> />        
+    
+        
+        <?php
+    }
+    else
+    {
+        if($this->_Value==1)
+        {
+            echo "Yes";
+        }
+        else 
+        {
+            echo "No";
+        }   
+    }
+?>

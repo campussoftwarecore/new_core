@@ -1,6 +1,8 @@
 <?php
     class Core_Attributes_Attribute extends Core_Pages_PageLayout
     {
+        public $_nodeName=NULL;
+        public $_pkName=NULL;
         public $_onchange=NULL;
         public $_keyUp=NULL;
         public $_idName=NULL;
@@ -9,8 +11,17 @@
         public $_readonly=NULL;
         public $_options=array();
         public $_action=NULL;
+        public $_record=array();
+        public $_multiedit=0;
         
-        
+        public function setNodeName($nodeName)
+        {
+            $this->_nodeName=$nodeName;
+        }
+        public function setPkName($pkName)
+        {
+            $this->_pkName=$pkName;
+        }
         public function setIdName($idName)
         {
             $this->_idName=$idName;
@@ -45,6 +56,15 @@
         {
             
         }
+        function setRecord($record)
+        {
+            $this->_record=$record;
+        }
+        function setMultiEdit()
+        {
+            $this->_multiedit=1;
+        }
+        
         public function setOptions($result)
         {
             $this->_options=$result;

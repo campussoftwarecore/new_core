@@ -127,6 +127,7 @@ function getformsubmit(node,action)
 				processData: false,
 				success: function (responseData)
 				{     
+                                    $(".formsubmit").prop( "disabled", false);
                                     
                                         try
                                         {
@@ -207,11 +208,11 @@ function updateresultdiv(action,node)
 {
 	if(action=="cancel")
 	{
-		$('#multiedit_'+node).val("0");
+		$('#'+node+'_multiedit').val("0");
 	}
 	else
 	{
-		$('#multiedit_'+node).val("1");	
+		$('#'+node+'_multiedit').val("1");	
 	}
         var formname="form#result_"+node;
         
@@ -235,30 +236,24 @@ function updateresultdiv(action,node)
 	
 	return true;
 }
-function multieditformsubmit(node,nodeencrypt)
+function multieditformsubmit(node)
 {
 	
-	var formname="#result_"+node;
+	var formname="form#result_"+node;       
 	var formdata = $(formname).serialize();	
-	$("#div_loading").show();
+        console.log(formname);
+        console.log(formdata);
+        var postUrl=window.hosturl+node+"/multiEditSave";
+        console.log(postUrl);
 	$.ajax({
-			url : "multieditformsubmit.php",
+			url : postUrl,
 			type : "POST",
 			dataType : "html",
 			data:formdata,
 			success : function (html)
 			{
-				$("#div_loading").hide();
-				if(html!="success")
-				{
-					$("#sample_div").html(html);
-					return false;
-				}
-				else
-				{
-					updateresultdiv("cancel",node,nodeencrypt);
-					return true;
-				}
+                            console.log(html);
+				$("#error_div").html(html);
 						
 			}
 			
@@ -359,8 +354,8 @@ function checkdateformate(colname,value)
 }
 function validateEmail(sEmail,colname)
 {
-	var idname="#"+colname;
-	var statusidname="#status_"+colname;
+    var idname="#"+colname;
+    var statusidname="#status_"+colname;
     var filter = /^([\w-\.]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([\w-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$/;
     if (filter.test(sEmail))
     {	$(idname).css('color', 'green');

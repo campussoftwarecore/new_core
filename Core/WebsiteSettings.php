@@ -17,7 +17,7 @@
             $this->documentRoot=$_SERVER['DOCUMENT_ROOT']."new_core/";
             $this->identity="Core";
             $this->themeName="default";
-            $this->rpp="10";
+            $this->rpp="2";
             $this->documentRootUpload="uploads/".$this->identity;
         }
     }

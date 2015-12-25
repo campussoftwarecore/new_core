@@ -7,6 +7,7 @@ class Core_Controllers_NodeController extends Core_Model_Node
     public $_currentAction="Admin";
     public $_websiteAdminUrl=NULL;
     public $_methodType=NULL;    
+    public $_performMraAction=NULL;
     public $_removeActionRecords=array();
             
     function __construct($nodeName,$action) 
@@ -23,6 +24,11 @@ class Core_Controllers_NodeController extends Core_Model_Node
     {        
         $this->_methodType=$Type;
     }
+    public function setMraActionPerform()
+    {
+        $this->_performMraAction=1;
+    }
+
     public function setRequestedData($requesteddata)
     {        
         $this->_requestedData=$requesteddata;
@@ -231,6 +237,7 @@ class Core_Controllers_NodeController extends Core_Model_Node
        
         $nodeDelete=new Core_Model_NodeDelete();
         $nodeDelete->setNode($this->_nodeName);
+        $nodeDelete->setPkValue($this->_currentSelector);
         $nodeDelete->addFilterCondition("(".$this->_tableName.".".$this->_primaryKey." = '".$this->_currentSelector."'".")");           
         $nodeDelete->delete();
         $output=array();
@@ -242,7 +249,14 @@ class Core_Controllers_NodeController extends Core_Model_Node
         }
         else
         {
-            echo json_encode($output);
+            if($this->_performMraAction)
+            {
+                return json_encode($output);
+            }
+            else
+            {
+                echo json_encode($output);
+            }
         }
         return;
     }
@@ -398,25 +412,32 @@ class Core_Controllers_NodeController extends Core_Model_Node
     {
         $errorsArray=array();
         $requestedData=$nodeObject->_requestedData;       
-        $nodeResult=  json_decode($requestedData['noderesult'],true);        
-        foreach ($this->mandotatoryAttributes() as $fieldName)
+        $nodeResult=  json_decode($requestedData['noderesult'],true);     
+        $mandotatoryAttributes =$this->mandotatoryAttributes();
+        if(Core::countArray($mandotatoryAttributes)>0)
         {
-            if($requestedData[$fieldName]=="")
+            foreach ($mandotatoryAttributes as $fieldName)
             {
-                $errorsArray[$fieldName]=" Please Enter ".$this->getLabel($fieldName);                
-            }
-            else
-            {
-                if(Core::inArray($fieldName, $this->_numberAttributes))
+                if($fieldName!="")
                 {
-                    if(!is_numeric($requestedData[$fieldName]))
+                    if($requestedData[$fieldName]=="")
                     {
-                        $errorsArray[$fieldName]=" Please Enter Numbers Only ";
-                    }                    
+                        $errorsArray[$fieldName]=" Please Enter ".$this->getLabel($fieldName);                
+                    }
+                    else
+                    {
+                        if(Core::inArray($fieldName, $this->_numberAttributes))
+                        {
+                            if(!is_numeric($requestedData[$fieldName]))
+                            {
+                                $errorsArray[$fieldName]=" Please Enter Numbers Only ";
+                            }                    
+                        }
+                    }
                 }
-            }
-                
-        }        
+
+            }    
+        }
         if(count($errorsArray)==0)
         {
             foreach($this->_uniqueAttributes as $fieldName)
@@ -661,9 +682,82 @@ class Core_Controllers_NodeController extends Core_Model_Node
     {
         $pidname=$this->_nodeName.'_selector';
         $primaryids=Core::covertStringToArray($this->_requestedData[$pidname],'|');
-        echo "<pre>";print_r($primaryids);echo "</pre>";
-        
+        foreach ($primaryids as $pid) 
+        {
+            $node=CoreClass::getController($this->_nodeName,$this->_currentNodeModule,"delete");              
+            $node->setActionName("delete");
+            $node->setParentNode($parentNode);
+            $node->setParentValue($parentValue);
+            $node->setParentAction($parentAction);
+            $node->setSurrentSelector($pid);
+            $node->setMethodType("POST"); 
+            $node->setMraActionPerform();
+            $node->checkSession();
+            $functionName="deleteAction";
+            $node->$functionName();
+            
+        }
+        $output=array();
+        $output['status']="success";
+        $output['redirecturl']=$this->_websiteHostUrl;            
+        echo json_encode($output);
     }
-    
+    public function checkActionPerform()
+    {
+        if($this->_parentAction=='edit' || $this->_parentAction=="" )
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+    public function checkMraActionPerform()
+    {
+        if(Core::countArray($this->_mraActions)>0)
+        {        
+            return true;
+        }
+        else
+        {
+            return FALSE;
+        }
+         
+    }
+    public function checkMultiEditAction()
+    {
+        $multiEditFields=  $this->_currentNodeStructure['editlist'];  
+        if(Core::countArray(Core::covertStringToArray($multiEditFields)))
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+    public function checkMultiEditActionInProgress()
+    {
+        if(Core::keyInArray($this->_nodeName.'_multiedit', $this->_requestedData))
+        {
+            if($this->_requestedData[$this->_nodeName.'_multiedit']==1)
+            {
+                return true;
+            }
+            return false;
+        }
+        return false;
+    }
+    public function getMultiEditAttributes() 
+    {
+        return Core::covertStringToArray($this->_currentNodeStructure['editlist']);        
+    }
+    public function multiEditSaveAction() 
+    {
+        echo "<pre>";
+            print_r($this->_requestedData);
+        echo "</pre>";
+    }
 }
 ?>

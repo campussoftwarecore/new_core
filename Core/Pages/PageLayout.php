@@ -204,11 +204,22 @@ class Core_Pages_PageLayout extends Core_Model_Language
         }
         
     }
-    public function loadAttributeTemplate($filename,$FieldName=NULL)
-    {  
-        global $FieldName;
-        $filename="Attributes/".$filename."Template.phtml";
-        $this->loadLayout($filename,1);
+    public function loadAttributeTemplate($attributeType,$FieldName=NULL,$actionName=NULL)
+    { 
+        if($actionName)
+        {            
+            $filename="Attributes/".Core::covertStringToFileName($actionName)."/".$attributeType."Template.phtml";  
+            if(!$this->loadLayout($filename,1))
+            {
+                $filename="Attributes/".$attributeType."Template.phtml";
+                $this->loadLayout($filename,1);
+            }
+        }
+        else
+        {
+            $filename="Attributes/".$attributeType."Template.phtml";
+            $this->loadLayout($filename,1);
+        }
         return true;
     }
     public function loadLayout($filename,$duplicateLoad=0,$returnFile=0)
@@ -219,29 +230,29 @@ class Core_Pages_PageLayout extends Core_Model_Language
         $currentnode=$this->_currentNodeName;
         if($currentnode)
         {
-            if(file_exists($ws->documentRoot."pages/".$ws->themeName."/".$currentnode."/".$filename))
+            if(Core::fileExists($ws->documentRoot."pages/".$ws->themeName."/".$currentnode."/".$filename))
             {
                 $filename=$ws->documentRoot."pages/".$ws->themeName."/".$currentnode."/".$filename;
                 $flag=1;
             }
-            if(file_exists($ws->documentRoot."pages/".$currentnode."/".$filename) && $flag==0)
+            if(Core::fileExists($ws->documentRoot."pages/".$currentnode."/".$filename) && $flag==0)
             {
                 $filename=$ws->documentRoot."pages/".$currentnode."/".$filename;
                 $flag=1;
             }
         }
-        if(file_exists($ws->documentRoot."pages/".$ws->themeName."/".$filename) && $flag==0)
+        if(Core::fileExists($ws->documentRoot."pages/".$ws->themeName."/".$filename) && $flag==0)
         {
             $filename=$ws->documentRoot."pages/".$ws->themeName."/".$filename;
             $flag=1;
         }
-        if(file_exists($ws->documentRoot."pages/".$filename) && $flag==0)
+        if(Core::fileExists($ws->documentRoot."pages/".$filename) && $flag==0)
         {
             $filename=$ws->documentRoot."pages/".$filename;
             $flag=1;
         } 
         
-        if(file_exists($filename))
+        if(Core::fileExists($filename))
         {
             if($returnFile==1)
             {

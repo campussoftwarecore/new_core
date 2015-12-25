@@ -20,17 +20,17 @@
 
                         if($value!="")
                         {
-                            $this->result[$rs[$key]]=$rs[$value];
+                            $this->result[$rs[$key]]=Core::getStripslashes($rs[$value]);
                         }
                         else
                         {
-                            $this->result[$rs[$key]]=$rs;
+                            $this->result[$rs[$key]]=Core::getStripslashes($rs);
                         }
 
                     }
                     else
                     {
-                            $this->result[$i]=$rs;
+                            $this->result[$i]=Core::getStripslashes($rs);
                     }                
                     $i++;
                 }
