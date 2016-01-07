@@ -1,5 +1,5 @@
 <?php
-    $mandotoryAttributes=$this->mandotatoryAttributes();    
+    $mandotoryAttributes=$this->mandotatoryAttributes();
 ?>
 <div class="container-fluid">
 	<div class="row-fluid">
@@ -16,13 +16,21 @@
                             $backUrl=$this->_websiteHostUrl;
                             if($this->_parentNode)
                             {
-                                $backUrl=$this->_websiteAdminUrl.$this->_parentNode."/".$this->_parentAction."/".$this->_parentSelector;
+                                $backUrl=$this->_websiteAdminUrl.$this->_parentNode."/".$this->_parentAction."/".$this->_parentSelector."/MTO/".$this->_nodeName;
                             }
                             if(count($this->_nodeOTMRelations)>0 && $this->_currentAction!='add')
                             {                                
                         ?>
 			<ul class="nav nav-tabs">
-				<li class="active">
+                                
+                            <?php
+                                $active="";
+                                if($this->_childNode=="")
+                                {
+                                    $active='class="active"';
+                                }
+                            ?>
+				<li <?php echo $active; ?>>
                                     <a href="#tab_<?php echo $this->_nodeName; ?>" data-toggle="tab">General</a>
                                 </li>
                                 
@@ -30,9 +38,14 @@
                                         <?php
                                         foreach($this->_nodeOTMRelations as $childNode=>$linkColName)
                                         {
+                                            $active="";
+                                            if($this->_childNode==$childNode)
+                                            {
+                                                $active='class="active"';
+                                            }
                                             ?>
                                         
-                                            <li>
+                                            <li <?php echo $active; ?>>
                                             <a href="#tab_<?php echo $childNode; ?>" data-toggle="tab" onclick="return samplefun('<?php echo $childNode; ?>');" ><?php echo $this->getLabel($childNode); ?></a>
                                             </li>
                                             <?php
@@ -44,7 +57,14 @@
                             }
                             ?>
 			<div class="tab-content">
-				<div class="tab-pane active" id="tab_<?php echo $this->_nodeName; ?>">
+                                <?php
+                                    $active="";
+                                    if($this->_childNode=="")
+                                    {
+                                        $active=' active ';
+                                    }
+                                ?>
+				<div class="tab-pane <?php echo $active;?>" id="tab_<?php echo $this->_nodeName; ?>">
 
 					<form name="<?php echo $this->_nodeName; ?>" id="<?php echo $this->_nodeName; ?>" class="form-horizontal <?php echo "form_".$this->_nodeName; ?>" action="" method="POST" enctype="multipart/form-data">
 						
@@ -126,8 +146,15 @@
                                                                           
                                         foreach($this->_nodeOTMRelations as $childNode=>$linkColName)
                                         {
+                                            
+                                                $active="";
+                                                if($this->_childNode==$childNode)
+                                                {
+                                                    $active=' active ';
+                                                }
+                                           
                                             ?>                                       
-                                            <div class="tab-pane" id="tab_<?php echo $childNode; ?>">
+                                            <div class="tab-pane <?php echo $active; ?>" id="tab_<?php echo $childNode; ?>">
                                                 <div id="total_<?php echo $childNode; ?>" name="total_<?php echo $childNode; ?>" >
                                                     <form id="result_<?php echo $childNode; ?>" name="result_<?php echo $childNode; ?>" >
                                                             <input type="hidden" id="<?php echo $childNode;?>_action_id" name="<?php echo $childNode;?>_action_id" value="admin">			
@@ -139,6 +166,12 @@
                                                 </div>
                                             </div>                                            
                                             <?php
+                                            if($this->_childNode==$childNode)
+                                            {
+                                                ?>
+                                                <input type="hidden" id="childdatadisplay" name="childdatadisplay" value="<?php echo $childNode;?>">
+                                                <?php
+                                            }
                                         }
                                     
                                 ?>

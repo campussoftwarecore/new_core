@@ -1,0 +1,67 @@
+<div class="controls">
+   <lable>Page</lable>
+   <select id="page" name="page" onchange="setpageforreport(this.value);">
+       <?php
+        if($this->_reportNode->_totalRecordsCount>=$this->_reportrpp)
+        {
+            $i=1;
+            while($this->_reportNode->_totalRecordsCount>=($i*$this->_reportrpp))
+            {
+                $sel="";
+                if($i==$this->_reportpage)
+                {
+                    $sel=" selected ";
+                }
+                echo '<option value="'.$i.'" '.$sel.' >'.$i.'</option>';
+                $i++;
+            }
+        }
+       ?>      
+   </select>
+</div>
+<div style="overflow-x:auto;">
+   <table id="sample-table-2" class="table table-striped table-bordered table-hover dataTable">
+      <tbody>
+         <tr class="row">
+             <?php
+             if(count($this->_reportNode->_showAttributes)>0)
+             {
+                 foreach ($this->_reportNode->_showAttributes as $FieldName) 
+                 {
+                     echo "<th>".$this->getLabel($FieldName)."</th>";
+                 }                 
+             }
+             ?>            
+         </tr>
+         <?php
+            if(count($this->_reportResult)>0)
+            {
+                foreach ($this->_reportResult as $rowData)
+                {
+                    echo '<tr class="row">';
+                    if(count($this->_reportNode->_showAttributes)>0)
+                    {
+                        foreach ($this->_reportNode->_showAttributes as $FieldName) 
+                        {
+                            $value=$rowData[$FieldName];
+                            if(in_array($FieldName,$this->_reportNode->_boolAttributes))
+                            {
+                                if($value==1)
+                                {
+                                    $value="Yes";
+                                }
+                                else
+                                {
+                                    $value="No";
+                                }
+                            }
+                            echo "<td>".$value."</td>";
+                        }                 
+                    }  
+                    echo "</tr>";
+                }
+            }
+         ?>
+      </tbody>
+   </table>
+</div>

@@ -1,15 +1,17 @@
 <form id="result_<?php echo $this->_nodeName;?>" name="result_<?php echo $this->_nodeName;?>">   
-    <input type="hidden" id="parentnode" name="parentnode" value="<?php echo $this->_parentNode;?>">
-   <input type="hidden" id="parentidvalue" name="parentidvalue" value="<?php echo $this->_parentSelector;?>">
-   <input type="hidden" id="parentaction" name="parentaction" value="<?php echo $this->_parentAction;?>">
-   <input type="hidden" id="action" name="action" value="save">
-   <input type="hidden" id="node" name="node" value="<?php echo $this->_nodeName;?>">
+    <input type="hidden" id="<?php echo $this->_nodeName;?>_parentnode" name="<?php echo $this->_nodeName;?>_parentnode" value="<?php echo $this->_parentNode;?>">
+   <input type="hidden" id="<?php echo $this->_nodeName;?>_parentidvalue" name="<?php echo $this->_nodeName;?>_parentidvalue" value="<?php echo $this->_parentSelector;?>">
+   <input type="hidden" id="<?php echo $this->_nodeName;?>_parentaction" name="<?php echo $this->_nodeName;?>_parentaction" value="<?php echo $this->_parentAction;?>">
+   <input type="hidden" id="<?php echo $this->_nodeName;?>_action" name="<?php echo $this->_nodeName;?>_action" value="admin">
+   <input type="hidden" id="<?php echo $this->_nodeName;?>_node" name="<?php echo $this->_nodeName;?>_node" value="<?php echo $this->_nodeName;?>">
    <input type="hidden" id="module" name="module" value="<?php echo $this->_currentNodeModule;?>">
+   <input type="hidden" id="multiedit_<?php echo $this->_nodeName;?>" name="multiedit_<?php echo $this->_nodeName;?>" value="0" />
+   <input type="hidden" id="mrahtml_<?php echo $this->_nodeName;?>" name="mrahtml_<?php echo $this->_nodeName;?>" value="0" />
 </form>
    <form id="<?php echo $this->_nodeName;?>" name="<?php echo $this->_nodeName;?>"> 
-   <input type="hidden" id="parentnode" name="parentnode" value="<?php echo $this->_parentNode;?>">
-   <input type="hidden" id="parentidvalue" name="parentidvalue" value="<?php echo $this->_parentSelector;?>">
-   <input type="hidden" id="parentaction" name="parentaction" value="<?php echo $this->_parentAction;?>">
+   <input type="hidden" id="<?php echo $this->_nodeName;?>_parentnode" name="<?php echo $this->_nodeName;?>_parentnode" value="<?php echo $this->_parentNode;?>">
+   <input type="hidden" id="<?php echo $this->_nodeName;?>_parentidvalue" name="<?php echo $this->_nodeName;?>_parentidvalue" value="<?php echo $this->_parentSelector;?>">
+   <input type="hidden" id="<?php echo $this->_nodeName;?>_parentaction" name="<?php echo $this->_nodeName;?>_parentaction" value="<?php echo $this->_parentAction;?>">
    <input type="hidden" id="action" name="action" value="save">
    <input type="hidden" id="node" name="node" value="<?php echo $this->_nodeName;?>">
    <input type="hidden" id="module" name="module" value="<?php echo $this->_currentNodeModule;?>">

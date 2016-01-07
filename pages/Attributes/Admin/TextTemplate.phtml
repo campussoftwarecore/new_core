@@ -18,6 +18,13 @@
     }
     else
     {
-        echo $this->_Value;  
+        if(is_array($this->_Value))
+        {
+            echo implode(",", $this->_Value);  
+        }
+        else 
+        {
+            echo $this->_Value;  
+        }        
     }
 ?>

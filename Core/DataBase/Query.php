@@ -13,7 +13,9 @@
         public $limitEnd=NULL;
         public $havingCon=NULL;
         public $output=array();
-        
+        public $forUpdate=NULL;
+
+
         public function setTable($tablename,$aliastable=NULL)
         {
             $this->table=$tablename;
@@ -23,6 +25,11 @@
             }
             $this->tablealias=$aliastable;
         }
+        public function addForUpdate()
+        {
+            $this->forUpdate=1;
+        }
+
         public function addWhere($where=NULL)
         {
             

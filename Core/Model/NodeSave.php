@@ -107,7 +107,7 @@ class Core_Model_NodeSave extends Core_Model_Settings
         }
         catch(Exception $ex)
         {
-            Mage::log($ex->getMessage());
+            Core::Log(__METHOD__.$ex->getMessage(),"NodeSave.log");
         }
         
         return $this->_tableFieldWithData[$this->_pkName];

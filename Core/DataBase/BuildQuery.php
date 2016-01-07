@@ -118,7 +118,10 @@
             $this->sql.=" ".$this->joinCondition;
             $this->buildFileterCondition();
             $this->sql.=$this->fileterCondition;
-            
+            if($this->forUpdate)
+            {
+                $this->sql.=" FOR UPDATE ";
+            }
             return $this->sql;                    
         }
         public function buildUpdate()

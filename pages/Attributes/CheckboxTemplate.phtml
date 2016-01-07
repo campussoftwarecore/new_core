@@ -4,13 +4,15 @@ if($this->_action=='admin')
     echo $this->_Value;
 }
 else
-{
+{   
+    
     if(!is_array($this->_Value))
     {
         $this->_Value=array($this->_Value);
     }
     if(count($this->_options)>0)
     {
+        
         foreach ($this->_options as $optionData)
         {
             $checked="";

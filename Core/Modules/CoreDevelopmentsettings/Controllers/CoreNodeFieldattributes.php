@@ -7,24 +7,17 @@
  */
 
 /**
- * Description of CoreUniquefieldset
+ * Description of CoreNodeFieldattributes
  *
  * @author ramesh
  */
-class Core_Modules_CoreDevelopmentsettings_Controllers_CoreUniquefieldset extends Core_Controllers_NodeController
+class Core_Modules_CoreDevelopmentsettings_Controllers_CoreNodeFieldattributes extends Core_Controllers_NodeController
 {
     //put your code here
-    public function coreUniquefieldsetAfterDataUpdate()
-    {        
-        $cache=new Core_Cache_Refresh();
-        $cache->setNodeName($this->_requestedData['core_node_settings_id']);
-        $cache->setUniqueSetValues();         
-        return TRUE;  
-    }
     public function getStructureAction()
     {
         $requestedData=$this->_requestedData;
-        $defaultValue=$requestedData['uniquefieldset'];
+        $defaultValue=$requestedData['fieldname'];
         $np=new Core_Model_NodeProperties();
         $np->setNode($requestedData['core_node_settings_id']);
         $nodestructure=$np->currentNodeStructure();
@@ -43,7 +36,7 @@ class Core_Modules_CoreDevelopmentsettings_Controllers_CoreUniquefieldset extend
             $result[$i]['pds']=$this->getLabel($key);
             $i++;
         }
-        $attributeType="checkbox";        
+        $attributeType="select";        
         $attributeDetails=new Core_Attributes_LoadAttribute($attributeType);				
         $attributeClass=Core_Attributes_.$attributeDetails->_attributeName;
         $attribute=new $attributeClass;

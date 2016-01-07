@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <hostsettings>
+	<Host>
+        <websitehost>localhost/new_core/</websitehost>
+        <websitehostadmin>localhost/new_core/</websitehostadmin>
+        <documentroot>C:/wamp/www/new_core/</documentroot>
+    </Host>
     <Database>
         <default>
             <Host>localhost</Host>

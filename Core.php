@@ -20,8 +20,7 @@ class Core
         {
             
             $fp=  fopen($filename,"a");
-            fwrite($fp, "
-                    ");
+            fwrite($fp,"\n");
             fwrite($fp, date('Y-m-d H:i:s')."  :");            
             fwrite($fp, $string);
             fclose($fp);                
@@ -35,6 +34,7 @@ class Core
     }
     static function createFolder($folderName,$type)
     {
+		
         $wp=new Core_WebsiteSettings();
         $tempPath="";
         switch ($type)
@@ -52,7 +52,7 @@ class Core
             case    "E" :
                             $folderName="Var/".$wp->identity."/Errors";
                             break;
-			case    "L" :
+            case    "L" :
                             $folderName="Var/".$wp->identity."/Logs";
                             break;
             case    "U" :
@@ -75,6 +75,16 @@ class Core
                                $folderName="backup/".$wp->identity;
                             }
                             break;
+            case    "R" :
+                            if($folderName)
+                            {
+                                $folderName="Var/".$wp->identity."/Reports"."/".$folderName;
+                            }
+                            else
+                            {
+                               $folderName="Var/".$wp->identity."/Reports";
+                            }                            
+                            break;			
             default     :
                             break;
         }
@@ -127,7 +137,7 @@ class Core
     }
     static  function methodExists($object,$method)
     {
-        
+        //Core::Log($method,"methods.log");
         if(method_exists($object,$method))           
         {
             return true;
@@ -196,14 +206,42 @@ class Core
         }
         return $output;
     }
-    static function redirectUrl($url)
+    static function covertStringToLower($string)
     {
-        echo '
-            <script>            
-                window.location.assign("'.$url.'")            
+        if($string)
+        {
+            return strtolower($string);
+        }
+        return $string;
+    }
+
+    static function redirectUrl($url,$message)
+    {
+        $string='
+            <script>';
+        if($message)
+        {
+            $string.='window.alert("'.$message.'");';
+        }
+         $string.='   window.location.assign("'.$url.'");            
             </script>';         
+        echo $string;
         exit;
     }
+    static function getSiteConfig()
+    {
+        try
+        {
+            $fp=  fopen("sitesettings.xml", "r") or ("ramesh");
+            $fileContent=  fread($fp,  filesize("sitesettings.xml")); 
+            fclose($fp); 
+            return Core::convertXmlToArray($fileContent)['Host'];
+        }
+        catch(Exception $ex)
+        {
+            Core::Log($ex->getMessage());
+        }        
+    }  
     static function getDBConfig()
     {
         try
@@ -267,6 +305,10 @@ class Core
     {
         return json_decode($string,1);
     }
+    static function convertArrayToJson($string)
+    {
+        return json_encode($string);
+    }
     static function getKeysFromArray($array)
     {
         $output=array();
@@ -314,14 +356,18 @@ class Core
     {                
         return count($array);
     }
-    static function getCachefilePath($nodeName,$type)
+    static function getCachefilePath($nodeName,$type,$refresh)
     {
         $wp=new Core_WebsiteSettings();
-        $filename=$wp->documentRoot."Var/".$wp->identity."/Cache/structure/".$nodeName."/";
+        $filename=Core::createFolder("Var/".$wp->identity."/Cache/structure/".$nodeName);
+        
         switch ($type) 
         {
             case 'R':
                     $filename.="noderelations.json";
+                    break;
+            case 'CR':
+                    $filename.="childnoderelations.json";
                     break;
             case 'L':
                     $filename.="layout.json";
@@ -335,9 +381,30 @@ class Core
             case 'N':
                     $filename.="nodefiles.json";
                     break;
-
+            case 'NA':
+                    $filename.="nodeactions.json";
+                    break;
+            case 'DF':
+                    $filename.="defaultvalues.json";
+                    break;
+            case 'UFS':
+                    $filename.="uniquesetvalues.json";
+                    break;
+            case 'FA':
+                    $filename.="fieldattributes.json";
+                    break;
+            case 'FP':
+                    $filename.="filepath.json";
+                    break;
+            case 'D':
+                    $filename.="fielddependee.json";
+                    break;
             default:
                 break;
+        }        
+        if($refresh)
+        {
+           return $filename;
         }        
         if(!Core::fileExists($filename))
         {
@@ -361,6 +428,48 @@ class Core
             return $filename;
         }
     }
+    static function getCachefilePathReports($node,$reportid,$type)
+    {
+        $wp=new Core_WebsiteSettings();
+        $filename=$wp->documentRoot."Var/".$wp->identity."/Reports/".$node."/";  
+        if($type=='S')
+        {
+            $filename.=$reportid."_query.log";
+        }
+        if($type=='F')
+        {
+            $filename.=$reportid."_selectfields.log";
+        }
+        if(!Core::fileExists($filename))
+        {
+            return false;
+        }
+        else
+        {
+            return $filename;
+        }
+    }
+    static function createFile($fileName,$overwrite,$data)
+    {
+        try
+        {
+            if($overwrite==1)
+            {
+                $fp=fopen($fileName,"w+");
+            }
+            else 
+            {
+                $fp=fopen($fileName,"w");
+            }
+            fwrite($fp, $data);
+            fclose($fp);
+        }
+        catch(Exception $ex)
+        {
+            Core::Log($ex->getMessage(),"fileexception.log");
+        }
+    }
+
     static function getFileContent($fileName)
     {
         $content="";
@@ -403,5 +512,36 @@ class Core
             Core::Log($ex->getMessage(),"exception.log");
         }
         return $value;
+    }
+    static function sumOfArarrayValues($inputArray,$keyArray)
+    {
+	$outputArray=array();
+	if(Core::countArray($inputArray)>0)
+	{
+	    $i=0;
+	    foreach($inputArray as $singleline)
+	    {
+		if($i==0)
+		{
+		    $singlelinekeys=Core::getKeysFromArray($singleline);
+		    foreach($singleline as $onekey=>$value)
+		    {
+			$outputArray=$outputArray+array($onekey=>null);
+		    }
+		    $i++;
+		}		
+		if(Core::countArray($keyArray)>0)
+		{
+		    foreach($keyArray as $temkey)
+		    {
+			if(Core::keyInArray($temkey,$singleline))
+			{
+			    $outputArray[$temkey]+=$singleline[$temkey];    
+			}
+		    }
+		}
+	    }
+	}
+	return $outputArray;
     }
 }

@@ -1,4 +1,8 @@
 <?php
+if(is_array($this->_Value))
+{
+    $this->_Value=implode("|",$this->_Value);
+}
 if($this->_action=='admin')
 {
     echo $this->_Value;

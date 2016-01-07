@@ -12,12 +12,13 @@
                 
         function __construct() 
         {
-            $this->websiteUrl="http://".$_SERVER['HTTP_HOST']."/new_core/";
-            $this->websiteAdminUrl="http://".$_SERVER['HTTP_HOST']."/new_core/";
-            $this->documentRoot=$_SERVER['DOCUMENT_ROOT']."new_core/";
+            $dbConfig=Core::getSiteConfig(); 
+            $this->websiteUrl="http://".$dbConfig['websitehost']."";
+            $this->websiteAdminUrl="http://".$dbConfig['websitehostadmin']."";
+            $this->documentRoot=$dbConfig['documentroot'];
             $this->identity="Core";
             $this->themeName="default";
-            $this->rpp="2";
+            $this->rpp="17";
             $this->documentRootUpload="uploads/".$this->identity;
         }
     }

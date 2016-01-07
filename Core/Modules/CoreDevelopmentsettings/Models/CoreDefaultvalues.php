@@ -7,17 +7,17 @@
  */
 
 /**
- * Description of CoreUniquefieldset
+ * Description of CoreDefaultvalues
  *
  * @author ramesh
  */
-class Core_Modules_CoreDevelopmentsettings_Models_CoreUniquefieldset extends Core_Model_Node
+class Core_Modules_CoreDevelopmentsettings_Models_CoreDefaultvalues extends Core_Model_Node
 {
     //put your code here
-    public function coreUniquefieldsetOnchange()
-    {        
+    public function coreDefaultvaluesOnchange()
+    {
         $events=array();
-        $events['core_node_settings_id']="getFieldsForUniqueFieldset();";           
+        $events['core_node_settings_id']="getFieldsForDefualtFields();";           
         return $events;
     }
 }

@@ -8,7 +8,9 @@ class Core_Pages_PageLayout extends Core_Model_Language
     protected $_isFooter=NULL;
     protected $_PagePropties=array();
     public $_currentNodeName=NULL;
-    
+    public $_currentNodeModule;
+
+
     public function setCurrentNodeName($nodeName)
     {
         $this->_currentNodeName=$nodeName;
@@ -219,7 +221,7 @@ class Core_Pages_PageLayout extends Core_Model_Language
         {
             $filename="Attributes/".$attributeType."Template.phtml";
             $this->loadLayout($filename,1);
-        }
+        }   
         return true;
     }
     public function loadLayout($filename,$duplicateLoad=0,$returnFile=0)
@@ -227,17 +229,34 @@ class Core_Pages_PageLayout extends Core_Model_Language
         $flag=0;
         $ws=new Core_WebsiteSettings();            
         
-        $currentnode=$this->_currentNodeName;
+        $currentnode=$this->_nodeName;
+        
         if($currentnode)
         {
-            if(Core::fileExists($ws->documentRoot."pages/".$ws->themeName."/".$currentnode."/".$filename))
+            $module=$this->_currentNodeModule;
+            if($module)
+            {    
+                $module=Core::covertStringToFileName($module);
+                $filename_temp=$ws->documentRoot."pages/".$ws->themeName."/".$module."/".Core::covertStringToFileName($currentnode)."/".$filename;
+                if(Core::fileExists($filename_temp) && $flag==0)
+                {
+                    $filename=$filename_temp;
+                    $flag=1;
+                }
+            }
+            if(Core::fileExists($ws->documentRoot."pages/".$ws->themeName."/".Core::covertStringToFileName($currentnode)."/".$filename) && $flag==0)
             {
-                $filename=$ws->documentRoot."pages/".$ws->themeName."/".$currentnode."/".$filename;
+                $filename=$ws->documentRoot."pages/".$ws->themeName."/".Core::covertStringToFileName($currentnode)."/".$filename;
                 $flag=1;
             }
-            if(Core::fileExists($ws->documentRoot."pages/".$currentnode."/".$filename) && $flag==0)
+            if(Core::fileExists($ws->documentRoot."pages/".$module."/".Core::covertStringToFileName($currentnode)."/".$filename) && $flag==0)
             {
-                $filename=$ws->documentRoot."pages/".$currentnode."/".$filename;
+                $filename=$ws->documentRoot."pages/".$module."/".Core::covertStringToFileName($currentnode)."/".$filename;
+                $flag=1;
+            }
+            if(Core::fileExists($ws->documentRoot."pages/".Core::covertStringToFileName($currentnode)."/".$filename) && $flag==0)
+            {
+                $filename=$ws->documentRoot."pages/".Core::covertStringToFileName($currentnode)."/".$filename;
                 $flag=1;
             }
         }

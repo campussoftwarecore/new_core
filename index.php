@@ -1,6 +1,6 @@
 <?php  
     error_reporting(0);
-    include_once 'Boostrap.php'; 
+    include_once 'Boostrap.php';     
     Core::checkCache();
     $wp=new Core_WebsiteSettings();
     $extension=substr($_REQUEST['reditectpath'], -3);     
@@ -20,7 +20,8 @@
     global $currentNodePropertices;
     try
     {
-        $currentNodePropertices=new Core_Model_AdminSettings($_REQUEST,$_FILES);    
+        $currentNodePropertices=new Core_Model_AdminSettings($_REQUEST,$_FILES);  
+        
         $parentNode=$currentNodePropertices->_parentNode;
         $parentValue=$currentNodePropertices->_parentValue;
         $parentAction=$currentNodePropertices->_parentAction;
@@ -31,6 +32,13 @@
         $currentRootModule=$currentNodePropertices->_nodeDetails['rootmodule'];
         $currentSelector=$currentNodePropertices->_currentSelector;
         $methodType=$currentNodePropertices->_methodType;
+        $apiMethod=$currentNodePropertices->_isAPI;
+        $childNode=$currentNodePropertices->_childNode;        
+        if($methodType!='POST' && $apiMethod==1)
+        {
+            echo "404";
+            exit;
+        }        
         $currentProfileCode=$_SESSION[$wp->identity]['profile_id'];
         $header=true;
         $navigation=true;
@@ -53,7 +61,9 @@
         }    
         if($currentNode!="")
         {  
-            $node=CoreClass::getController($currentNode,$currentModule,$action);              
+            $node=CoreClass::getController($currentNode,$currentModule,$action);     
+            $node->setAPI($apiMethod);
+            $node->setChildNode($childNode);
             $node->setActionName($action);
             $node->setParentNode($parentNode);
             $node->setParentValue($parentValue);
@@ -63,6 +73,7 @@
             $node->setRequestedData($_REQUEST);
             $node->setFilesData($_FILES);
             $node->checkSession();
+            
             if($header)
             {            
                 $page=new Core_Pages_HeaderPage();            

@@ -15,12 +15,21 @@ class Core_Model_Abstract extends Core_Pages_PageLayout
     public $_showAttributes=array(); 
     public $_collections=array();
     public $_tableName=NULL;
+    public $_primaryKey=NULL;
+    public $_autoKey=NULL;
+    public $_descriptor=NULL;
     public $_nodeMTORelations=array();   
     public $_NodeFieldAttributes=array();
     public $_NodeFieldsList=array();
     public $_nodeOTORelations=array(); 
     public $_nodeOTMRelations=array(); 
+    public $_isDefaultCollection=NULL;
+    public $_isAPI=NULL;
     
+    public function setAPI($apiMethod)
+    {
+        $this->_isAPI=$apiMethod;
+    }
     public function setNodeName($nodename) 
     {
         $this->_nodeName=$nodename;
@@ -135,7 +144,8 @@ class Core_Model_Abstract extends Core_Pages_PageLayout
     public function getFieldsForNode()
     {
         $np= new Core_Model_NodeProperties($this->_nodeName);
-        $nodeStructure=$np->currentNodeStructure();
+        $np->setNode($this->_nodeName);
+        $nodeStructure=$np->currentNodeStructure();        
         $nodeTable=$nodeStructure['tablename'];       
         $this->_tableName=$nodeTable;
         $this->getNodeFieldsProperties();
@@ -143,6 +153,7 @@ class Core_Model_Abstract extends Core_Pages_PageLayout
     }
     function getNodeFieldsProperties()
     {
+        
         $ts=new Core_Model_TableStructure();
         $ts->setTable($this->_tableName);   
         $filedsArray=array();
@@ -158,11 +169,13 @@ class Core_Model_Abstract extends Core_Pages_PageLayout
         $wp=new Core_WebsiteSettings();
         $np = new Core_Model_NodeProperties();
         $np->setNode($this->_nodeName);
-        $this->_currentNodeStructure=$np->currentNodeStructure();    
-        $this->_nodesFullStructure=$np->_globalNodeStructure;
-        $this->_tableName =$this->_currentNodeStructure['table'];
+        $this->_currentNodeStructure=$np->currentNodeStructure();
+        $this->_tableName =$this->_currentNodeStructure['tablename'];
         $this->_primaryKey=$this->_currentNodeStructure['primkey'];
-        $this->_descriptor=$this->_currentNodeStructure['descriptor'];            
+        $this->_autoKey=$this->_currentNodeStructure['autokey'];
+        $this->_descriptor=$this->_currentNodeStructure['descriptor'];
+        $this->_isDefaultCollection=$this->_currentNodeStructure['default_collection'];
+        
         if(trim($this->_currentNodeStructure['uniquefields']))
         {
             $this->_uniqueAttributes=explode("|",  $this->_currentNodeStructure['uniquefields']);
@@ -228,7 +241,7 @@ class Core_Model_Abstract extends Core_Pages_PageLayout
         $nr->setNode($this->_nodeName);        
         $this->_nodeMTORelations=$nr->getCurrentNodeRelation();          
         $this->_nodeOTORelations=$nr->getCurrentNodeOneToOneRelation();
-        $this->_nodeOTMRelations=$nr->getCurrentNodeOneToManyRelation();
+        $this->_nodeOTMRelations=$nr->getCurrentNodeOneToManyRelation();        
     }
     function setNodeFeildAttribute($FieldList,$type)
     {

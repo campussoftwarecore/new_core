@@ -46,6 +46,7 @@ $wp=new Core_WebsiteSettings();
 <!-- END HEAD -->
 <!-- BEGIN BODY -->
 <body class="fixed-top">
+    <input type="hidden" name="sitehost" id="sitehost" value="<?php echo $wp->websiteUrl; ?>" />
    <div id="dialogoverlay"></div>
       <div id="dialogbox">
 	 <div style="
@@ -162,7 +163,8 @@ $wp=new Core_WebsiteSettings();
                                                                     $style='style="display:block;"';
                                                                     $className=" open ";
                                                                 }
-                                                                $output1.='<li class="has-supersub '.$className.' " '.$style.'  name="link_'.$root.'" id="link_'.$root."-".$moduledisplay.'" >
+                                                                $submenu=0;
+                                                                $output2='<li class="has-supersub '.$className.' " '.$style.'  name="link_'.$root.'" id="link_'.$root."-".$moduledisplay.'" >
                                                                                        <a href="javascript:;" >
                                                                                         <div>
                                                                                            <span class="icon-box">
@@ -178,21 +180,26 @@ $wp=new Core_WebsiteSettings();
                                                                                                         {
                                                                                                             if($node!=$moduledisplay)
                                                                                                             {
-                                                                                                                $output1.='
+                                                                                                                $output2.='
 
         <li>
                 <a  href="'.$menuObject->_nodeLink[$node].'">'.$menuObject->_nodeDisplay[$node].'</a>
         </li>';
                                                                                                                 $child=1;
+                                                                                                                $submenu=1;
                                                                                                             }
                                                                                                         }
                                                                                                 }
-                                                                $output1.='	
-                                                                                        </ul>';
+                                                                $output2.='	
+                                                                                        </ul>
+                                                                                        </li>';
+                                                                if($submenu==1)
+                                                                {
+                                                                    $output1.=$output2;
+                                                                }
                                                         }						
 
-                                        $output1.='		 
-                                                        </li>							
+                                        $output1.='     							
                                                   </ul>';							
 
                                         $output1.="

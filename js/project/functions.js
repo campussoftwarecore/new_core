@@ -1,6 +1,13 @@
-window.hosturl= "http://localhost/new_core/";
-$(document).ready(function () {
-calldefaultfunctions();
+window.hosturl= "";
+$(document).ready(function () 
+{
+    window.hosturl=$("#sitehost").val();
+    if(document.getElementById('childdatadisplay'))
+    {
+	var childdatadisplay=document.getElementById('childdatadisplay').value;
+        samplefun(childdatadisplay);
+    }
+    calldefaultfunctions();
 });
 var ram=0;
 function calldefaultfunctions()
@@ -127,6 +134,7 @@ function getformsubmit(node,action)
 				processData: false,
 				success: function (responseData)
 				{     
+                                    $("#error_div").html(responseData);
                                     $(".formsubmit").prop( "disabled", false);
                                     
                                         try
@@ -217,14 +225,17 @@ function updateresultdiv(action,node)
         var formname="form#result_"+node;
         
 	var formdata = $(formname).serialize();	
+        console.log(formdata);
+        var POSTURL=window.hosturl+node+"/adminRefresh";
+        console.log(POSTURL);
 	$.ajax({
-			url : window.hosturl+node+"/adminRefresh",
+			url : POSTURL,
 			type : "POST",
 			dataType : "html",
 			data:formdata+"&resultchange=1"+"&gridsearch=search",
 			success : function (html)
 			{
-                                
+                                console.log(html);
 				var idname="#total_"+node;
                                 $(idname).html(html);
 				//$("#div_loading").hide();
@@ -250,11 +261,21 @@ function multieditformsubmit(node)
 			type : "POST",
 			dataType : "html",
 			data:formdata,
-			success : function (html)
+			success : function (responseData)
 			{
-                            console.log(html);
-				$("#error_div").html(html);
-						
+                            try
+                            {
+                                var obj = jQuery.parseJSON(responseData)
+                                if(obj.status=="success")
+                                {
+                                    window.location.replace(obj.redirecturl);
+                                }
+                            }
+                            catch(err)
+                            {
+                                $("#error_div").html(responseData);
+                                console.log(err);
+                            }                            		
 			}
 			
 	});	
@@ -275,6 +296,25 @@ function getPrimarykey()
             success : function (html)
             {                
                $("#primkey").val(html);
+
+            }
+     });
+    
+}
+function getAutokey()
+{
+    var destinationNode=$("#node").val();
+    var formData = $("form").serialize();
+    var posturl=window.hosturl+destinationNode+"/getAutokey";
+        
+    $.ajax({
+            url : posturl,
+            type : "POST",
+            dataType : "html",
+            data : formData,
+            success : function (html)
+            {                
+               $("#autokey").val(html);
 
             }
      });
@@ -556,4 +596,153 @@ function getFieldsForFormSettings()
 
             }
      });
+}
+function getFieldsForRelationDependee()
+{
+    var node=$("#node").val();    
+    var formData=$("form#"+node).serialize();
+  
+    var posturl=window.hosturl+node+"/getStructure";
+     
+    $.ajax({
+            url : posturl,
+            type : "POST",
+            dataType : "html",
+            data : formData+"&idname=dependee_fields",
+            success : function (responseData)
+            {   
+               $("#value_dependee_fields").html(responseData);
+
+            }
+     });
+}
+function getFieldsForDefualtFields()
+{
+    var node=$("#node").val();    
+    var formData=$("form#"+node).serialize();
+  
+    var posturl=window.hosturl+node+"/getStructure";
+     
+    $.ajax({
+            url : posturl,
+            type : "POST",
+            dataType : "html",
+            data : formData+"&idname=fieldname",
+            success : function (responseData)
+            {   
+               $("#value_fieldname").html(responseData);
+
+            }
+     });
+}
+function getFieldsForAttributeFields()
+{
+    var node=$("#node").val();    
+    var formData=$("form#"+node).serialize();
+  
+    var posturl=window.hosturl+node+"/getStructure";
+     
+    $.ajax({
+            url : posturl,
+            type : "POST",
+            dataType : "html",
+            data : formData+"&idname=fieldname",
+            success : function (responseData)
+            {   
+               $("#value_fieldname").html(responseData);
+
+            }
+     });
+}
+function getFieldsforReport()
+{
+    var node=$("#node").val();    
+    var formData=$("form#"+node).serialize();
+  
+    var posturl=window.hosturl+node+"/getStructure";
+     
+    $.ajax({
+            url : posturl,
+            type : "POST",
+            dataType : "html",
+            data : formData+"&idname=fieldsdata",
+            success : function (responseData)
+            {   
+               $("#value_fieldsdata").html(responseData);
+
+            }
+     });
+}
+function getreportfilter(reportname)
+{	
+	if(reportname!="")
+	{
+             var posturl=window.hosturl+'core_reportsengine'+"/filter";
+		$.ajax({
+			
+			url:posturl,
+			type:"POST",
+			data:"&reportname="+reportname,
+			dataType:"html",
+			success : function (output)
+			{
+                            console.log(output);
+				$("#filterdiv").html(output);
+				$("#buttons_div").show();
+				$("#report_submit").attr("disabled", false);
+				$("#report_submitrefresh").hide();
+				$("#div_loading").hide();
+				$("#reportoutput_div").html("");
+				$("#page").val(1);
+			}
+			
+			});
+		
+	}
+	else
+	{
+		$("#filterdiv").html("");
+		$("#reportoutput_div").html("");
+		$("#buttons_div").hide();
+		$("#div_loading").hide();
+		$("#page").val(1);
+	}
+	return true;
+}
+function reportdatasubmit()
+{
+	var formdata=$("form").serialize();
+	var outputtype=document.getElementById("output_type").value;
+	if(outputtype=="csv" || outputtype=='pdf')
+	{
+		var url1="phpfiles/reportoutput.php?"+formdata;
+		window.open(url1);
+	}
+	else
+	{
+            var posturl=window.hosturl+'core_reportsengine'+"/getReportDetails";
+		$("#report_submit").attr("disabled", true);
+		$("#report_submitrefresh").show();		
+		$.ajax({
+				
+			url:posturl,
+			type:"POST",
+			data:formdata,
+			dataType:"html",
+			success : function (output)
+			{
+				$("#reportoutput_div").html(output);
+				$("#report_submit").attr("disabled", false);
+			}
+				
+		});
+	}
+	
+	return false;
+	
+}
+function setpageforreport(page)
+{
+	$("#page").val(page);
+	reportdatasubmit();
 }

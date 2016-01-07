@@ -2,8 +2,7 @@
     $performAction=$this->checkActionPerform();
     $performMraAction=$this->checkMraActionPerform();    
     $performMultiEditAction=$this->checkMultiEditActionInProgress();
-    $multiEditFields=$this->getMultiEditAttributes();   
-
+    $multiEditFields=$this->getMultiEditAttributes();
 ?>
 <div id="total_<?php echo $this->_nodeName;?>" name="total_<?php echo $this->_nodeName;?>">
     <?php if(!$performMultiEditAction) 
@@ -262,40 +261,44 @@
                                                     if(!$performMultiEditAction) 
                                                     {
                                                         
-                                                    ?>
-                                                    <span>
-                                                        <?php
-                                                        if($performAction==1 && $performMraAction==1)
-                                                        {      
-                                                            
-                                                            ?>
-                                                        <input type="checkbox" class="mra_<?php echo $this->_nodeName;?>" id="<?php echo $this->_nodeName."_".$primarykeyValue;?>" name="mra_<?php echo $this->_nodeName;?>[]" value="<?php echo $primarykeyValue;?>" /> 
-                                                        <?php
-                                                        }
                                                         ?>
-
-                                                    </span>
-                                                    <?php                                                        
-                                                        if(count($this->_individualActions)>0)
-                                                        {
-                                                            ?>
-                                                                <span class="action-buttons">
+                                                        <span>
                                                             <?php
-                                                                foreach($this->_individualActions as $actionData)
-                                                                {                                                                    
-                                                                    if($performAction==1 || $actionData['code']=='view')
-                                                                    {
-                                                                        if($this->recordActionPerform($actionData['code'],$primarykeyValue))
+                                                            if($performAction==1 && $performMraAction==1)
+                                                            {      
+
+                                                                ?>
+                                                            <input type="checkbox" class="mra_<?php echo $this->_nodeName;?>" id="<?php echo $this->_nodeName."_".$primarykeyValue;?>" name="mra_<?php echo $this->_nodeName;?>[]" value="<?php echo $primarykeyValue;?>" /> 
+                                                            <?php
+                                                            }
+                                                            ?>
+
+                                                        </span>
+                                                        <?php                                                        
+                                                            if(count($this->_individualActions)>0)
+                                                            {
+                                                                ?>
+                                                                    <span class="action-buttons">
+                                                                <?php
+                                                                    foreach($this->_individualActions as $actionData)
+                                                                    {                                                                    
+                                                                        if($performAction==1 || $actionData['code']=='view')
                                                                         {
-                                                                            echo '<a href="'.$this->_websiteHostUrl.$actionData['code'].'/'.$primarykeyValue.'/'.$parentPath.'">'.$actionData['name']."</a>";
+                                                                            if($this->recordActionPerform($actionData['code'],$primarykeyValue))
+                                                                            {
+                                                                                echo '<a href="'.$this->_websiteHostUrl.$actionData['code'].'/'.$primarykeyValue.'/'.$parentPath.'">'.$actionData['name']."</a>";
+                                                                            }
                                                                         }
                                                                     }
-                                                                }
-                                                            ?>
-                                                                </span>
-                                                            <?php
-                                                        }
-                                                    }  
+                                                                ?>
+                                                                    </span>
+                                                                <?php
+                                                            }
+                                                    }
+                                                    else
+                                                    {
+                                                       echo '<input type="hidden" name="'.$this->_nodeName."_save[".$primarykeyValue."][".$this->_autoKey."]".'" id="'.$this->_nodeName."_".$primarykeyValue.'_'.$this->_autoKey.'" value="'.$row[$this->_autoKey].'"/>';
+                                                    }
                                                     ?>
                                                 </td>
                                                 <?php   

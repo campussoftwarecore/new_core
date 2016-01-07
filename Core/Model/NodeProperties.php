@@ -12,21 +12,29 @@ class Core_Model_NodeProperties
     }
     public function nodeSettings()
     {
-        $wp=new Core_WebsiteSettings();    
-        $filename=$wp->documentRoot."Var/".$wp->identity."/nodestructure.json";
-        $fp=fopen($filename,"r");
-        $filecontent=  fread($fp,filesize($wp->documentRoot."Var/".$wp->identity."/nodestructure.json"));
-        fclose($fp);
-        return json_decode($filecontent,true);
+        $filename=Core::createFolder(NULL, "C")."/nodestructure.json";
+        $data=Core::getFileContent($filename);
+        if($data)
+        {
+            return Core::JsontoArray($data);            
+        }
+        else
+        {
+            return array();
+        }        
     }    
     public function getDefaultLabels()
     {
-        $wp=new Core_WebsiteSettings();    
-        $filename=$wp->documentRoot."Var/".$wp->identity."/language.json";
-        $fp=fopen($filename,"r");
-        $filecontent=  fread($fp,filesize($wp->documentRoot."Var/".$wp->identity."/language.json"));
-        fclose($fp);
-        return json_decode($filecontent,true);
+        $filename=Core::createFolder(NULL, "C")."/language.json";
+        $data=Core::getFileContent($filename);
+        if($data)
+        {
+            return Core::JsontoArray($data);            
+        }
+        else
+        {
+            return array();
+        }        
     }
     public function getCurrentProfilePermission($profile_id="ROOT")
     {
@@ -48,10 +56,9 @@ class Core_Model_NodeProperties
     }
     public function getLableNames()
     {
-        $wp=new Core_WebsiteSettings();    
-        $filename=$wp->documentRoot."Labels/".$wp->identity."/english.phtml";
+        $filename=Core::createFolder(NULL, "C")."/english.phtml";
         
-        if(file_exists($filename))
+        if(Core::fileExists($filename))
         {
             include_once $filename;
         }        
@@ -96,10 +103,83 @@ class Core_Model_NodeProperties
     public function getActionType($action=NULL)
     {
         $wp=new Core_WebsiteSettings();    
-        $filename=$wp->documentRoot."Var/".$wp->identity."/actiontype.json";
-        $fp=fopen($filename,"r");
-        $filecontent=  fread($fp,filesize($filename));
-        return json_decode($filecontent,true)[$action];
+        $filename=Core::createFolder(NULL, "C")."/actiontype.json";
+        $data=Core::getFileContent($filename);
+        if($data)
+        {
+            return Core::JsontoArray($data)[$action];            
+        }
+        else
+        {
+            return array();
+        }        
     }  
+    public function getChildRelations() 
+    {
+        $filePath=Core::getCachefilePath($this->_nodeName, "CR");
+        $childRelations=Core::getFileContent($filePath);
+        if($childRelations)
+        {
+            return Core::JsontoArray($childRelations);            
+        }
+        else
+        {
+            return array();
+        } 
+    }
+    public function getFieldAttributes() 
+    {
+        $filePath=Core::getCachefilePath($this->_nodeName, "FA");
+        $fieldAttributes=Core::getFileContent($filePath);
+        if($fieldAttributes)
+        {
+            return Core::JsontoArray($fieldAttributes);            
+        }
+        else
+        {
+            return array();
+        } 
+    }
+    public function setRelationDependency() 
+    {
+        $this->_nodeName;
+        $filePath=Core::getCachefilePath($this->_nodeName, "D");
+        
+        $relationDependency=Core::getFileContent($filePath);
+        if($relationDependency)
+        {
+            return Core::JsontoArray($relationDependency);            
+        }
+        else
+        {
+            return array();
+        } 
+    }
+    public function getDefaultValues() 
+    {
+        $filePath=Core::getCachefilePath($this->_nodeName, "DF");
+        $defaultValues=Core::getFileContent($filePath);
+        if($defaultValues)
+        {
+            return Core::JsontoArray($defaultValues);            
+        }
+        else
+        {
+            return array();
+        } 
+    }
+    public function getUniqueSetValues() 
+    {
+        $filePath=Core::getCachefilePath($this->_nodeName, "UFS");
+        $uniqueFields=Core::getFileContent($filePath);
+        if($uniqueFields)
+        {
+            return Core::JsontoArray($uniqueFields);            
+        }
+        else
+        {
+            return array();
+        } 
+    }
     
 }

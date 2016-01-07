@@ -17,20 +17,35 @@ class CoreClass
     
     static function getController($node,$module=NULL,$action=NULL)
     {
+        $wp=new Core_WebsiteSettings();
         $className="Modules_".str_replace(" ","",ucwords(str_replace("_", " ",$module)))."_Controllers"."_".str_replace(" ","",ucwords(str_replace("_", " ",$node)));
-        if(Core::fileExists(str_replace("_","/",$className).".php"))
+        if(Core::fileExists($wp->documentRoot.str_replace("_","/",$className).".php"))
         {
             return new $className($node,$action);
         }
         $className="Core_Modules_".str_replace(" ","",ucwords(str_replace("_", " ",$module)))."_Controllers"."_".str_replace(" ","",ucwords(str_replace("_", " ",$node)));
-        if(Core::fileExists(str_replace("_","/",$className).".php"))
+        if(Core::fileExists($wp->documentRoot.str_replace("_","/",$className).".php"))
         {
             return new $className($node,$action);
         }
         else
         {
-            Core::Log($className,"controller.log");
+            Core::Log($className,"controllers.log");
             return new Core_Controllers_NodeController($node,$action);
+        }        
+        
+    }
+    static function getHelper($helperNode=NULL)
+    {
+        $wp=new Core_WebsiteSettings();        
+        $className="Core_Helper_".$helperNode;
+        if(Core::fileExists($wp->documentRoot.str_replace("_","/",$className).".php"))
+        {
+            return new $className();
+        }
+        else
+        {           
+            return new Core_Helper_Data();
         }        
         
     }
@@ -49,6 +64,7 @@ class CoreClass
             return new $className($node,$action);
         }
         $className="Core_Modules_".str_replace(" ","",ucwords(str_replace("_", " ",$module)))."_Models"."_".str_replace(" ","",ucwords(str_replace("_", " ",$node)));       
+        Core::Log($className,"models.log");
         if(Core::fileExists(str_replace("_","/",$className).".php"))
         {
             return new $className($node,$action);
@@ -65,6 +81,7 @@ class CoreClass
         {
             return false;
         }
+        
         $methodName=lcfirst(str_replace(" ","",ucwords(str_replace("_", " ",$node))).str_replace(" ","",ucwords(str_replace("_", " ",$FieldName))).ucwords($action));
         
         if(Core::methodExists($object, $methodName))

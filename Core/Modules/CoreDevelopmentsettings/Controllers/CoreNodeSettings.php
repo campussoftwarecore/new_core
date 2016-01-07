@@ -53,6 +53,32 @@ class Core_Modules_CoreDevelopmentsettings_Controllers_CoreNodeSettings extends 
         }
         
     }
+    public function getAutokeyAction() 
+    {
+        try
+        {
+            $tbmodel=new Core_Model_TableStructure();
+            $tbmodel->setTable($this->_requestedData['tablename']);
+            $tableStructure=$tbmodel->getStructure();            
+            if(count($tableStructure)>0)
+            {
+                $PrimaryKey="";
+                $UniqueKey="";
+                foreach ($tableStructure as $fieldData) 
+                {
+                    if($fieldData['Extra']=='auto_increment')
+                    {
+                        echo $fieldData['Field'];
+                    }                            
+                }               
+            }            
+        }
+        catch(Exception $ex)
+        {
+            Core::Log($ex->getMessage());
+        }
+        
+    }
     public function getNodeStructureDetailsAction() 
     {
         $tbmodel=new Core_Model_TableStructure();
@@ -120,4 +146,47 @@ class Core_Modules_CoreDevelopmentsettings_Controllers_CoreNodeSettings extends 
         $cache->profilePrivileges();
         return TRUE;  
     }
+    public function coreReportsdetailsSettingsNodeIdDescriptorAction()
+    {        
+        $defaultValue=$this->_requestedData['node_id'];
+        $result=array();
+        $finalResult=array();
+        if($this->_requestedData['core_reportsdetails_id'])
+        {
+            $db=new Core_DataBase_ProcessQuery();
+            $db->setTable("core_reportsdetails");
+            $db->addWhere("core_reportsdetails.id='".$this->_requestedData['core_reportsdetails_id']."'");
+            $report=$db->getRow();
+            $db=new Core_DataBase_ProcessQuery();
+            $db->setTable("core_registernode");
+            $db->addField("displayvalue");
+            $db->addWhere("core_registernode.nodename='".$report['node_id']."'");
+            
+            $nodeDisplay=$db->getValue();
+            $finalResult[]=array("pid"=>$report['node_id'],"pds"=>$nodeDisplay);
+            $db=new Core_DataBase_ProcessQuery();
+            $db->setTable("core_node_relations","nrl");
+            $db->addFieldArray(array("rnd.nodename"=>"pid","rnd.displayvalue"=>"pds"));
+            $db->addJoin("node_id", "core_registernode", "rnd", "nrl.core_node_parent=rnd.nodename");
+            $db->addWhere("((nrl.core_node_settings_id='".$report['node_id']."' and nrl.core_node_parent!='".$report['node_id']."' and nrl.core_relation_type_id='MTO'))");
+            $db->addGroupBy("rnd.nodename");
+            $db->addOrderBy("rnd.sort_value");
+            $db->buildSelect();
+            $result=$db->getRows();
+            foreach ($result as $rs)
+            {
+                $finalResult[]=$rs;
+            }
+        }
+        $attributeType="select";        
+        $attributeDetails=new Core_Attributes_LoadAttribute($attributeType);				
+        $attributeClass=Core_Attributes_.$attributeDetails->_attributeName;
+        $attribute=new $attributeClass;
+        $attribute->setIdName('node_id');
+        $attribute->setOptions($finalResult);
+        $attribute->setValue($defaultValue);
+        $attribute->setOnchange("getFieldsforReport();");
+        $attribute->loadAttributeTemplate($attributeType,'node_id');
+    }
+
 }

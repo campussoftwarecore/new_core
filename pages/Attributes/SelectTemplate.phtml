@@ -27,9 +27,10 @@ else
     else
     {
             ?>
-            <select  id="<?php echo $this->_idName; ?>" name="<?php echo $this->_idName; ?>" class="chosen-with-diselect " onchange="<?php echo $this->_onchange; ?>" >
+            <select  id="<?php echo $this->_idName; ?>" name="<?php echo $this->_idName; ?>" onchange="<?php echo $this->_onchange; ?>" >
        <option value="">  Select <?php echo $this->getLabel($this->_idName); ?>  </option>
        <?php
+            $this->_Value=trim($this->_Value);
             if(count($this->_options)>0)
             {
                 foreach ($this->_options as $optionData)
@@ -45,8 +46,18 @@ else
                 }
             }
         ?>
-    </select>	
+    </select>
+            
     <?php
+    if($this->_onchange)
+            {
+            ?>
+            <script>
+                <?php echo $this->_onchange; ?>
+            </script>
+
+            <?php
+            }
     }
 }
 ?>
